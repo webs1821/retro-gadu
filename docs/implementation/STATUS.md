@@ -116,3 +116,15 @@ Clippy i RustSec bez ostrzeżeń. [Raport](VERIFICATION-2026-11-01-dev5.md).
 
 E05 nadal częściowy: WWW, discovery, samoobsługa i administrator online pozostają
 kolejnymi przyrostami. Oryginalnego GG6 nie kwalifikowano. Rozwój nadal lokalny.
+
+## 2026-11-01 — E05b: lokalne discovery HTTP
+
+Wersja `0.1.0-dev.6`. Opcjonalne appmsg3/appmsg4 podają rzeczywisty lokalny port
+GG6, obsługują HTTP/1.0 i nie ufają Host ani nagłówkom proxy. Brak Ready lub
+wyłączona opcja zwracają notoperating. Stare operacje rejestracji, zmiany hasła
+oraz przypominania odmawiają bez dotykania kont i zaproszeń.
+
+52 testy Rust, HTTP discovery i odmowy, cykl życia oraz sesje TCP przeszły.
+Clippy, kontrola pochodzenia i audyt bez uwag. [Raport](VERIFICATION-2026-11-01-dev6.md).
+Kolejny przyrost E05: rejestracja WWW przez istniejącą transakcję zaproszenia,
+z ochroną żądań i limitami. Nadal bez natywnej kwalifikacji i bez wdrożenia.

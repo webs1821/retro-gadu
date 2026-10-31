@@ -103,6 +103,11 @@ async fn run() -> Result<(), Error> {
     };
     let address = listener.local_addr()?;
     let state = HttpState::new(store.clone());
+    let state = if config.legacy_discovery {
+        state.with_legacy_discovery(gg.as_ref().ok_or("GG listener missing")?.0.local_addr()?)?
+    } else {
+        state
+    };
     let stop = CancellationToken::new();
     let hub = gg.as_ref().map(|(_, ctx)| ctx.hub.clone());
     let no_gg_stop = stop.clone();

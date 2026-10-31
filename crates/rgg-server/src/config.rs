@@ -13,6 +13,8 @@ pub struct Config {
     pub http_bind: SocketAddr,
     pub gg_bind: Option<SocketAddr>,
     #[serde(default)]
+    pub legacy_discovery: bool,
+    #[serde(default)]
     pub network: rgg_transport::server::Limits,
     #[serde(default)]
     pub queue: rgg_application::messaging::QueueLimits,
@@ -37,6 +39,8 @@ pub enum ConfigError {
     DataDirectory,
     #[error("invalid network or queue limits")]
     Limits,
+    #[error("legacy_discovery requires a local IPv4 GG listener")]
+    LegacyDiscovery,
 }
 impl Config {
     pub fn load(path: &Path) -> Result<Self, ConfigError> {
@@ -52,6 +56,9 @@ impl Config {
         }
         if !(1..=30).contains(&config.shutdown_seconds) {
             return Err(ConfigError::Shutdown);
+        }
+        if config.legacy_discovery && !config.gg_bind.is_some_and(|a| a.is_ipv4()) {
+            return Err(ConfigError::LegacyDiscovery);
         }
         let q = &config.queue;
         if !config.network.valid()
@@ -76,6 +83,21 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn discovery_requires_an_ipv4_gg_listener() {
+        for extra in ["", "\ngg_bind='[::1]:0'"] {
+            assert!(matches!(
+                Config::parse(
+                    &format!(
+                        "data_dir='data'\nhttp_bind='127.0.0.1:0'\nlegacy_discovery=true{extra}"
+                    ),
+                    Path::new(".")
+                ),
+                Err(ConfigError::LegacyDiscovery)
+            ));
+        }
+        assert!(Config::parse("data_dir='data'\nhttp_bind='127.0.0.1:0'\ngg_bind='127.0.0.1:0'\nlegacy_discovery=true",Path::new(".")).is_ok());
+    }
     #[test]
     fn paths_are_relative_to_configuration_and_unknown_options_are_errors() {
         let config = Config::parse(

@@ -33,6 +33,11 @@ Wersja **0.1.0-dev.5** dodaje dobrowolny katalog publiczny GG6: odczyt i zapis
 własnego profilu, polskie filtry, zakres lat urodzenia, stronicowanie i limit
 zapytań odporny na reconnect. Widoczność statusu w wynikach respektuje prywatność.
 
+Wersja **0.1.0-dev.6** dodaje opcjonalne lokalne HTTP discovery dla GG6,
+ze wskazaniem rzeczywistego portu i odmową historycznych operacji konta.
+
+- [Kontrakt discovery](docs/implementation/HTTP-DISCOVERY.md)
+- [Weryfikacja dev.6](docs/implementation/VERIFICATION-2026-11-01-dev6.md)
 - [Kontrakt katalogu](docs/implementation/PUBLIC-DIRECTORY.md)
 - [Weryfikacja dev.5](docs/implementation/VERIFICATION-2026-11-01-dev5.md)
 - [Kontrakt obecności i kontaktów](docs/implementation/PRESENCE-AND-CONTACTS.md)
@@ -80,6 +85,7 @@ python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debu
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_directory.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+python tests/http_discovery.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 cargo build --workspace --locked --features rgg-server/test-hooks
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
@@ -127,8 +133,9 @@ gg_bind = "127.0.0.1:8074"
 Uruchom `rgg-server --config <ścieżka-do-tego-pliku>`. Brak `gg_bind` oznacza
 tryb samego HTTP. Po jego włączeniu serwer wymaga istniejącego `keys.toml` i
 weryfikuje klucze kont przed otwarciem obsługi połączeń. Oba porty muszą wskazywać
-loopback. Nie ma jeszcze HTTP discovery dla oryginalnego GG; testy używają
-bezpośredniego połączenia TCP i osobnych kont syntetycznych.
+loopback. Opcjonalne `legacy_discovery = true` w głównej sekcji konfiguracji
+włącza endpointy appmsg3/appmsg4 dla GG6 i wymaga IPv4. Odpowiedź wskazuje
+faktyczny lokalny port. Testy używają osobnych kont syntetycznych.
 
 Interaktywny pomocnik przekazuje hasło i kod przez standardowe wejście,
 bez umieszczania ich w argumentach procesu. Bezpośredni `account-create` przyjmuje
@@ -208,7 +215,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.5](docs/implementation/cargo-audit-2026-11-01-dev5.json).
+[raporcie audytu dev.6](docs/implementation/cargo-audit-2026-11-01-dev6.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

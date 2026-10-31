@@ -30,7 +30,7 @@ wyniku testów działającego gg-retro.
 | Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |
 | Rejestracja WWW | brak | — | — |
 | Statystyki online/zarejestrowani z respektowaniem niewidoczności | brak | — | — |
-| Konfigurowana domena i legacy HTTP discovery | brak | — | — |
+| Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | brak w nowym projekcie | — | — |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane; brak kwalifikacji wydajności/RSS/soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca | nie dotyczy |
 | Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI i walidacja kluczy; reszta brak | `accounts_cli.py` | nie dotyczy |

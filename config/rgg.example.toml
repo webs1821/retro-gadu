@@ -6,6 +6,7 @@ shutdown_seconds = 5
 # Enable only after initializing this data directory and creating local accounts.
 # In WSL, use a Linux filesystem path for data_dir and keys.toml (see README).
 # gg_bind = "127.0.0.1:8074"
+# legacy_discovery = true # Requires gg_bind with a loopback IPv4 address.
 
 # Defaults, shown explicitly for local protocol testing:
 [network]

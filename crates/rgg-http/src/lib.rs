@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
+mod legacy;
 use axum::{
     Json, Router,
     extract::State,
     http::{StatusCode, header},
     response::{IntoResponse, Response},
-    routing::get,
+    routing::{any, get},
 };
 use rgg_application::ports::HealthRepository;
 use serde::Serialize;
@@ -21,16 +22,25 @@ use std::{
 pub struct HttpState {
     repository: Arc<dyn HealthRepository>,
     ready: Arc<AtomicBool>,
+    discovery: Option<legacy::Discovery>,
 }
 impl HttpState {
     pub fn new(repository: Arc<dyn HealthRepository>) -> Self {
         Self {
             repository,
             ready: Arc::new(AtomicBool::new(false)),
+            discovery: None,
         }
     }
     pub fn set_ready(&self, value: bool) {
         self.ready.store(value, Ordering::Release);
+    }
+    pub fn with_legacy_discovery(
+        mut self,
+        endpoint: std::net::SocketAddr,
+    ) -> Result<Self, &'static str> {
+        self.discovery = Some(legacy::Discovery::new(endpoint)?);
+        Ok(self)
     }
 }
 #[derive(Serialize)]
@@ -50,6 +60,14 @@ pub fn router(state: HttpState) -> Router {
             }),
         )
         .route("/health/ready", get(ready))
+        .route("/appsvc/appmsg3.asp", get(legacy::discovery))
+        .route("/appsvc/appmsg4.asp", get(legacy::discovery))
+        .route(
+            "/appsvc/fmregister3.asp",
+            any(legacy::deny_account_operation),
+        )
+        .route("/fmregister.php", any(legacy::deny_account_operation))
+        .route("/fmsendpwd.php", any(legacy::deny_account_operation))
         .with_state(state)
 }
 async fn ready(State(state): State<HttpState>) -> Response {
