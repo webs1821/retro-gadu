@@ -1,0 +1,46 @@
+schema_version = 1
+
+[[sources]]
+id = "poggadaj-gg32"
+project = "poggadaj"
+upstream_url = "https://github.com/Oreeeee/poggadaj"
+commit = "4dc5484621fc53fc3205af80e4f80eca9f1d208d"
+source_paths = ["src/internal/security/gg/gg.go"]
+source_sha256 = ["24569d73b49b775b75679ca405e007be958ec84b35d2a2b6d0cfb8734a857867"]
+source_copies = ["third_party/poggadaj/gg.go"]
+upstream_authors = ["Oreeeee"]
+license_id = "AGPL-3.0-or-later"
+license_path = "third_party/poggadaj/LICENSE.txt"
+license_sha256 = "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+kind = "ported"
+local_paths = ["crates/rgg-protocol/src/legacy_hash.rs", "tools/gg32_vectors.py"]
+symbols = ["gg32"]
+changes = "Port GG32LoginHash z Go do Rust: argument bajtowy, jawne wrapping_add/sub, rotate_left. Pomocniczy port Python generuje syntetyczne wektory regresji. Pozostałe funkcje pliku źródłowego nie są używane."
+verification = "Kontrola zgodności operacji z przypiętym źródłem; testy wartości brzegowych i wektorów. Testy klienta natywnego pozostają osobnym wymaganiem."
+reviewed_on = "2026-10-31"
+
+[[sources]]
+id = "libgadu-wire-reference"
+project = "libgadu protocol documentation"
+upstream_url = "https://libgadu.github.io/protocol/"
+kind = "reference-only"
+upstream_authors = ["Autorzy dokumentacji libgadu"]
+local_paths = ["crates/rgg-protocol/src/frame.rs", "crates/rgg-protocol/src/gg6.rs"]
+symbols = ["decode", "decode_login"]
+changes = "Wykorzystano opis formatu binarnego: nagłówki, pola LOGIN60, Windows-1250 i typy ping/pong. Nie skopiowano implementacji C biblioteki ani tekstu dokumentacji."
+verification = "Własny parser i jawne fixture bajtowe; dokumentacja nie zastępuje testów GG 6.0/6.1."
+reviewed_on = "2026-10-31"
+
+[[sources]]
+id = "gg-retro-compatibility-reference"
+project = "gg-retro fork webs1821"
+upstream_url = "https://github.com/webs1821/gg-retro"
+commit = "ed9640cc247764754b5e47891053eb07a53f76d5"
+kind = "reference-only"
+upstream_authors = ["macbury", "webs1821"]
+license_ref = "LicenseRef-MIS-macbury"
+local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md"]
+symbols = ["0.8.3"]
+changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności; kod serwera i jego testy nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
+verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności."
+reviewed_on = "2026-10-31"

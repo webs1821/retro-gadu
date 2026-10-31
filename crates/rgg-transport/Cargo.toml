@@ -1,0 +1,20 @@
+[package]
+name = "rgg-transport"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+rgg-protocol.workspace = true
+bytes.workspace = true
+tokio-util.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+rgg-application.workspace = true
+tokio.workspace = true
+futures-util.workspace = true
+
+[lints]
+workspace = true

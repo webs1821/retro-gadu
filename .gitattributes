@@ -1,0 +1,7 @@
+* text=auto eol=lf
+/third_party/** -text
+/docs/reviews/** -text
+/docs/reviews/** whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+/PLAN_IMPLEMENTACJI.md -text
+*.png binary
+*.exe binary

@@ -1,0 +1,24 @@
+{
+  "plan_version": "1.0",
+  "sha256": "cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec",
+  "lines": 840,
+  "words": 11041,
+  "modules": 22,
+  "stages": 13,
+  "reviewers": 3,
+  "review_rounds": 2,
+  "first_round_findings": 28,
+  "followup_refinement": "A04-R1",
+  "ready_for": "E01 local implementation",
+  "reports": {
+    "architecture-followup.md": "ca7910d205f11203e66d8b1b64c3a562d24858df174b6f3a7a99d10d01dd3852",
+    "architecture.md": "7295a25d25a8790de97902b8c497ea324294b06ddfd58653a240dbb09b881a9d",
+    "PLAN-v0.1.md": "380d006a7244b65d1e9f4c38365c0f99f3b75acb5b5e6f7cbe54b74b2826d67b",
+    "PLAN-v0.2.md": "54ba707b2958f3dc3fe85984e3a4f1157bbfc33fe8b8a714c2c5ea4c241298b2",
+    "protocol-followup.md": "3f7a8ce74f045e7ce7e85cac4ad40c1441ba84970b9bb782625f447b8e4e111d",
+    "protocol.md": "d38f0e8bee47b10f86256404bdd73f7b8bb69c3f02e8371addd15af9855b5ddc",
+    "ROZLICZENIE_UWAG.md": "d3687926eb1bf355191e0dbd73927a27dfe21a97ea9b4b23b056ea6d18f89454",
+    "security-followup.md": "d6f29a42449c7e0b76828f9d7cb8e9c9df2b8be7977ec2264360a0a769318328",
+    "security.md": "4f259449676f722d38634fc8d5f078b450158311b0929ac864fb2a7f784262c2"
+  }
+}

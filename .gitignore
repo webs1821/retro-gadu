@@ -1,0 +1,11 @@
+/target/
+/data/
+/rgg.toml
+*.sqlite*
+*.db
+*.db-shm
+*.db-wal
+*.key
+.env
+.secrets/
+__pycache__/

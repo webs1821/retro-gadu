@@ -1,0 +1,97 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 webs1821
+use serde::Deserialize;
+use std::{
+    net::SocketAddr,
+    path::{Path, PathBuf},
+};
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Config {
+    pub data_dir: PathBuf,
+    pub http_bind: SocketAddr,
+    #[serde(default = "shutdown_default")]
+    pub shutdown_seconds: u64,
+}
+fn shutdown_default() -> u64 {
+    5
+}
+#[derive(Debug, thiserror::Error)]
+pub enum ConfigError {
+    #[error("cannot read configuration")]
+    Io(#[from] std::io::Error),
+    // TOML errors can quote input: never forward their text to logs.
+    #[error("invalid configuration syntax or unknown field")]
+    Syntax,
+    #[error("development server must bind to a loopback IP address")]
+    PublicBind,
+    #[error("shutdown_seconds must be between 1 and 30")]
+    Shutdown,
+    #[error("data_dir must not be empty")]
+    DataDirectory,
+}
+impl Config {
+    pub fn load(path: &Path) -> Result<Self, ConfigError> {
+        let source = std::fs::read_to_string(path)?;
+        Self::parse(&source, path.parent().unwrap_or(Path::new(".")))
+    }
+    fn parse(source: &str, base: &Path) -> Result<Self, ConfigError> {
+        let mut config: Self = toml::from_str(source).map_err(|_| ConfigError::Syntax)?;
+        if !config.http_bind.ip().is_loopback() {
+            return Err(ConfigError::PublicBind);
+        }
+        if !(1..=30).contains(&config.shutdown_seconds) {
+            return Err(ConfigError::Shutdown);
+        }
+        if config.data_dir.as_os_str().is_empty() {
+            return Err(ConfigError::DataDirectory);
+        }
+        if config.data_dir.is_relative() {
+            config.data_dir = base.join(&config.data_dir);
+        }
+        Ok(config)
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn paths_are_relative_to_configuration_and_unknown_options_are_errors() {
+        let config = Config::parse(
+            "data_dir='data'\nhttp_bind='127.0.0.1:0'",
+            Path::new("/config"),
+        )
+        .unwrap();
+        assert_eq!(config.data_dir, Path::new("/config/data"));
+        assert!(matches!(
+            Config::parse(
+                "data_dir='data'\nhttp_bind='127.0.0.1:0'\nhtp_bind='oops'",
+                Path::new(".")
+            ),
+            Err(ConfigError::Syntax)
+        ));
+    }
+    #[test]
+    fn local_development_cannot_accidentally_listen_on_the_lan_or_internet() {
+        for bind in ["0.0.0.0:8080", "[::]:8080", "192.168.1.2:8080"] {
+            let text = format!("data_dir='data'\nhttp_bind='{bind}'");
+            assert!(matches!(
+                Config::parse(&text, Path::new(".")),
+                Err(ConfigError::PublicBind)
+            ));
+        }
+        assert!(Config::parse("data_dir='data'\nhttp_bind='[::1]:8080'", Path::new(".")).is_ok());
+        assert!(matches!(
+            Config::parse("data_dir=''\nhttp_bind='127.0.0.1:8080'", Path::new(".")),
+            Err(ConfigError::DataDirectory)
+        ));
+        assert!(matches!(
+            Config::parse(
+                "data_dir='data'\nhttp_bind='127.0.0.1:8080'\nshutdown_seconds=0",
+                Path::new(".")
+            ),
+            Err(ConfigError::Shutdown)
+        ));
+    }
+}

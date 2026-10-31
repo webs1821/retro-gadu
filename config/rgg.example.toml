@@ -1,0 +1,4 @@
+# Local development only. Paths are resolved relative to this file.
+data_dir = "../data"
+http_bind = "127.0.0.1:8088"
+shutdown_seconds = 5

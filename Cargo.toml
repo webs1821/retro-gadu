@@ -1,0 +1,40 @@
+[workspace]
+members = ["crates/rgg-domain", "crates/rgg-application", "crates/rgg-protocol", "crates/rgg-store-sqlite", "crates/rgg-transport", "crates/rgg-http", "crates/rgg-server"]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0-dev.1"
+edition = "2024"
+license = "AGPL-3.0-or-later"
+authors = ["webs1821"]
+
+[workspace.dependencies]
+rgg-domain = { path = "crates/rgg-domain" }
+rgg-protocol = { path = "crates/rgg-protocol" }
+rgg-application = { path = "crates/rgg-application" }
+rgg-store-sqlite = { path = "crates/rgg-store-sqlite" }
+rgg-transport = { path = "crates/rgg-transport" }
+rgg-http = { path = "crates/rgg-http" }
+bytes = "1.11.0"
+thiserror = "2.0.17"
+encoding_rs = "0.8.35"
+rand = "0.9.2"
+tokio = { version = "1.48.0", features = ["macros", "rt-multi-thread", "net", "signal", "time", "sync", "io-util"] }
+tokio-util = { version = "0.7.17", features = ["codec", "rt"] }
+futures-util = { version = "0.3.31", features = ["sink"] }
+async-trait = "0.1.89"
+axum = "0.8.8"
+serde = { version = "1.0.228", features = ["derive"] }
+toml = "0.8"
+sqlx = { version = "0.8.6", default-features = false, features = ["runtime-tokio", "sqlite", "migrate", "macros"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
+tempfile = "3"
+serde_json = "1"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[profile.release]
+lto = "thin"
+strip = "debuginfo"

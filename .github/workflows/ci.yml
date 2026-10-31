@@ -1,0 +1,24 @@
+name: local-development-checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'
+      - name: Install pinned Rust toolchain
+        run: rustup show active-toolchain
+      - run: python tools/verify_repository.py
+      - run: python tools/gg32_vectors.py
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --locked
+      - run: cargo build --workspace --locked
+      - run: python tests/lifecycle.py --binary target/debug/rgg-server
