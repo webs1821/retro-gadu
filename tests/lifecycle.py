@@ -17,10 +17,10 @@ import urllib.request
 
 
 class Server:
-    def __init__(self, binary, config, log):
+    def __init__(self, binary, config, log, env=None):
         self.log = log
         self.handle = log.open("wb")
-        self.process = subprocess.Popen([str(binary), "--config", str(config)], stdout=self.handle, stderr=self.handle)
+        self.process = subprocess.Popen([str(binary), "--config", str(config)], stdout=self.handle, stderr=self.handle, env=env)
         self.address = None
 
     def ready(self):
@@ -77,7 +77,7 @@ def main():
             restarted.ready()
             with sqlite3.connect(str(root / "data/rgg.sqlite")) as db:
                 assert db.execute("SELECT process_epoch FROM runtime_state").fetchone()[0] != first_epoch
-                assert db.execute("SELECT max(version) FROM _sqlx_migrations").fetchone()[0] == 3
+                assert db.execute("SELECT max(version) FROM _sqlx_migrations").fetchone()[0] == 4
                 assert db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
             restarted.close()
             assert restarted.process.returncode == 0, restarted.log.read_text()

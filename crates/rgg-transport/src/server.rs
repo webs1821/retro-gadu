@@ -1,0 +1,370 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// SPDX-FileCopyrightText: 2026 webs1821
+use crate::{FrameCodec, TransportError};
+use bytes::BytesMut;
+use futures_util::{SinkExt, StreamExt};
+use rand::TryRngCore;
+use rgg_application::{
+    messaging::{Authenticator, MessagingError, PasswordProof},
+    sessions::{AccountHandle, IoFence, SessionHub},
+};
+use rgg_protocol::{frame::Frame, gg6, gg6_messages as wire, legacy_hash::gg32};
+use std::{collections::HashMap, net::IpAddr, sync::Arc, time::Duration};
+use subtle::ConstantTimeEq;
+use tokio::{
+    io::AsyncWriteExt,
+    net::{TcpListener, TcpStream},
+    task::JoinSet,
+    time::{Instant, timeout, timeout_at},
+};
+use tokio_util::{
+    codec::{Decoder, Encoder, Framed},
+    sync::DropGuard,
+};
+
+#[derive(Clone, Debug, serde::Deserialize)]
+#[serde(default, deny_unknown_fields)]
+pub struct Limits {
+    pub max_connections: usize,
+    pub per_ip: usize,
+    pub login_seconds: u64,
+    pub initial_seconds: u64,
+    pub idle_seconds: u64,
+    pub write_millis: u64,
+}
+impl Default for Limits {
+    fn default() -> Self {
+        Self {
+            max_connections: 64,
+            per_ip: 16,
+            login_seconds: 5,
+            initial_seconds: 5,
+            idle_seconds: 90,
+            write_millis: 2000,
+        }
+    }
+}
+impl Limits {
+    pub fn valid(&self) -> bool {
+        (1..=128).contains(&self.max_connections)
+            && (1..=self.max_connections).contains(&self.per_ip)
+            && (1..=60).contains(&self.login_seconds)
+            && (1..=60).contains(&self.initial_seconds)
+            && (5..=3600).contains(&self.idle_seconds)
+            && (100..=5000).contains(&self.write_millis)
+    }
+}
+pub struct Context {
+    pub hub: Arc<SessionHub>,
+    pub authentication: Authenticator,
+    pub limits: Limits,
+}
+struct Proof {
+    seed: u32,
+    response: u32,
+}
+impl PasswordProof for Proof {
+    fn matches(&self, password: &[u8]) -> bool {
+        bool::from(
+            gg32(password, self.seed)
+                .to_le_bytes()
+                .ct_eq(&self.response.to_le_bytes()),
+        )
+    }
+}
+
+struct Inbound;
+impl Decoder for Inbound {
+    type Item = Frame;
+    type Error = TransportError;
+    fn decode(&mut self, b: &mut BytesMut) -> Result<Option<Frame>, Self::Error> {
+        if b.len() >= 8 {
+            let kind = u32::from_le_bytes(b[..4].try_into().expect("header"));
+            let len = u32::from_le_bytes(b[4..8].try_into().expect("header")) as usize;
+            if len > wire::inbound_limit(kind) {
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::InvalidData,
+                    "profile packet limit",
+                )
+                .into());
+            }
+        }
+        FrameCodec.decode(b)
+    }
+    fn decode_eof(&mut self, b: &mut BytesMut) -> Result<Option<Frame>, Self::Error> {
+        let f = self.decode(b)?;
+        if f.is_none() {
+            rgg_protocol::frame::finish(b)?;
+        }
+        Ok(f)
+    }
+}
+impl Encoder<Frame> for Inbound {
+    type Error = TransportError;
+    fn encode(&mut self, f: Frame, b: &mut BytesMut) -> Result<(), Self::Error> {
+        FrameCodec.encode(f, b)
+    }
+}
+// Field drop order is essential: socket BEFORE stopped signal BEFORE the actor's last owner.
+struct Socket {
+    io: Framed<TcpStream, Inbound>,
+    _stopped: DropGuard,
+    actor: Option<Arc<AccountHandle>>,
+    id: [u8; 16],
+}
+type Failure = Box<dyn std::error::Error + Send + Sync>;
+async fn send(socket: &mut Socket, frame: Frame, limits: &Limits) -> Result<(), Failure> {
+    timeout(
+        Duration::from_millis(limits.write_millis),
+        socket.io.send(frame),
+    )
+    .await??;
+    Ok(())
+}
+
+pub async fn serve(listener: TcpListener, context: Arc<Context>) -> std::io::Result<()> {
+    let mut tasks = JoinSet::new();
+    let mut ips: HashMap<IpAddr, usize> = HashMap::new();
+    let mut arrivals: HashMap<IpAddr, (f64, Instant)> = HashMap::new();
+    let mut maintenance = tokio::time::interval(Duration::from_secs(30));
+    maintenance.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    let result = loop {
+        tokio::select! {biased;
+            _=context.hub.shutdown.cancelled()=>break Ok(()),
+            result=tasks.join_next(),if !tasks.is_empty()=>{if let Some(Ok(ip))=result&& let Some(count)=ips.get_mut(&ip){*count-=1;if *count==0{ips.remove(&ip);}}},
+            _=maintenance.tick()=>{if context.hub.prune().await.is_err(){break Err(std::io::Error::other("queue maintenance failed"));}},
+            incoming=listener.accept()=>{
+                let (stream,address)=match incoming{Ok(v)=>v,Err(e)=>break Err(e)};let ip=address.ip();let now=Instant::now();
+                arrivals.retain(|_,(_,last)|now.duration_since(*last)<Duration::from_secs(60));
+                if !arrivals.contains_key(&ip)&&arrivals.len()>=512{continue;}
+                let (tokens,last)=arrivals.entry(ip).or_insert((64.0,now));*tokens=(*tokens+now.duration_since(*last).as_secs_f64()*16.0).min(64.0);*last=now;
+                if *tokens<1.0||tasks.len()>=context.limits.max_connections||ips.get(&ip).copied().unwrap_or(0)>=context.limits.per_ip{continue;}*tokens-=1.0;
+                stream.set_nodelay(true)?;socket2::SockRef::from(&stream).set_send_buffer_size(32*1024)?;
+                *ips.entry(ip).or_default()+=1;let ctx=context.clone();tasks.spawn(async move{connection(stream,ctx).await;ip});
+            }
+        }
+    };
+    context.hub.shutdown.cancel();
+    drop(listener);
+    if timeout(Duration::from_secs(8), async {
+        while tasks.join_next().await.is_some() {}
+    })
+    .await
+    .is_err()
+    {
+        tasks.abort_all();
+        while tasks.join_next().await.is_some() {}
+    }
+    context.hub.finish_shutdown().await;
+    result
+}
+async fn connection(stream: TcpStream, context: Arc<Context>) {
+    let fence = IoFence::new();
+    let mut socket = Socket {
+        io: Framed::new(stream, Inbound),
+        _stopped: fence.stopped.clone().drop_guard(),
+        actor: None,
+        id: [0; 16],
+    };
+    let _ = tokio::select! {biased;
+        _=context.hub.shutdown.cancelled()=>Ok(()),_=fence.stop.cancelled()=>Ok(()),
+        result=conversation(&mut socket,&context,&fence)=>result,
+    };
+    if fence.replaced() && socket.io.write_buffer().is_empty() {
+        let _ = timeout(Duration::from_millis(200), socket.io.send(wire::empty(0xb))).await;
+    }
+    let _ = timeout(Duration::from_millis(200), socket.io.get_mut().shutdown()).await;
+    let cleanup = socket.actor.clone().map(|actor| (actor, socket.id));
+    drop(socket);
+    if let Some((actor, id)) = cleanup {
+        let _ = actor.closed(id).await;
+    }
+}
+async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Result<(), Failure> {
+    let mut random = [0; 4];
+    rand::rngs::OsRng
+        .try_fill_bytes(&mut random)
+        .map_err(|_| "random unavailable")?;
+    let seed = u32::from_le_bytes(random);
+    let login_deadline = Instant::now() + Duration::from_secs(ctx.limits.login_seconds);
+    let login = timeout_at(login_deadline, async {
+        send(socket, gg6::welcome(seed), &ctx.limits).await?;
+        let frame = socket.io.next().await.ok_or("closed")??;
+        if frame.kind != gg6::LOGIN60 {
+            return Err("login required".into());
+        }
+        let login = gg6::decode_login(&frame.payload)?;
+        wire::status(login.status)?;
+        let identity = ctx
+            .authentication
+            .authenticate(
+                login.user,
+                &Proof {
+                    seed,
+                    response: login.response,
+                },
+            )
+            .await?;
+        Ok::<_, Failure>((login, identity))
+    })
+    .await;
+    let (login, identity) = match login {
+        Ok(Ok(v)) => v,
+        _ => {
+            send(socket, wire::empty(9), &ctx.limits).await?;
+            return Ok(());
+        }
+    };
+    let actor = ctx.hub.account(login.user).await?;
+    socket.actor = Some(actor.clone());
+    rand::rngs::OsRng
+        .try_fill_bytes(&mut socket.id)
+        .map_err(|_| "random unavailable")?;
+    let key = actor.attach(identity, socket.id, fence.clone()).await?;
+    send(socket, wire::empty(3), &ctx.limits).await?;
+    let mut ready = false;
+    let mut staging = None;
+    let mut initial = Instant::now() + Duration::from_secs(ctx.limits.initial_seconds);
+    let mut friends = wire::status(login.status)?.1;
+    let mut idle = Instant::now() + Duration::from_secs(ctx.limits.idle_seconds);
+    let mut poll = tokio::time::interval(Duration::from_millis(500));
+    poll.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    let mut tokens = 400.0f64;
+    let mut last = Instant::now();
+    let mut drain = false;
+    loop {
+        let frame = tokio::select! {biased;
+            _=tokio::time::sleep_until(idle)=>return Err("idle deadline".into()),
+            _=tokio::time::sleep_until(initial),if !ready=>return Err("initial state deadline".into()),
+            frame=socket.io.next()=>Some(frame.ok_or("closed")??),
+            _=actor.wake.notified(),if ready=>None,
+            _=poll.tick(),if ready=>None,
+            _=std::future::ready(()),if ready&&drain=>None,
+        };
+        if let Some(frame) = frame {
+            let now = Instant::now();
+            tokens = (tokens + now.duration_since(last).as_secs_f64() * 100.0).min(400.0);
+            last = now;
+            if tokens < 1.0 {
+                return Err("packet rate".into());
+            }
+            tokens -= 1.0;
+            idle = now + Duration::from_secs(ctx.limits.idle_seconds);
+            match frame.kind {
+                8 if frame.payload.is_empty() => send(socket, wire::empty(7), &ctx.limits).await?,
+                0xf | 0x10 | 0x12 => {
+                    let rules = wire::contacts(&frame.payload)?;
+                    if frame.kind == 0xf {
+                        if let Some(all) = &mut staging {
+                            let all: &mut Vec<_> = all;
+                            all.extend(rules);
+                            if all.len() > 4000 {
+                                return Err("contact quota".into());
+                            }
+                        } else {
+                            actor.begin_initial(key.clone()).await?;
+                            if ready {
+                                initial = Instant::now()
+                                    + Duration::from_secs(ctx.limits.initial_seconds);
+                            }
+                            ready = false;
+                            staging = Some(rules);
+                        }
+                    } else {
+                        if frame.kind == 0x12 && staging.is_some() {
+                            return Err("EMPTY during staging".into());
+                        }
+                        let mut all = staging.take().unwrap_or_default();
+                        all.extend(rules);
+                        if all.len() > 4000 {
+                            return Err("contact quota".into());
+                        }
+                        actor.privacy(key.clone(), all.clone(), friends).await?;
+                        ready = true;
+                        drain = true;
+                        for chunk in all.chunks(400) {
+                            let snapshot = wire::offline_snapshot(chunk);
+                            if !snapshot.payload.is_empty() {
+                                send(socket, snapshot, &ctx.limits).await?;
+                            }
+                        }
+                    }
+                }
+                0xd | 0xe if ready => {
+                    let rules = wire::contacts(&frame.payload)?;
+                    if rules.len() != 1 {
+                        return Err("contact length".into());
+                    }
+                    actor
+                        .contact(key.clone(), rules[0], frame.kind == 0xe)
+                        .await?;
+                }
+                2 => {
+                    let (offline, value) = wire::decode_status(&frame.payload)?;
+                    friends = value;
+                    actor.friends(key.clone(), friends).await?;
+                    if offline {
+                        return Ok(());
+                    }
+                }
+                0xb if ready => {
+                    let (recipient, sequence, no_ack) =
+                        wire::message_header(&frame.payload).ok_or("message header")?;
+                    let status = match wire::decode_message(&frame.payload) {
+                        Err(_) => 6,
+                        Ok(message) => {
+                            let user = message.recipient;
+                            match actor.accept(key.clone(), message).await {
+                                Ok(_) => {
+                                    #[cfg(feature = "test-hooks")]
+                                    fault("after_accept_commit", sequence);
+                                    #[cfg(feature = "test-hooks")]
+                                    let drop_wake =
+                                        std::env::var_os("RGG_TEST_DROP_WAKEUPS").is_some();
+                                    #[cfg(not(feature = "test-hooks"))]
+                                    let drop_wake = false;
+                                    if !drop_wake {
+                                        ctx.hub.wake(user).await;
+                                    }
+                                    3
+                                }
+                                Err(MessagingError::Quota) => 4,
+                                Err(MessagingError::Rejected | MessagingError::Invalid) => 6,
+                                Err(e) => return Err(e.into()),
+                            }
+                        }
+                    };
+                    if !no_ack {
+                        send(
+                            socket,
+                            wire::acknowledgement(status, recipient, sequence),
+                            &ctx.limits,
+                        )
+                        .await?;
+                    }
+                }
+                _ => return Err("unexpected command".into()),
+            }
+        } else {
+            // The monotonic deadline includes the claim wait; UTC is never a write authorization.
+            let deadline = Instant::now() + Duration::from_millis(ctx.limits.write_millis);
+            if let Some(lease) = timeout_at(deadline, actor.claim(key.clone())).await?? {
+                #[cfg(feature = "test-hooks")]
+                fault("before_delivery_write", lease.client_sequence);
+                timeout_at(deadline, socket.io.send(wire::received(&lease)?)).await??;
+                #[cfg(feature = "test-hooks")]
+                fault("after_delivery_write", lease.client_sequence);
+                actor.written(key.clone(), lease).await?;
+                drain = true;
+            } else {
+                drain = false;
+            }
+        }
+    }
+}
+#[cfg(feature = "test-hooks")]
+fn fault(stage: &str, sequence: u32) {
+    if sequence == 0xfeed && std::env::var("RGG_TEST_CRASH").as_deref() == Ok(stage) {
+        std::process::exit(86);
+    }
+}

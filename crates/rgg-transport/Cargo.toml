@@ -11,10 +11,16 @@ bytes.workspace = true
 tokio-util.workspace = true
 thiserror.workspace = true
 
-[dev-dependencies]
 rgg-application.workspace = true
 tokio.workspace = true
 futures-util.workspace = true
+rand.workspace = true
+subtle.workspace = true
+serde.workspace = true
+socket2.workspace = true
+
+[features]
+test-hooks = []
 
 [lints]
 workspace = true

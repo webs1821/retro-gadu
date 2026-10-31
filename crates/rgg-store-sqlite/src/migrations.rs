@@ -37,6 +37,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0003_secret_nonces.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    4,
+                    "sessions messages".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0004_sessions_messages.sql").into(),
+                    false,
+                ),
             ])
         })
     }

@@ -138,7 +138,7 @@ impl AccountRepository for SqliteStore {
 
     async fn retire_account(&self, user: UserId) -> Result<(), AccountError> {
         let mut tx = self.pool.begin().await.map_err(database_error)?;
-        let deleted = sqlx::query("DELETE FROM accounts WHERE uin=?")
+        let deleted = sqlx::query("DELETE FROM accounts WHERE uin=? AND NOT EXISTS(SELECT 1 FROM account_sessions WHERE uin=accounts.uin)")
             .bind(i64::from(user.get()))
             .execute(&mut *tx)
             .await
@@ -148,6 +148,8 @@ impl AccountRepository for SqliteStore {
             tx.rollback().await.map_err(database_error)?;
             return Err(AccountError::Inactive);
         }
+        sqlx::query("UPDATE deliveries SET state='Rejected',terminal_at=unixepoch(),reason='account_retired' WHERE recipient=? AND state='Pending'").bind(i64::from(user.get())).execute(&mut *tx).await.map_err(database_error)?;
+        sqlx::query("UPDATE messages SET body=NULL,styles=NULL WHERE recipient=? AND id IN (SELECT message_id FROM deliveries WHERE state='Rejected')").bind(i64::from(user.get())).execute(&mut *tx).await.map_err(database_error)?;
         sqlx::query("INSERT INTO retired_uins(uin,retired_at) VALUES(?,unixepoch())")
             .bind(i64::from(user.get()))
             .execute(&mut *tx)

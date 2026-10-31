@@ -3,6 +3,9 @@
 
 mod accounts;
 mod database;
+mod messaging;
+#[cfg(test)]
+mod messaging_tests;
 mod migrations;
 use crate::database as sqlx;
 pub mod directory;
@@ -17,7 +20,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 3;
+pub const SCHEMA_VERSION: i64 = 4;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {
@@ -114,8 +117,17 @@ impl SqliteStore {
             .try_fill_bytes(&mut entropy)
             .map_err(|_| OpenError::Random)?;
         let epoch: String = entropy.iter().map(|byte| format!("{byte:02x}")).collect();
+        let mut tx = pool.begin().await?;
+        // The OS lock proves that every previous process/writer is dead. Wall-clock lease
+        // expiry is deliberately not a prerequisite for recovery after a new epoch.
+        sqlx::query("UPDATE delivery_attempts SET outcome='RecoveredEpoch',completed_at=unixepoch() WHERE outcome IS NULL").execute(&mut *tx).await?;
+        sqlx::query("UPDATE deliveries SET state='Pending',lease_token=NULL,session_id=NULL,epoch=NULL,generation=NULL,lease_until=NULL WHERE state='Leased'").execute(&mut *tx).await?;
+        sqlx::query("DELETE FROM account_sessions")
+            .execute(&mut *tx)
+            .await?;
         sqlx::query("INSERT INTO runtime_state(id,process_epoch,started_at) VALUES(1,?,unixepoch()) ON CONFLICT(id) DO UPDATE SET process_epoch=excluded.process_epoch,started_at=excluded.started_at")
-            .bind(&epoch).execute(pool).await?;
+            .bind(&epoch).execute(&mut *tx).await?;
+        tx.commit().await?;
         Ok(epoch)
     }
 

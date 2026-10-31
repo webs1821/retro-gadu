@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "cargo_lock_sha256": "172bfa5ebf7e8c4a98339de856816205cc6fe5e13dfe3f0fd8c15d82e6c16edd",
+  "cargo_lock_sha256": "525c320dbc8ef5307d029c7239afb303d164a51c30c78a4538a78917f72b7f86",
   "packages": [
     {
       "name": "aead",
@@ -1097,6 +1097,14 @@
       "repository": "https://github.com/storyyeller/stable_deref_trait",
       "source": "registry+https://github.com/rust-lang/crates.io-index",
       "checksum": "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
+    },
+    {
+      "name": "subtle",
+      "version": "2.6.1",
+      "license": "BSD-3-Clause",
+      "repository": "https://github.com/dalek-cryptography/subtle",
+      "source": "registry+https://github.com/rust-lang/crates.io-index",
+      "checksum": "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
     },
     {
       "name": "syn",

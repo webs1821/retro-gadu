@@ -5,6 +5,7 @@
 use bytes::BytesMut;
 use rgg_protocol::frame::{self, Frame, FrameError};
 use tokio_util::codec::{Decoder, Encoder};
+pub mod server;
 
 #[derive(Debug, thiserror::Error)]
 pub enum TransportError {

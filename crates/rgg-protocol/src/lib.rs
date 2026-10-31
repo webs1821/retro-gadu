@@ -5,4 +5,5 @@
 
 pub mod frame;
 pub mod gg6;
+pub mod gg6_messages;
 pub mod legacy_hash;

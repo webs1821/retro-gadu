@@ -11,6 +11,11 @@ use std::{
 pub struct Config {
     pub data_dir: PathBuf,
     pub http_bind: SocketAddr,
+    pub gg_bind: Option<SocketAddr>,
+    #[serde(default)]
+    pub network: rgg_transport::server::Limits,
+    #[serde(default)]
+    pub queue: rgg_application::messaging::QueueLimits,
     #[serde(default = "shutdown_default")]
     pub shutdown_seconds: u64,
 }
@@ -30,6 +35,8 @@ pub enum ConfigError {
     Shutdown,
     #[error("data_dir must not be empty")]
     DataDirectory,
+    #[error("invalid network or queue limits")]
+    Limits,
 }
 impl Config {
     pub fn load(path: &Path) -> Result<Self, ConfigError> {
@@ -38,11 +45,24 @@ impl Config {
     }
     fn parse(source: &str, base: &Path) -> Result<Self, ConfigError> {
         let mut config: Self = toml::from_str(source).map_err(|_| ConfigError::Syntax)?;
-        if !config.http_bind.ip().is_loopback() {
+        if !config.http_bind.ip().is_loopback()
+            || config.gg_bind.is_some_and(|a| !a.ip().is_loopback())
+        {
             return Err(ConfigError::PublicBind);
         }
         if !(1..=30).contains(&config.shutdown_seconds) {
             return Err(ConfigError::Shutdown);
+        }
+        let q = &config.queue;
+        if !config.network.valid()
+            || !(1..=10000).contains(&q.per_recipient_messages)
+            || !(1..=10000).contains(&q.per_sender_messages)
+            || !(1..=100000).contains(&q.global_messages)
+            || !(1024..=64 * 1024 * 1024).contains(&q.per_recipient_bytes)
+            || !(1024..=512 * 1024 * 1024).contains(&q.global_bytes)
+            || !(1..=30 * 86400).contains(&q.ttl_seconds)
+        {
+            return Err(ConfigError::Limits);
         }
         if config.data_dir.as_os_str().is_empty() {
             return Err(ConfigError::DataDirectory);

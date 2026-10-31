@@ -1044,7 +1044,7 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 
 [[package]]
 name = "rgg-admin"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "rgg-application",
  "rgg-credentials",
@@ -1058,17 +1058,20 @@ dependencies = [
 
 [[package]]
 name = "rgg-application"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "async-trait",
  "rgg-domain",
+ "serde",
  "thiserror",
+ "tokio",
+ "tokio-util",
  "zeroize",
 ]
 
 [[package]]
 name = "rgg-credentials"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "chacha20poly1305",
  "hex",
@@ -1085,14 +1088,14 @@ dependencies = [
 
 [[package]]
 name = "rgg-domain"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "thiserror",
 ]
 
 [[package]]
 name = "rgg-http"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "axum",
  "rgg-application",
@@ -1102,7 +1105,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-protocol"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "bytes",
  "encoding_rs",
@@ -1114,11 +1117,14 @@ dependencies = [
 
 [[package]]
 name = "rgg-server"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "axum",
+ "rgg-application",
+ "rgg-credentials",
  "rgg-http",
  "rgg-store-sqlite",
+ "rgg-transport",
  "serde",
  "tempfile",
  "thiserror",
@@ -1131,7 +1137,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-store-sqlite"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "async-trait",
  "futures-util",
@@ -1139,6 +1145,7 @@ dependencies = [
  "rgg-application",
  "rgg-credentials",
  "rgg-domain",
+ "serde_json",
  "sqlx-core",
  "sqlx-sqlite",
  "tempfile",
@@ -1150,12 +1157,16 @@ dependencies = [
 
 [[package]]
 name = "rgg-transport"
-version = "0.1.0-dev.2"
+version = "0.1.0-dev.3"
 dependencies = [
  "bytes",
  "futures-util",
+ "rand",
  "rgg-application",
  "rgg-protocol",
+ "serde",
+ "socket2",
+ "subtle",
  "thiserror",
  "tokio",
  "tokio-util",
@@ -1400,6 +1411,12 @@ name = "stable_deref_trait"
 version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
+
+[[package]]
+name = "subtle"
+version = "2.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "syn"
