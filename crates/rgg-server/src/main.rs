@@ -64,7 +64,7 @@ async fn run() -> Result<(), Error> {
     let config = config::Config::load(&config_file)?;
     let store = Arc::new(SqliteStore::open(&config.data_dir).await?);
     let prepared = async {
-        let listener = tokio::net::TcpListener::bind(config.http_bind).await?;
+        let mut registration = None;
         let gg = if let Some(bind) = config.gg_bind {
             let ring = Arc::new(rgg_credentials::Keyring::load(
                 &config.data_dir.join("keys.toml"),
@@ -76,6 +76,15 @@ async fn run() -> Result<(), Error> {
             }
             for probe in store.credential_key_probes().await? {
                 ring.open(probe.user, &probe.secret)?;
+            }
+            if config.web_registration {
+                registration = Some(Arc::new(
+                    rgg_application::registration::RegistrationService::new(
+                        store.clone(),
+                        ring.clone(),
+                        Arc::new(rgg_credentials::InvitationCodes),
+                    ),
+                ));
             }
             let hub = Arc::new(SessionHub::new(
                 store.clone(),
@@ -91,10 +100,11 @@ async fn run() -> Result<(), Error> {
         } else {
             None
         };
-        Ok::<_, Error>((listener, gg))
+        let listener = tokio::net::TcpListener::bind(config.http_bind).await?;
+        Ok::<_, Error>((listener, gg, registration))
     }
     .await;
-    let (listener, gg) = match prepared {
+    let (listener, gg, registration) = match prepared {
         Ok(value) => value,
         Err(error) => {
             store.close().await;
@@ -103,6 +113,11 @@ async fn run() -> Result<(), Error> {
     };
     let address = listener.local_addr()?;
     let state = HttpState::new(store.clone());
+    let state = if let Some(registration) = registration {
+        state.with_registration(registration, address)?
+    } else {
+        state
+    };
     let state = if config.legacy_discovery {
         state.with_legacy_discovery(gg.as_ref().ok_or("GG listener missing")?.0.local_addr()?)?
     } else {
@@ -120,9 +135,13 @@ async fn run() -> Result<(), Error> {
             Ok(())
         }
     });
-    let server = axum::serve(listener, rgg_http::router(state.clone()))
-        .with_graceful_shutdown(stop.clone().cancelled_owned())
-        .into_future();
+    let server = axum::serve(
+        listener,
+        rgg_http::router(state.clone())
+            .into_make_service_with_connect_info::<std::net::SocketAddr>(),
+    )
+    .with_graceful_shutdown(stop.clone().cancelled_owned())
+    .into_future();
     tokio::pin!(server);
     state.set_ready(true);
     info!(%address, version = env!("CARGO_PKG_VERSION"), "HTTP listening (local development)");

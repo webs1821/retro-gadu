@@ -15,6 +15,8 @@ pub struct Config {
     #[serde(default)]
     pub legacy_discovery: bool,
     #[serde(default)]
+    pub web_registration: bool,
+    #[serde(default)]
     pub network: rgg_transport::server::Limits,
     #[serde(default)]
     pub queue: rgg_application::messaging::QueueLimits,
@@ -41,6 +43,8 @@ pub enum ConfigError {
     Limits,
     #[error("legacy_discovery requires a local IPv4 GG listener")]
     LegacyDiscovery,
+    #[error("web_registration requires a GG listener and initialized account keyring")]
+    WebRegistration,
 }
 impl Config {
     pub fn load(path: &Path) -> Result<Self, ConfigError> {
@@ -59,6 +63,9 @@ impl Config {
         }
         if config.legacy_discovery && !config.gg_bind.is_some_and(|a| a.is_ipv4()) {
             return Err(ConfigError::LegacyDiscovery);
+        }
+        if config.web_registration && config.gg_bind.is_none() {
+            return Err(ConfigError::WebRegistration);
         }
         let q = &config.queue;
         if !config.network.valid()
@@ -83,6 +90,17 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn website_requires_the_initialized_gg_account_runtime() {
+        assert!(matches!(
+            Config::parse(
+                "data_dir='data'\nhttp_bind='127.0.0.1:0'\nweb_registration=true",
+                Path::new(".")
+            ),
+            Err(ConfigError::WebRegistration)
+        ));
+        assert!(Config::parse("data_dir='data'\nhttp_bind='127.0.0.1:0'\ngg_bind='127.0.0.1:0'\nweb_registration=true",Path::new(".")).is_ok());
+    }
     #[test]
     fn discovery_requires_an_ipv4_gg_listener() {
         for extra in ["", "\ngg_bind='[::1]:0'"] {

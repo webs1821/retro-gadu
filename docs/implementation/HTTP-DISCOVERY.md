@@ -21,8 +21,8 @@ HTTP nie nadpisuje systemowego DNS/hosts, nie patchuje klienta i nie wysyła
 Stare operacje konta pod `/appsvc/fmregister3.asp`, `/fmregister.php` i
 `/fmsendpwd.php` zawsze odmawiają HTTP 403. Handler nie odczytuje hasła ani
 zaproszenia z formularza i nie wywołuje portu kont. Nie wolno przez te ścieżki
-ominąć rejestracji z zaproszeniem ani zmienić hasła. Nie ma jeszcze interfejsu
-WWW rejestracji ani bezpiecznego odzyskiwania konta.
+ominąć rejestracji z zaproszeniem ani zmienić hasła. W dev.7 rejestrację z zaproszeniem realizuje osobny [formularz WWW](WEB-REGISTRATION.md).
+Bezpieczne odzyskiwanie konta pozostaje do implementacji.
 
 Publiczny nasłuch, domena produkcyjna, proxy i TLS pozostają poza lokalnym
 profilem uruchomienia. Opcja discovery nie znosi blokady adresów innych niż loopback.

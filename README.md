@@ -20,7 +20,7 @@ Wersja **0.1.0-dev.3** dodaje lokalny nasłuch GG6, logowanie LOGIN60/GG32,
 sesje kont, ping/pong oraz trwałe wiadomości tekstowe online i offline.
 Wiadomości czekają na zakończenie synchronizacji blokad klienta. Potwierdzenie
 dla nadawcy następuje po zatwierdzeniu zapisu w SQLite, a kolejka przeżywa restart.
-Podstawowe style tekstu i Windows-1250 są obsługiwane. Obrazy, konferencje, katalog i pozostałe braki opisuje macierz zgodności.
+Podstawowe style tekstu i Windows-1250 są obsługiwane. Obrazy, konferencje i pozostałe braki opisuje macierz zgodności.
 Testy TCP i awarii są automatyczne; oryginalnego klienta GG6 jeszcze nie kwalifikowano.
 
 Wersja **0.1.0-dev.4** dodaje obecność zależną od obserwatora, opisy i czas
@@ -36,6 +36,11 @@ zapytań odporny na reconnect. Widoczność statusu w wynikach respektuje prywat
 Wersja **0.1.0-dev.6** dodaje opcjonalne lokalne HTTP discovery dla GG6,
 ze wskazaniem rzeczywistego portu i odmową historycznych operacji konta.
 
+Wersja **0.1.0-dev.7** dodaje lokalną rejestrację WWW z zaproszeniami, wyborem
+numeru, jednorazowym CSRF oraz limitami. Nowe konto od razu loguje się w GG6.
+
+- [Rejestracja WWW](docs/implementation/WEB-REGISTRATION.md)
+- [Weryfikacja dev.7](docs/implementation/VERIFICATION-2026-11-01-dev7.md)
 - [Kontrakt discovery](docs/implementation/HTTP-DISCOVERY.md)
 - [Weryfikacja dev.6](docs/implementation/VERIFICATION-2026-11-01-dev6.md)
 - [Kontrakt katalogu](docs/implementation/PUBLIC-DIRECTORY.md)

@@ -210,13 +210,20 @@ impl SecretProtector for Keyring {
     }
 }
 
+pub struct InvitationCodes;
+impl rgg_application::registration::InvitationDigester for InvitationCodes {
+    fn digest(&self, code: &str) -> Option<[u8; 32]> {
+        invitation_digest(code)
+    }
+}
 pub fn invitation_digest(code: &str) -> Option<[u8; 32]> {
     if code.len() != 32 || !code.bytes().all(|byte| byte.is_ascii_hexdigit()) {
         return None;
     }
     let mut hasher = Sha256::new();
     hasher.update(b"rGG\0invitation\0");
-    hasher.update(code.to_ascii_lowercase().as_bytes());
+    let normalized = Zeroizing::new(code.to_ascii_lowercase());
+    hasher.update(normalized.as_bytes());
     Some(hasher.finalize().into())
 }
 

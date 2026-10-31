@@ -15,7 +15,7 @@ wyniku testów działającego gg-retro.
 | OS lock, SQLite WAL/FULL, migracje, nowa epoka po awarii | gotowe lokalnie | testy store + `lifecycle.py` | nie dotyczy |
 | Ramkowanie GG, fragmentacja, limit, niepełny EOF | gotowe lokalnie | `frame::tests`, `rgg-transport::tests` | nie sprawdzono |
 | Parser LOGIN60, CP1250, GG32 | gotowe lokalnie | testy protokołu i `gg6_sessions.py` | nie sprawdzono |
-| Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI; rotacja operacyjna i importer brak | `accounts::tests`, `rgg-credentials::tests`, `accounts_cli.py` | nie dotyczy |
+| Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI i WWW; rotacja operacyjna i importer brak | `accounts::tests`, `rgg-credentials::tests`, `accounts_cli.py` | nie dotyczy |
 | Logowanie klienta GG | gotowe lokalnie dla LOGIN60/GG32 | logowanie poprawne/błędne, obcy UIN, stare wyzwanie, timeout, pakiet przed loginem | nie sprawdzono |
 | Generacje sesji, zastąpienie sesji, reconnect GG po restarcie | sesje i ponowne otwarcie TCP gotowe lokalnie; automatyczny reconnect oryginalnego klienta niepotwierdzony | bariera zamknięcia, stale credentials, stary detach, FIN po SIGTERM | nie sprawdzono |
 | Trwała kolejka offline, FIFO, ACK po commit | gotowe lokalnie dla tekstu GG6 | `messaging_tests`, `gg6_sessions.py`, powtarzany seq i cofnięty zegar | nie sprawdzono |
@@ -27,8 +27,8 @@ wyniku testów działającego gg-retro.
 | Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | brak | — | — |
 | Katalog: własny profil READ/WRITE | gotowe lokalnie: dobrowolność, zastępowanie, usuwanie i własność | `profile_tests`, `gg6_directory.py` | nie sprawdzono |
 | Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | gotowe lokalnie dla GG6; zakres lat zamiast dokładnej daty | polskie filtry, strony 20/20/1, rzadkie pola, prywatność, trwały limit | nie sprawdzono |
-| Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |
-| Rejestracja WWW | brak | — | — |
+| Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI i WWW | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |
+| Rejestracja WWW | gotowe lokalnie, opt-in /register; publiczny profil TLS/proxy niekwalifikowany | http_registration.py: CSRF, limity, 12 konkurencyjnych żądań/3 użycia, GG6 i restart | przeglądarka desktop: wygląd; klient TCP syntetyczny |
 | Statystyki online/zarejestrowani z respektowaniem niewidoczności | brak | — | — |
 | Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | brak w nowym projekcie | — | — |

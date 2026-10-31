@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 mod legacy;
+mod registration;
 use axum::{
     Json, Router,
     extract::State,
@@ -23,6 +24,7 @@ pub struct HttpState {
     repository: Arc<dyn HealthRepository>,
     ready: Arc<AtomicBool>,
     discovery: Option<legacy::Discovery>,
+    registration: Option<Arc<registration::Website>>,
 }
 impl HttpState {
     pub fn new(repository: Arc<dyn HealthRepository>) -> Self {
@@ -30,10 +32,19 @@ impl HttpState {
             repository,
             ready: Arc::new(AtomicBool::new(false)),
             discovery: None,
+            registration: None,
         }
     }
     pub fn set_ready(&self, value: bool) {
         self.ready.store(value, Ordering::Release);
+    }
+    pub fn with_registration(
+        mut self,
+        service: Arc<rgg_application::registration::RegistrationService>,
+        address: std::net::SocketAddr,
+    ) -> Result<Self, &'static str> {
+        self.registration = Some(Arc::new(registration::Website::new(service, address)?));
+        Ok(self)
     }
     pub fn with_legacy_discovery(
         mut self,
@@ -68,6 +79,7 @@ pub fn router(state: HttpState) -> Router {
         )
         .route("/fmregister.php", any(legacy::deny_account_operation))
         .route("/fmsendpwd.php", any(legacy::deny_account_operation))
+        .merge(registration::routes(state.clone()))
         .with_state(state)
 }
 async fn ready(State(state): State<HttpState>) -> Response {

@@ -8,6 +8,7 @@ pub mod contacts;
 pub mod directory;
 pub mod messaging;
 pub mod presence;
+pub mod registration;
 pub mod sessions;
 
 pub mod contracts {

@@ -128,3 +128,20 @@ oraz przypominania odmawiają bez dotykania kont i zaproszeń.
 Clippy, kontrola pochodzenia i audyt bez uwag. [Raport](VERIFICATION-2026-11-01-dev6.md).
 Kolejny przyrost E05: rejestracja WWW przez istniejącą transakcję zaproszenia,
 z ochroną żądań i limitami. Nadal bez natywnej kwalifikacji i bez wdrożenia.
+
+## 2026-11-01 — E05c: lokalna rejestracja WWW
+
+Wersja `0.1.0-dev.7`. Opcjonalny formularz używa wspólnej, atomowej rejestracji
+konta i zużycia zaproszenia. Wybór numeru, przydział od 112233, szyfrowanie hasła
+i brak automatycznego wpisu publicznego zachowują kontrakt CLI. Origin/Host,
+jednorazowy CSRF, monotoniczne limity oraz deadline chronią lokalny endpoint.
+
+55 testów Rust, 4 grupy HTTP rejestracji i wszystkie regresje discovery, katalogu,
+obecności/kontaktów, sesji, CLI i cyklu życia przeszły. W teście 12 równoczesnych
+żądań powstały dokładnie 3 konta z jednego zaproszenia. Formularz obejrzano
+w lokalnej przeglądarce desktop na tymczasowej bazie; podgląd zamknięto.
+[Kontrakt](WEB-REGISTRATION.md), [wyniki](VERIFICATION-2026-11-01-dev7.md).
+
+E05 nadal nie jest ukończony: samoobsługa, bezpieczne odzyskiwanie i publiczny
+profil wdrożeniowy są otwarte. W macierzy brakuje też statystyk, konferencji,
+obrazków i kwalifikacji. Rozwój pozostaje wyłącznie lokalny.
