@@ -22,6 +22,7 @@ fn word(body: &[u8], at: usize) -> u32 {
 pub fn inbound_limit(kind: u32) -> usize {
     match kind {
         0x15 => 106,
+        0x16 => 2048,
         0x8 | 0x12 => 0,
         0xf | 0x10 => 2000,
         0xd | 0xe => 5,
@@ -80,19 +81,6 @@ pub fn contacts(body: &[u8]) -> Result<Vec<ContactRule>, DecodeError> {
             })
         })
         .collect()
-}
-/// Presence subscriptions are accepted, but full presence publication belongs to E04.
-pub fn offline_snapshot(rules: &[ContactRule]) -> Frame {
-    let mut b = BytesMut::new();
-    for r in rules.iter().filter(|r| r.flags & 1 != 0) {
-        b.put_u32_le(r.user.get());
-        b.put_u8(1);
-        b.extend_from_slice(&[0; 9]);
-    }
-    Frame {
-        kind: 0x11,
-        payload: b.freeze(),
-    }
 }
 pub fn message_header(body: &[u8]) -> Option<(u32, u32, bool)> {
     (body.len() >= 12).then(|| (word(body, 0), word(body, 4), word(body, 8) & 32 != 0))

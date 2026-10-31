@@ -20,10 +20,17 @@ Wersja **0.1.0-dev.3** dodaje lokalny nasłuch GG6, logowanie LOGIN60/GG32,
 sesje kont, ping/pong oraz trwałe wiadomości tekstowe online i offline.
 Wiadomości czekają na zakończenie synchronizacji blokad klienta. Potwierdzenie
 dla nadawcy następuje po zatwierdzeniu zapisu w SQLite, a kolejka przeżywa restart.
-Podstawowe style tekstu i Windows-1250 są obsługiwane. Obecność kontaktów,
-obrazy, konferencje, katalog i pozostałe braki opisuje macierz zgodności.
+Podstawowe style tekstu i Windows-1250 są obsługiwane. Obrazy, konferencje, katalog i pozostałe braki opisuje macierz zgodności.
 Testy TCP i awarii są automatyczne; oryginalnego klienta GG6 jeszcze nie kwalifikowano.
 
+Wersja **0.1.0-dev.4** dodaje obecność zależną od obserwatora, opisy i czas
+powrotu, niewidoczność, tryb tylko znajomi oraz 4000 subskrypcji. Listę kontaktów
+można przechowywać i pobierać jako osobne, wersjonowane archiwum. Niepełny upload
+nie nadpisuje poprzedniej listy. Upload zakończony pełnym blokiem 2047 B bez
+terminatora pozostaje świadomie ograniczony; szczegóły opisuje kontrakt poniżej.
+
+- [Kontrakt obecności i kontaktów](docs/implementation/PRESENCE-AND-CONTACTS.md)
+- [Weryfikacja dev.4](docs/implementation/VERIFICATION-2026-11-01-dev4.md)
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md)
 - [Macierz funkcjonalności i braków](docs/implementation/PARITY.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md)
@@ -65,13 +72,15 @@ cargo build --workspace --locked
 python tests/lifecycle.py --binary target/debug/rgg-server
 python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 cargo build --workspace --locked --features rgg-server/test-hooks
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
+python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
 cargo build --workspace --locked
 cargo audit
 ```
 
-Testy `lifecycle.py`, `accounts_cli.py` i `gg6_sessions.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
+Testy `lifecycle.py`, `accounts_cli.py` oraz oba zestawy `gg6_*.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
 syntetycznej bazy i losowego portu loopback. Jeśli ustawiono `CARGO_TARGET_DIR`,
 ścieżkę do pliku wykonywalnego należy odpowiednio zmienić.
 Do audytu użyto `cargo-audit 0.22.2`, instalowanego przez
@@ -192,7 +201,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.3](docs/implementation/cargo-audit-2026-10-31-dev3.json).
+[raporcie audytu dev.4](docs/implementation/cargo-audit-2026-11-01-dev4.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

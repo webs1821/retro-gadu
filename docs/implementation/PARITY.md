@@ -1,7 +1,7 @@
 # Zgodność funkcjonalna rGG z gg-retro
 
 Punkt odniesienia: `webs1821/gg-retro` **0.8.3**, commit
-`ed9640cc247764754b5e47891053eb07a53f76d5`. Aktualizacja: 2026-10-31.
+`ed9640cc247764754b5e47891053eb07a53f76d5`. Aktualizacja: 2026-11-01.
 
 Statusy: **gotowe lokalnie** = kod i wskazane testy; **częściowe** = brak całego
 przepływu; **brak** = do implementacji. „Natywny” oznacza test konkretnej wersji
@@ -20,9 +20,9 @@ wyniku testów działającego gg-retro.
 | Generacje sesji, zastąpienie sesji, reconnect GG po restarcie | sesje i ponowne otwarcie TCP gotowe lokalnie; automatyczny reconnect oryginalnego klienta niepotwierdzony | bariera zamknięcia, stale credentials, stary detach, FIN po SIGTERM | nie sprawdzono |
 | Trwała kolejka offline, FIFO, ACK po commit | gotowe lokalnie dla tekstu GG6 | `messaging_tests`, `gg6_sessions.py`, powtarzany seq i cofnięty zegar | nie sprawdzono |
 | Retry po awarii i uczciwy stan „zapisano do TCP bez potwierdzenia klienta” | gotowe lokalnie; możliwość duplikatu na granicy awarii | cztery kontrolowane awarie procesu, recovery epoki, fencing tokenów | nie sprawdzono |
-| Obecność, opis, czas powrotu, niewidoczność, tylko znajomi | częściowe: parser statusu, wylogowanie i zapis flagi friends-only; brak publikacji obecności, opisu i czasu | walidacja statusów; snapshot kontaktów pokazuje offline | nie sprawdzono |
+| Obecność, opis, czas powrotu, niewidoczność, tylko znajomi | gotowe lokalnie; wspólna bramka polityki i publikacji | `presence_tests`, `gg6_presence_contacts.py`: opis, Ready, niewidoczność, blokady, restart | nie sprawdzono |
 | Blokowanie i egzekwowanie prywatności przed pierwszą wiadomością | gotowe lokalnie dla NOTIFY FIRST/LAST/EMPTY i ADD/REMOVE | bramka Ready, blokady offline po restarcie, bez wskrzeszania po odblokowaniu | nie sprawdzono |
-| Lista kontaktów, import/eksport, subskrypcje | brak; otwarta bramka zakończenia uploadu 2047 B | — | — |
+| Lista kontaktów, import/eksport, subskrypcje | częściowe: subskrypcje i archiwum gotowe lokalnie; upload wymaga końcowego fragmentu krótszego niż 2047 B, ACK odroczone | 4000 kontaktów, granice fragmentów, staging, EOF/timeout, 2 awarie przy commit | nie sprawdzono |
 | Formatowanie wiadomości i konferencje | podstawowe style tekstu gotowe lokalnie; konferencje odrzucane | CP1250, bold/italic/underline/RGB, nieobsługiwane opcje bez ACK sukcesu | nie sprawdzono |
 | Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | brak | — | — |
 | Katalog: własny profil READ/WRITE | brak | — | — |

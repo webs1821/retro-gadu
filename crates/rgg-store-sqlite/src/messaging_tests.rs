@@ -12,7 +12,7 @@ use std::sync::Arc;
 fn uid(n: u32) -> UserId {
     UserId::new(n).unwrap()
 }
-async fn setup() -> (tempfile::TempDir, Arc<SqliteStore>, Arc<Keyring>) {
+pub(super) async fn setup() -> (tempfile::TempDir, Arc<SqliteStore>, Arc<Keyring>) {
     let root = tempfile::tempdir().unwrap();
     let store = Arc::new(SqliteStore::open(root.path()).await.unwrap());
     let ring = Arc::new(Keyring::create_new(&root.path().join("keys.toml")).unwrap());

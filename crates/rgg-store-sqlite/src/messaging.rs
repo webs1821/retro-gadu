@@ -7,12 +7,12 @@ use rgg_application::messaging::*;
 use rgg_domain::{MessageText, UserId};
 use sqlx::{Row, Sqlite, Transaction};
 
-fn db(_: sqlx::Error) -> MessagingError {
+pub(crate) fn db(_: sqlx::Error) -> MessagingError {
     MessagingError::Storage
 }
 type Tx<'a> = Transaction<'a, Sqlite>;
 
-async fn fence(
+pub(crate) async fn fence(
     tx: &mut Tx<'_>,
     key: &SessionKey,
     require_ready: bool,
@@ -57,6 +57,41 @@ async fn release_user(tx: &mut Tx<'_>, user: UserId, now: i64) -> Result<(), Mes
     Ok(())
 }
 
+pub(crate) async fn replace_privacy_tx(
+    tx: &mut Tx<'_>,
+    session: &SessionKey,
+    rules: &[ContactRule],
+    friends_only: bool,
+    now: i64,
+) -> Result<(), MessagingError> {
+    if rules.len() > 4000 || rules.iter().any(|r| r.flags & !7 != 0) {
+        return Err(MessagingError::Invalid);
+    }
+    fence(tx, session, false).await?;
+    sqlx::query("DELETE FROM contact_rules WHERE owner=?")
+        .bind(i64::from(session.user.get()))
+        .execute(&mut **tx)
+        .await
+        .map_err(db)?;
+    for rule in rules {
+        sqlx::query("INSERT INTO contact_rules(owner,peer,flags) VALUES(?,?,?) ON CONFLICT(owner,peer) DO UPDATE SET flags=(flags | excluded.flags)")
+                .bind(i64::from(session.user.get())).bind(i64::from(rule.user.get())).bind(i64::from(rule.flags)).execute(&mut **tx).await.map_err(db)?;
+    }
+    sqlx::query("UPDATE account_privacy SET friends_only=?,revision=revision+1 WHERE uin=?")
+        .bind(friends_only)
+        .bind(i64::from(session.user.get()))
+        .execute(&mut **tx)
+        .await
+        .map_err(db)?;
+    privacy_rejections(tx, session.user, now).await?;
+    sqlx::query("UPDATE account_sessions SET ready=1 WHERE uin=?")
+        .bind(i64::from(session.user.get()))
+        .execute(&mut **tx)
+        .await
+        .map_err(db)?;
+    Ok(())
+}
+
 #[async_trait]
 impl MessagingRepository for SqliteStore {
     async fn attach_session_if_current(
@@ -72,6 +107,16 @@ impl MessagingRepository for SqliteStore {
         let generation = generation.ok_or(MessagingError::Stale)?;
         // Application must have crossed the previous transport's stopped barrier first.
         release_user(&mut tx, user, now).await?;
+        sqlx::query("DELETE FROM account_presence WHERE uin=?")
+            .bind(i64::from(user.get()))
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
+        sqlx::query("DELETE FROM contact_staging WHERE owner=?")
+            .bind(i64::from(user.get()))
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
         sqlx::query("INSERT OR IGNORE INTO account_privacy(uin) VALUES(?)")
             .bind(i64::from(user.get()))
             .execute(&mut *tx)
@@ -97,6 +142,17 @@ impl MessagingRepository for SqliteStore {
         let mut tx = self.pool.begin().await.map_err(db)?;
         fence(&mut tx, session, false).await?;
         release_user(&mut tx, session.user, now).await?;
+        sqlx::query("DELETE FROM account_presence WHERE uin=? AND availability!='offline'")
+            .bind(i64::from(session.user.get()))
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
+        sqlx::query("DELETE FROM contact_staging WHERE owner=? AND session_id=?")
+            .bind(i64::from(session.user.get()))
+            .bind(session.id.as_slice())
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
         sqlx::query("DELETE FROM account_sessions WHERE uin=? AND session_id=?")
             .bind(i64::from(session.user.get()))
             .bind(session.id.as_slice())
@@ -122,32 +178,8 @@ impl MessagingRepository for SqliteStore {
         friends_only: bool,
         now: i64,
     ) -> Result<(), MessagingError> {
-        if rules.len() > 4000 || rules.iter().any(|r| r.flags & !7 != 0) {
-            return Err(MessagingError::Invalid);
-        }
         let mut tx = self.pool.begin().await.map_err(db)?;
-        fence(&mut tx, session, false).await?;
-        sqlx::query("DELETE FROM contact_rules WHERE owner=?")
-            .bind(i64::from(session.user.get()))
-            .execute(&mut *tx)
-            .await
-            .map_err(db)?;
-        for rule in rules {
-            sqlx::query("INSERT INTO contact_rules(owner,peer,flags) VALUES(?,?,?) ON CONFLICT(owner,peer) DO UPDATE SET flags=(flags | excluded.flags)")
-                .bind(i64::from(session.user.get())).bind(i64::from(rule.user.get())).bind(i64::from(rule.flags)).execute(&mut *tx).await.map_err(db)?;
-        }
-        sqlx::query("UPDATE account_privacy SET friends_only=?,revision=revision+1 WHERE uin=?")
-            .bind(friends_only)
-            .bind(i64::from(session.user.get()))
-            .execute(&mut *tx)
-            .await
-            .map_err(db)?;
-        privacy_rejections(&mut tx, session.user, now).await?;
-        sqlx::query("UPDATE account_sessions SET ready=1 WHERE uin=?")
-            .bind(i64::from(session.user.get()))
-            .execute(&mut *tx)
-            .await
-            .map_err(db)?;
+        replace_privacy_tx(&mut tx, session, rules, friends_only, now).await?;
         tx.commit().await.map_err(db)
     }
     async fn change_contact(
@@ -371,6 +403,16 @@ impl MessagingRepository for SqliteStore {
             return Err(MessagingError::Stale);
         }
         release_user(&mut tx, user, now).await?;
+        sqlx::query("DELETE FROM account_presence WHERE uin=?")
+            .bind(i64::from(user.get()))
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
+        sqlx::query("DELETE FROM contact_staging WHERE owner=?")
+            .bind(i64::from(user.get()))
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
         sqlx::query("DELETE FROM account_sessions WHERE uin=?")
             .bind(i64::from(user.get()))
             .execute(&mut *tx)

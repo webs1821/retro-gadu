@@ -25,7 +25,7 @@ project = "libgadu protocol documentation"
 upstream_url = "https://libgadu.github.io/protocol/"
 kind = "reference-only"
 upstream_authors = ["Autorzy dokumentacji libgadu"]
-local_paths = ["crates/rgg-protocol/src/frame.rs", "crates/rgg-protocol/src/gg6.rs", "crates/rgg-protocol/src/gg6_messages.rs", "tests/gg6_sessions.py"]
+local_paths = ["crates/rgg-protocol/src/frame.rs", "crates/rgg-protocol/src/gg6.rs", "crates/rgg-protocol/src/gg6_messages.rs", "crates/rgg-protocol/src/gg6_presence.rs", "tests/gg6_sessions.py"]
 symbols = ["decode", "decode_login", "decode_message", "received", "Client"]
 changes = "Wykorzystano opis formatu binarnego: nagłówki, LOGIN60, Windows-1250, ping/pong, listy NOTIFY i flagi kontaktów, statusy, SEND/RECV_MSG, ACK i podstawowe style tekstu. Adapter Rust i klient testowy Python napisano niezależnie; test Python importuje jawnie przypisany port GG32. Nie skopiowano implementacji C ani tekstu dokumentacji."
 verification = "Własny parser i jawne fixture bajtowe; dokumentacja nie zastępuje testów GG 6.0/6.1."
@@ -43,4 +43,17 @@ local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md"]
 symbols = ["0.8.3"]
 changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności; kod serwera i jego testy nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
 verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności."
+reviewed_on = "2026-10-31"
+
+[[sources]]
+id = "libgadu-legacy-reference"
+project = "libgadu legacy protocol implementation"
+upstream_url = "https://github.com/wojtekka/libgadu"
+commit = "9eb2aa0eb6ad020fda7c7264538e48c7b78ba602"
+kind = "reference-only"
+upstream_authors = ["Wojtek Kaniewski", "Autorzy libgadu"]
+local_paths = ["crates/rgg-protocol/src/gg6_presence.rs", "crates/rgg-protocol/src/gg6_contacts.rs", "docs/implementation/PRESENCE-AND-CONTACTS.md"]
+symbols = ["decode_status", "snapshot", "decode", "2047"]
+changes = "Odczytano fakty formatu z include/libgadu.h.in, src/handlers.c i src/libgadu.c: typy GG_USERLIST, rozmiar fragmentu, brak znacznika końca pełnego bloku oraz różnicę GG_STATUS60/GG_NOTIFY_REPLY60. Własny adapter i transakcje nie są portem implementacji C."
+verification = "Własne testy TCP i granic długości; upload z ostatnim pełnym blokiem bez dodatkowego terminatora odmawia publikacji. Oryginalny klient GG6 wymaga osobnej kwalifikacji."
 reviewed_on = "2026-10-31"

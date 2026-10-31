@@ -2,17 +2,21 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 //! Bounded per-account actors. No account actor ever waits on another account actor.
 use crate::messaging::*;
+use crate::{
+    contacts::{ArchiveResult, ArchiveSegment, ContactArchive},
+    presence::{Presence, VisiblePresence},
+};
 use rgg_domain::UserId;
 use std::{
     collections::HashMap,
     sync::{
         Arc, Weak,
-        atomic::{AtomicU8, Ordering},
+        atomic::{AtomicU8, AtomicU64, Ordering},
     },
     time::Duration,
 };
 use tokio::{
-    sync::{Mutex, Notify, mpsc, oneshot},
+    sync::{Mutex, Notify, OwnedRwLockReadGuard, RwLock, mpsc, oneshot},
     task::JoinSet,
 };
 use tokio_util::sync::CancellationToken;
@@ -56,7 +60,11 @@ type Reply<T> = oneshot::Sender<Result<T, MessagingError>>;
 enum Request {
     Attach(VerifiedIdentity, [u8; 16], IoFence, Reply<SessionKey>),
     Initial(SessionKey, Reply<()>),
-    Privacy(SessionKey, Vec<ContactRule>, bool, Reply<()>),
+    Privacy(SessionKey, Vec<ContactRule>, Presence, Reply<()>),
+    Presence(SessionKey, Presence, Reply<()>),
+    Archive(SessionKey, ArchiveSegment, Reply<ArchiveResult>),
+    Export(SessionKey, Reply<ContactArchive>),
+    AbortArchive(SessionKey, Reply<()>),
     Contact(SessionKey, ContactRule, bool, Reply<()>),
     Friends(SessionKey, bool, Reply<()>),
     Accept(SessionKey, MessageBundle, Reply<i64>),
@@ -98,9 +106,9 @@ impl AccountHandle {
         &self,
         key: SessionKey,
         rules: Vec<ContactRule>,
-        friends: bool,
+        presence: Presence,
     ) -> Result<(), MessagingError> {
-        self.call(|r| Request::Privacy(key, rules, friends, r))
+        self.call(|r| Request::Privacy(key, rules, presence, r))
             .await
     }
     pub async fn contact(
@@ -113,6 +121,26 @@ impl AccountHandle {
     }
     pub async fn friends(&self, key: SessionKey, value: bool) -> Result<(), MessagingError> {
         self.call(|r| Request::Friends(key, value, r)).await
+    }
+    pub async fn presence(
+        &self,
+        key: SessionKey,
+        presence: Presence,
+    ) -> Result<(), MessagingError> {
+        self.call(|r| Request::Presence(key, presence, r)).await
+    }
+    pub async fn archive(
+        &self,
+        key: SessionKey,
+        segment: ArchiveSegment,
+    ) -> Result<ArchiveResult, MessagingError> {
+        self.call(|r| Request::Archive(key, segment, r)).await
+    }
+    pub async fn export(&self, key: SessionKey) -> Result<ContactArchive, MessagingError> {
+        self.call(|r| Request::Export(key, r)).await
+    }
+    pub async fn abort_archive(&self, key: SessionKey) -> Result<(), MessagingError> {
+        self.call(|r| Request::AbortArchive(key, r)).await
     }
     pub async fn accept(
         &self,
@@ -147,6 +175,14 @@ pub struct SessionHub {
     handles: Mutex<HashMap<UserId, Weak<AccountHandle>>>,
     tasks: Mutex<JoinSet<()>>,
     pub shutdown: CancellationToken,
+    publication: Arc<RwLock<()>>,
+    revision: Arc<AtomicU64>,
+}
+/// Retain this permit through the socket write. Never await an actor while holding it.
+pub struct PresencePublication {
+    pub entries: Vec<VisiblePresence>,
+    pub revision: u64,
+    _permit: OwnedRwLockReadGuard<()>,
 }
 impl SessionHub {
     pub fn new(
@@ -161,6 +197,8 @@ impl SessionHub {
             handles: Mutex::new(HashMap::new()),
             tasks: Mutex::new(JoinSet::new()),
             shutdown: CancellationToken::new(),
+            publication: Arc::new(RwLock::new(())),
+            revision: Arc::new(AtomicU64::new(1)),
         }
     }
     pub async fn account(&self, user: UserId) -> Result<Arc<AccountHandle>, MessagingError> {
@@ -192,6 +230,8 @@ impl SessionHub {
             limits: self.limits.clone(),
             active: None,
             stop: self.shutdown.clone(),
+            publication: self.publication.clone(),
+            revision: self.revision.clone(),
         };
         let mut tasks = self.tasks.lock().await;
         while tasks.try_join_next().is_some() {}
@@ -207,6 +247,21 @@ impl SessionHub {
     }
     pub async fn prune(&self) -> Result<(), MessagingError> {
         self.repository.prune(self.clock.unix_seconds()).await
+    }
+    pub fn presence_revision(&self) -> u64 {
+        self.revision.load(Ordering::Acquire)
+    }
+    pub async fn presence_snapshot(
+        &self,
+        key: &SessionKey,
+    ) -> Result<PresencePublication, MessagingError> {
+        let permit = self.publication.clone().read_owned().await;
+        let entries = self.repository.presence_snapshot(key).await?;
+        Ok(PresencePublication {
+            entries,
+            revision: self.presence_revision(),
+            _permit: permit,
+        })
     }
     pub async fn finish_shutdown(&self) {
         self.shutdown.cancel();
@@ -236,6 +291,8 @@ struct AccountActor {
     limits: Arc<QueueLimits>,
     active: Option<Active>,
     stop: CancellationToken,
+    publication: Arc<RwLock<()>>,
+    revision: Arc<AtomicU64>,
 }
 impl AccountActor {
     fn valid(&self, key: &SessionKey, ready: bool, idle: bool) -> Result<(), MessagingError> {
@@ -263,6 +320,7 @@ impl AccountActor {
         if let Some(old) = &self.active {
             old.fence.barrier(true).await?;
         }
+        let _permit = self.publication.clone().write_owned().await;
         let key = self
             .repository
             .attach_session_if_current(
@@ -278,6 +336,7 @@ impl AccountActor {
             ready: false,
             lease: None,
         });
+        self.revision.fetch_add(1, Ordering::Release);
         Ok(key)
     }
     async fn closed(&mut self, id: [u8; 16]) -> Result<(), MessagingError> {
@@ -288,11 +347,13 @@ impl AccountActor {
             if !active.fence.stopped.is_cancelled() {
                 return Err(MessagingError::Busy);
             }
+            let _permit = self.publication.clone().write_owned().await;
             let result = self
                 .repository
                 .detach_session(&active.key, self.clock.unix_seconds())
                 .await;
             self.active = None;
+            self.revision.fetch_add(1, Ordering::Release);
             match result {
                 Err(MessagingError::Stale) => Ok(()),
                 other => other,
@@ -310,6 +371,7 @@ impl AccountActor {
                     let _ = reply.send(self.attach(identity, id, fence).await);
                 }
                 Request::Initial(key, reply) => {
+                    let _permit = self.publication.clone().write_owned().await;
                     let result = async {
                         self.valid(&key, false, true)?;
                         self.repository.begin_initial_state(&key).await?;
@@ -317,21 +379,29 @@ impl AccountActor {
                         Ok(())
                     }
                     .await;
+                    if result.is_ok() {
+                        self.revision.fetch_add(1, Ordering::Release);
+                    }
                     let _ = reply.send(result);
                 }
-                Request::Privacy(key, rules, friends, reply) => {
+                Request::Privacy(key, rules, presence, reply) => {
+                    let _permit = self.publication.clone().write_owned().await;
                     let result = async {
                         self.valid(&key, false, true)?;
                         self.repository
-                            .replace_privacy(&key, &rules, friends, now)
+                            .activate_presence(&key, &rules, &presence, now)
                             .await?;
                         self.active.as_mut().expect("validated").ready = true;
                         Ok(())
                     }
                     .await;
+                    if result.is_ok() {
+                        self.revision.fetch_add(1, Ordering::Release);
+                    }
                     let _ = reply.send(result);
                 }
                 Request::Contact(key, rule, remove, reply) => {
+                    let _permit = self.publication.clone().write_owned().await;
                     let result = async {
                         self.valid(&key, true, true)?;
                         self.repository
@@ -339,12 +409,55 @@ impl AccountActor {
                             .await
                     }
                     .await;
+                    if result.is_ok() {
+                        self.revision.fetch_add(1, Ordering::Release);
+                    }
                     let _ = reply.send(result);
                 }
                 Request::Friends(key, value, reply) => {
+                    let _permit = self.publication.clone().write_owned().await;
                     let result = async {
                         self.valid(&key, false, true)?;
                         self.repository.change_friends_only(&key, value).await
+                    }
+                    .await;
+                    if result.is_ok() {
+                        self.revision.fetch_add(1, Ordering::Release);
+                    }
+                    let _ = reply.send(result);
+                }
+                Request::Presence(key, presence, reply) => {
+                    let _permit = self.publication.clone().write_owned().await;
+                    let result = async {
+                        self.valid(&key, true, true)?;
+                        self.repository.set_presence(&key, &presence).await
+                    }
+                    .await;
+                    if result.is_ok() {
+                        self.revision.fetch_add(1, Ordering::Release);
+                    }
+                    let _ = reply.send(result);
+                }
+                Request::Archive(key, segment, reply) => {
+                    let result = async {
+                        self.valid(&key, true, true)?;
+                        self.repository.stage_archive(&key, segment).await
+                    }
+                    .await;
+                    let _ = reply.send(result);
+                }
+                Request::Export(key, reply) => {
+                    let result = async {
+                        self.valid(&key, true, true)?;
+                        self.repository.export_archive(&key).await
+                    }
+                    .await;
+                    let _ = reply.send(result);
+                }
+                Request::AbortArchive(key, reply) => {
+                    let result = async {
+                        self.valid(&key, false, true)?;
+                        self.repository.abort_archive(&key).await
                     }
                     .await;
                     let _ = reply.send(result);
@@ -399,10 +512,12 @@ impl AccountActor {
                         if let Some(active) = &self.active {
                             active.fence.barrier(false).await?;
                         }
+                        let _permit = self.publication.clone().write_owned().await;
                         self.repository
                             .revoke_credentials(self.user, version, now)
                             .await?;
                         self.active = None;
+                        self.revision.fetch_add(1, Ordering::Release);
                         Ok(())
                     }
                     .await;
@@ -413,10 +528,12 @@ impl AccountActor {
         if let Some(active) = self.active.take()
             && active.fence.barrier(false).await.is_ok()
         {
+            let _permit = self.publication.clone().write_owned().await;
             let _ = self
                 .repository
                 .detach_session(&active.key, self.clock.unix_seconds())
                 .await;
+            self.revision.fetch_add(1, Ordering::Release);
         }
     }
 }

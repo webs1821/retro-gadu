@@ -2,11 +2,15 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 
 mod accounts;
+mod contacts;
 mod database;
 mod messaging;
 #[cfg(test)]
 mod messaging_tests;
 mod migrations;
+mod presence;
+#[cfg(test)]
+mod presence_tests;
 use crate::database as sqlx;
 pub mod directory;
 
@@ -20,7 +24,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 4;
+pub const SCHEMA_VERSION: i64 = 5;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {
@@ -123,6 +127,12 @@ impl SqliteStore {
         sqlx::query("UPDATE delivery_attempts SET outcome='RecoveredEpoch',completed_at=unixepoch() WHERE outcome IS NULL").execute(&mut *tx).await?;
         sqlx::query("UPDATE deliveries SET state='Pending',lease_token=NULL,session_id=NULL,epoch=NULL,generation=NULL,lease_until=NULL WHERE state='Leased'").execute(&mut *tx).await?;
         sqlx::query("DELETE FROM account_sessions")
+            .execute(&mut *tx)
+            .await?;
+        sqlx::query("DELETE FROM account_presence WHERE availability!='offline'")
+            .execute(&mut *tx)
+            .await?;
+        sqlx::query("DELETE FROM contact_staging")
             .execute(&mut *tx)
             .await?;
         sqlx::query("INSERT INTO runtime_state(id,process_epoch,started_at) VALUES(1,?,unixepoch()) ON CONFLICT(id) DO UPDATE SET process_epoch=excluded.process_epoch,started_at=excluded.started_at")

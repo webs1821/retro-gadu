@@ -81,3 +81,22 @@ Zakres tej prośby jest zaimplementowany i przetestowany lokalnie. E02 nadal
 wymaga operacyjnej rotacji kluczy, a kwalifikacja klienta natywnego jest otwarta.
 Kolejne funkcje to pełna obecność i listy kontaktów, następnie brakujące elementy
 z macierzy. Warunek rozważenia podmiany gg-retro pozostaje niespełniony.
+
+## 2026-11-01 — E04: obecność, prywatność i archiwum kontaktów
+
+Wersja `0.1.0-dev.4`. Statusy, opisy CP1250, czas powrotu, niewidoczność,
+tryb tylko znajomi oraz subskrypcje są podłączone do TCP. Wspólna bramka chroni
+odczyt i publikację przed konkurencyjnym zatwierdzeniem zmiany prywatności.
+Ready atomowo publikuje własny stan i reguły; niejawne rozłączenie nie utrwala
+opisu online. Jawny offline przeżywa restart i respektuje politykę obserwatora.
+
+Migracja 0005 dodaje obecność i wersjonowane archiwa kontaktów. Staging jest
+odseparowany od poprzedniej opublikowanej listy i reguł prywatności. ACK wychodzi
+po pełnym commit. Legacy upload z końcowym pełnym blokiem bez terminatora
+pozostaje nierozstrzygalny: obowiązuje ograniczony profil i timeout bez utraty
+starej listy. Nie oznaczamy rodzimego importu GG6 jako w pełni zakwalifikowanego.
+
+44 testy Rust, cztery zestawy procesu/TCP, sześć kontrolowanych awarii i Clippy
+przeszły poprawnie. [Raport dev.4](VERIFICATION-2026-11-01-dev4.md) oraz
+[kontrakt](PRESENCE-AND-CONTACTS.md) określają dokładne granice potwierdzenia.
+Kolejny przyrost: E05, katalog i WWW. Nadal wyłącznie lokalnie, bez wdrażania.

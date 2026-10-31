@@ -5,10 +5,15 @@ use bytes::BytesMut;
 use futures_util::{SinkExt, StreamExt};
 use rand::TryRngCore;
 use rgg_application::{
-    messaging::{Authenticator, MessagingError, PasswordProof},
+    contacts::ArchiveResult,
+    messaging::{Authenticator, MessagingError, PasswordProof, SessionKey},
+    presence::{Availability, Presence},
     sessions::{AccountHandle, IoFence, SessionHub},
 };
-use rgg_protocol::{frame::Frame, gg6, gg6_messages as wire, legacy_hash::gg32};
+use rgg_protocol::{
+    frame::Frame, gg6, gg6_contacts as archive_wire, gg6_messages as wire,
+    gg6_presence as presence_wire, legacy_hash::gg32,
+};
 use std::{collections::HashMap, net::IpAddr, sync::Arc, time::Duration};
 use subtle::ConstantTimeEq;
 use tokio::{
@@ -31,6 +36,7 @@ pub struct Limits {
     pub initial_seconds: u64,
     pub idle_seconds: u64,
     pub write_millis: u64,
+    pub archive_seconds: u64,
 }
 impl Default for Limits {
     fn default() -> Self {
@@ -41,6 +47,7 @@ impl Default for Limits {
             initial_seconds: 5,
             idle_seconds: 90,
             write_millis: 2000,
+            archive_seconds: 10,
         }
     }
 }
@@ -52,6 +59,7 @@ impl Limits {
             && (1..=60).contains(&self.initial_seconds)
             && (5..=3600).contains(&self.idle_seconds)
             && (100..=5000).contains(&self.write_millis)
+            && (1..=60).contains(&self.archive_seconds)
     }
 }
 pub struct Context {
@@ -118,6 +126,46 @@ async fn send(socket: &mut Socket, frame: Frame, limits: &Limits) -> Result<(), 
         Duration::from_millis(limits.write_millis),
         socket.io.send(frame),
     )
+    .await??;
+    Ok(())
+}
+#[derive(Default)]
+struct PresenceCache {
+    revision: u64,
+    entries: HashMap<u32, Presence>,
+}
+async fn publish_presence(
+    socket: &mut Socket,
+    ctx: &Context,
+    key: &SessionKey,
+    cache: &mut PresenceCache,
+    initial: bool,
+) -> Result<(), Failure> {
+    if !initial && cache.revision == ctx.hub.presence_revision() {
+        return Ok(());
+    }
+    timeout(Duration::from_millis(ctx.limits.write_millis), async {
+        // Do not await an account actor while holding this gate: mutations use its exclusive side.
+        let publication = ctx.hub.presence_snapshot(key).await?;
+        if initial {
+            for chunk in publication.entries.chunks(128) {
+                socket.io.send(presence_wire::snapshot(chunk)?).await?;
+            }
+        } else {
+            for view in &publication.entries {
+                if cache.entries.get(&view.user.get()) != Some(&view.presence) {
+                    socket.io.send(presence_wire::changed(view)?).await?;
+                }
+            }
+        }
+        cache.entries = publication
+            .entries
+            .iter()
+            .map(|v| (v.user.get(), v.presence.clone()))
+            .collect();
+        cache.revision = publication.revision;
+        Ok::<(), Failure>(())
+    })
     .await??;
     Ok(())
 }
@@ -194,7 +242,7 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
             return Err("login required".into());
         }
         let login = gg6::decode_login(&frame.payload)?;
-        wire::status(login.status)?;
+        presence_wire::from_login(&login)?;
         let identity = ctx
             .authentication
             .authenticate(
@@ -225,7 +273,10 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
     let mut ready = false;
     let mut staging = None;
     let mut initial = Instant::now() + Duration::from_secs(ctx.limits.initial_seconds);
-    let mut friends = wire::status(login.status)?.1;
+    let mut own_presence = presence_wire::from_login(&login)?;
+    let mut presence_cache = PresenceCache::default();
+    let mut upload_replies: Vec<u8> = Vec::new();
+    let mut upload_deadline = Instant::now();
     let mut idle = Instant::now() + Duration::from_secs(ctx.limits.idle_seconds);
     let mut poll = tokio::time::interval(Duration::from_millis(500));
     poll.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
@@ -236,6 +287,7 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
         let frame = tokio::select! {biased;
             _=tokio::time::sleep_until(idle)=>return Err("idle deadline".into()),
             _=tokio::time::sleep_until(initial),if !ready=>return Err("initial state deadline".into()),
+            _=tokio::time::sleep_until(upload_deadline),if !upload_replies.is_empty()=>return Err("ambiguous or incomplete contact upload".into()),
             frame=socket.io.next()=>Some(frame.ok_or("closed")??),
             _=actor.wake.notified(),if ready=>None,
             _=poll.tick(),if ready=>None,
@@ -279,15 +331,15 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                         if all.len() > 4000 {
                             return Err("contact quota".into());
                         }
-                        actor.privacy(key.clone(), all.clone(), friends).await?;
+                        actor
+                            .privacy(key.clone(), all, own_presence.clone())
+                            .await?;
                         ready = true;
                         drain = true;
-                        for chunk in all.chunks(400) {
-                            let snapshot = wire::offline_snapshot(chunk);
-                            if !snapshot.payload.is_empty() {
-                                send(socket, snapshot, &ctx.limits).await?;
-                            }
+                        if own_presence.availability == Availability::Offline {
+                            return Ok(());
                         }
+                        publish_presence(socket, ctx, &key, &mut presence_cache, true).await?;
                     }
                 }
                 0xd | 0xe if ready => {
@@ -298,13 +350,52 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                     actor
                         .contact(key.clone(), rules[0], frame.kind == 0xe)
                         .await?;
+                    publish_presence(socket, ctx, &key, &mut presence_cache, false).await?;
                 }
                 2 => {
-                    let (offline, value) = wire::decode_status(&frame.payload)?;
-                    friends = value;
-                    actor.friends(key.clone(), friends).await?;
-                    if offline {
+                    own_presence = presence_wire::decode_status(&frame.payload)?;
+                    if ready {
+                        actor.presence(key.clone(), own_presence.clone()).await?;
+                    }
+                    if own_presence.availability == Availability::Offline {
                         return Ok(());
+                    }
+                }
+                0x16 if ready => {
+                    match archive_wire::decode(&frame.payload)? {
+                        archive_wire::Request::Get => {
+                            timeout(Duration::from_millis(ctx.limits.write_millis), async {
+                                let archive = actor.export(key.clone()).await?;
+                                for frame in archive_wire::export(&archive.text)? {
+                                    socket.io.send(frame).await?;
+                                }
+                                Ok::<(), Failure>(())
+                            })
+                            .await??;
+                        }
+                        archive_wire::Request::Put(segment) => {
+                            if segment.start {
+                                upload_replies.clear();
+                                upload_deadline = Instant::now()
+                                    + Duration::from_secs(ctx.limits.archive_seconds);
+                            }
+                            let ack = if segment.start { 0 } else { 2 };
+                            let result = actor.archive(key.clone(), segment).await?;
+                            upload_replies.push(ack);
+                            if upload_replies.len() > 130 {
+                                return Err("archive fragment quota".into());
+                            }
+                            if matches!(result, ArchiveResult::Published(_)) {
+                                // No success acknowledgement escapes before atomic publication.
+                                timeout(Duration::from_millis(ctx.limits.write_millis), async {
+                                    for ack in upload_replies.drain(..) {
+                                        socket.io.send(archive_wire::reply(ack, &[])).await?;
+                                    }
+                                    Ok::<(), TransportError>(())
+                                })
+                                .await??;
+                            }
+                        }
                     }
                 }
                 0xb if ready => {
@@ -346,6 +437,7 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                 _ => return Err("unexpected command".into()),
             }
         } else {
+            publish_presence(socket, ctx, &key, &mut presence_cache, false).await?;
             // The monotonic deadline includes the claim wait; UTC is never a write authorization.
             let deadline = Instant::now() + Duration::from_millis(ctx.limits.write_millis);
             if let Some(lease) = timeout_at(deadline, actor.claim(key.clone())).await?? {

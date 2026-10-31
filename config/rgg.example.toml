@@ -15,6 +15,7 @@ login_seconds = 5
 initial_seconds = 5
 idle_seconds = 90
 write_millis = 2000
+archive_seconds = 10
 
 [queue]
 per_recipient_messages = 1000
