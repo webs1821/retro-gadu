@@ -29,7 +29,7 @@ wyniku testów działającego gg-retro.
 | Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | gotowe lokalnie dla GG6; zakres lat zamiast dokładnej daty | polskie filtry, strony 20/20/1, rzadkie pola, prywatność, trwały limit | nie sprawdzono |
 | Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI i WWW | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |
 | Rejestracja WWW | gotowe lokalnie, opt-in /register; publiczny profil TLS/proxy niekwalifikowany | http_registration.py: CSRF, limity, 12 konkurencyjnych żądań/3 użycia, GG6 i restart | przeglądarka desktop: wygląd; klient TCP syntetyczny |
-| Statystyki online/zarejestrowani z respektowaniem niewidoczności | brak | — | — |
+| Statystyki online/zarejestrowani z respektowaniem niewidoczności | gotowe lokalnie: strona główna i /api/stats, opt-in | statistics_tests, http_statistics.py; epoka/generacja/credential/Ready, niewidoczność/tylko znajomi, restart/retirement | przeglądarka desktop: wygląd |
 | Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | brak w nowym projekcie | — | — |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane; brak kwalifikacji wydajności/RSS/soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca | nie dotyczy |

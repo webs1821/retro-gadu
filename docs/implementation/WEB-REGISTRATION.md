@@ -55,3 +55,8 @@ złe Origin/Host/cookies, oversize, timeout i brak ominięcia limitu przez proxy
 headers. Testy jednostkowe sprawdzają wygaśnięcie, powiązanie z IP i pojemność.
 `tools/preview_registration.py --server ... --admin ...` daje osobny chwilowy
 podgląd na danych testowych; Enter zamyka proces i usuwa jego dane.
+
+Od dev.8 wspólny adapter `website.rs` obsługuje też opcjonalną stronę liczników.
+GET strony głównej, /api/stats, formularza i CSS współdzielą powyższy budżet oraz
+limit współbieżności. Opcje rejestracji i liczników są niezależne. Helper podglądu
+uruchamia obie funkcje i otwiera adres strony głównej.

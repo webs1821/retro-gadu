@@ -68,6 +68,13 @@ pub fn effective_presence_for(presence: &Presence, subject_rule: u8, viewer_rule
         visible
     }
 }
+/// Public counters have no authenticated viewer and therefore no friendship grant.
+pub fn publicly_online(presence: &Presence) -> bool {
+    matches!(
+        effective_presence_for(presence, 0, 0).availability,
+        Availability::Available | Availability::Away
+    )
+}
 #[async_trait]
 pub trait PresenceRepository: Send + Sync {
     async fn activate_presence(

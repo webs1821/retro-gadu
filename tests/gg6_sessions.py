@@ -94,9 +94,9 @@ class Lab:
         result = subprocess.run([str(self.admin), command, "--data-dir", str(self.data), *args], input=json.dumps(payload).encode() if payload else None, capture_output=True, timeout=10)
         assert result.returncode == 0, result.stderr
         return json.loads(result.stdout)
-    def start(self, extra="", fault=None, drop_wake=False, discovery=False, registration=False):
+    def start(self, extra="", fault=None, drop_wake=False, discovery=False, registration=False, statistics=False):
         config = self.root / "rgg.toml"
-        config.write_text("data_dir='data'\nhttp_bind='127.0.0.1:0'\ngg_bind='127.0.0.1:0'\nlegacy_discovery="+str(discovery).lower()+"\nweb_registration="+str(registration).lower()+"\n[network]\nlogin_seconds=1\ninitial_seconds=1\nwrite_millis=500\n" + extra, encoding="utf-8")
+        config.write_text("data_dir='data'\nhttp_bind='127.0.0.1:0'\ngg_bind='127.0.0.1:0'\nlegacy_discovery="+str(discovery).lower()+"\nweb_registration="+str(registration).lower()+"\nweb_public_stats="+str(statistics).lower()+"\n[network]\nlogin_seconds=1\ninitial_seconds=1\nwrite_millis=500\n" + extra, encoding="utf-8")
         env = os.environ.copy()
         env.pop("RGG_TEST_CRASH", None)
         env.pop("RGG_TEST_DROP_WAKEUPS", None)

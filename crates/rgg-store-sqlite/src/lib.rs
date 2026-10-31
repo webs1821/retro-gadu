@@ -14,6 +14,9 @@ mod presence_tests;
 #[cfg(test)]
 mod profile_tests;
 mod public_profiles;
+mod statistics;
+#[cfg(test)]
+mod statistics_tests;
 use crate::database as sqlx;
 pub mod directory;
 

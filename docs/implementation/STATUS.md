@@ -145,3 +145,16 @@ w lokalnej przeglądarce desktop na tymczasowej bazie; podgląd zamknięto.
 E05 nadal nie jest ukończony: samoobsługa, bezpieczne odzyskiwanie i publiczny
 profil wdrożeniowy są otwarte. W macierzy brakuje też statystyk, konferencji,
 obrazków i kwalifikacji. Rozwój pozostaje wyłącznie lokalny.
+
+## 2026-11-01 — E05d: anonimowe statystyki i strona główna
+
+Wersja `0.1.0-dev.8`. Opcjonalne `web_public_stats` udostępnia stronę główną
+i JSON /api/stats. Liczniki pochodzą z jednej migawki bazy; obecność wymaga
+aktualnej, gotowej sesji i przechodzi wspólną politykę anonimowego obserwatora.
+Nie pobieramy identyfikatorów, opisów ani sekretów do wyliczenia online.
+
+56 testów Rust i trzy grupy HTTP statystyk przeszły, wraz z regresjami
+rejestracji, discovery i cyklu życia. Wygląd strony głównej sprawdzono w lokalnej
+przeglądarce desktop; chwilowy proces i tab zamknięto. Reszta regresji ma pełny
+wynik z dev.7. E05 nadal wymaga samoobsługi i publicznej kwalifikacji.
+[Kontrakt](PUBLIC-STATISTICS.md), [wyniki](VERIFICATION-2026-11-01-dev8.md).

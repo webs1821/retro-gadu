@@ -110,7 +110,8 @@ impl Gate {
     }
 }
 pub(crate) struct Website {
-    service: Arc<RegistrationService>,
+    pub(crate) service: Option<Arc<RegistrationService>>,
+    pub(crate) statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
     authority: String,
     origin: String,
     gate: Mutex<Gate>,
@@ -118,14 +119,19 @@ pub(crate) struct Website {
 }
 impl Website {
     pub fn new(
-        service: Arc<RegistrationService>,
+        service: Option<Arc<RegistrationService>>,
+        statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
         address: SocketAddr,
     ) -> Result<Self, &'static str> {
-        if !address.ip().is_loopback() || address.port() == 0 {
+        if !address.ip().is_loopback()
+            || address.port() == 0
+            || (service.is_none() && statistics.is_none())
+        {
             return Err("registration website requires a bound loopback listener");
         }
         Ok(Self {
             service,
+            statistics,
             authority: address.to_string(),
             origin: format!("http://{address}"),
             gate: Mutex::new(Gate::new(Instant::now())),
@@ -167,12 +173,14 @@ fn secured(mut response: Response) -> Response {
     }
     response
 }
-fn notice(status: StatusCode, message: &str) -> Response {
+pub(crate) fn notice(status: StatusCode, message: &str) -> Response {
     // Callers supply only fixed messages or a validated numeric UIN, never raw input/errors.
     secured((status,Html(format!("<!doctype html><html lang=\"pl\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Retro Gadu</title><link rel=\"stylesheet\" href=\"/assets/registration.css\"><main><p class=\"brand\">Retro Gadu <span>rGG</span></p><h1>{message}</h1><p><a href=\"/register\">Wróć do formularza</a></p></main></html>"))).into_response())
 }
 pub(crate) fn routes(state: HttpState) -> Router<HttpState> {
     Router::new()
+        .route("/", get(crate::statistics::home))
+        .route("/api/stats", get(crate::statistics::api))
         .route("/register", get(form).post(submit))
         .route("/assets/registration.css", get(styles))
         .layer(DefaultBodyLimit::max(4096))
@@ -184,9 +192,18 @@ async fn guard(
     request: Request,
     next: Next,
 ) -> Response {
-    let Some(web) = &state.registration else {
-        return notice(StatusCode::NOT_FOUND, "Rejestracja WWW jest wyłączona.");
+    let Some(web) = &state.website else {
+        return notice(StatusCode::NOT_FOUND, "Ta strona jest wyłączona.");
     };
+    let enabled = match request.uri().path() {
+        "/register" => web.service.is_some(),
+        "/" | "/api/stats" => web.statistics.is_some(),
+        "/assets/registration.css" => true,
+        _ => false,
+    };
+    if !enabled {
+        return notice(StatusCode::NOT_FOUND, "Ta strona jest wyłączona.");
+    }
     if !state.ready.load(Ordering::Acquire) {
         return notice(
             StatusCode::SERVICE_UNAVAILABLE,
@@ -233,7 +250,7 @@ async fn form(
     State(state): State<HttpState>,
     ConnectInfo(remote): ConnectInfo<SocketAddr>,
 ) -> Response {
-    let Some(web) = &state.registration else {
+    let Some(web) = &state.website else {
         return notice(StatusCode::NOT_FOUND, "Rejestracja jest wyłączona.");
     };
     let mut token = [0u8; 32];
@@ -328,7 +345,7 @@ async fn submit(
     headers: HeaderMap,
     input: Result<Form<RegistrationForm>, FormRejection>,
 ) -> Response {
-    let Some(web) = &state.registration else {
+    let Some(web) = &state.website else {
         return notice(StatusCode::NOT_FOUND, "Rejestracja jest wyłączona.");
     };
     let form = match input {
@@ -357,7 +374,13 @@ async fn submit(
         );
     }
     let result = match account_input(form) {
-        Ok(input) => web.service.register(input).await,
+        Ok(input) => {
+            web.service
+                .as_ref()
+                .expect("registration guard")
+                .register(input)
+                .await
+        }
         Err(error) => Err(error),
     };
     let mut response = match result {

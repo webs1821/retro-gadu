@@ -10,6 +10,7 @@ pub mod messaging;
 pub mod presence;
 pub mod registration;
 pub mod sessions;
+pub mod statistics;
 
 pub mod contracts {
     #[derive(Clone, Debug, PartialEq, Eq)]

@@ -17,6 +17,8 @@ pub struct Config {
     #[serde(default)]
     pub web_registration: bool,
     #[serde(default)]
+    pub web_public_stats: bool,
+    #[serde(default)]
     pub network: rgg_transport::server::Limits,
     #[serde(default)]
     pub queue: rgg_application::messaging::QueueLimits,

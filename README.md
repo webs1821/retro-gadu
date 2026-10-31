@@ -39,6 +39,11 @@ ze wskazaniem rzeczywistego portu i odmową historycznych operacji konta.
 Wersja **0.1.0-dev.7** dodaje lokalną rejestrację WWW z zaproszeniami, wyborem
 numeru, jednorazowym CSRF oraz limitami. Nowe konto od razu loguje się w GG6.
 
+Wersja **0.1.0-dev.8** dodaje opcjonalną stronę główną i publiczne liczniki
+istniejących kont oraz jawnej obecności. Ukryte sesje nie zwiększają liczby online.
+
+- [Liczniki i strona główna](docs/implementation/PUBLIC-STATISTICS.md)
+- [Weryfikacja dev.8](docs/implementation/VERIFICATION-2026-11-01-dev8.md)
 - [Rejestracja WWW](docs/implementation/WEB-REGISTRATION.md)
 - [Weryfikacja dev.7](docs/implementation/VERIFICATION-2026-11-01-dev7.md)
 - [Kontrakt discovery](docs/implementation/HTTP-DISCOVERY.md)

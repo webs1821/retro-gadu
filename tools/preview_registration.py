@@ -11,8 +11,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="rgg-ui-preview-") as root:
         lab=Lab(args.server.resolve(),args.admin.resolve(),Path(root))
         try:
-            lab.start(registration=True)
-            print("Preview: http://"+lab.server.address+"/register",flush=True)
+            lab.start(registration=True,statistics=True)
+            print("Preview: http://"+lab.server.address+"/",flush=True)
             input()
         finally:lab.stop()
 if __name__=="__main__":main()

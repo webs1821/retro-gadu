@@ -1,0 +1,25 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 webs1821 -->
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Retro Gadu — rGG</title>
+  <link rel="stylesheet" href="/assets/registration.css">
+</head>
+<body>
+<main>
+  <p class="brand">Retro Gadu <span>rGG</span></p>
+  <p class="badge">Instancja lokalna</p>
+  <h1>Dobrze znów<br>się spotkać.</h1>
+  <p class="intro">Klasyczne rozmowy. Twój dawny numer. Nowy serwer.</p>
+  <dl class="counters">
+    <div><dt>Zarejestrowanych</dt><dd data-registered="{{registered}}">{{registered}}</dd></div>
+    <div><dt>Widocznych online</dt><dd data-online="{{online}}">{{online}}</dd></div>
+  </dl>
+  <p class="hint">Licznik online pomija osoby niewidoczne i status dostępny tylko dla znajomych. Stan z chwili otwarcia strony.</p>
+  {{registration_link}}
+</main>
+</body>
+</html>
