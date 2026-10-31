@@ -100,3 +100,19 @@ starej listy. Nie oznaczamy rodzimego importu GG6 jako w pełni zakwalifikowaneg
 przeszły poprawnie. [Raport dev.4](VERIFICATION-2026-11-01-dev4.md) oraz
 [kontrakt](PRESENCE-AND-CONTACTS.md) określają dokładne granice potwierdzenia.
 Kolejny przyrost: E05, katalog i WWW. Nadal wyłącznie lokalnie, bez wdrażania.
+
+## 2026-11-01 — E05a: dobrowolny katalog publiczny
+
+Wersja `0.1.0-dev.5`. READ/WRITE i SEARCH są podłączone do GG6. Profil jest
+dobrowolny, pełny formularz zastępuje poprzedni, a pusty usuwa publikację. Regresje
+zerowych sekwencji, odpowiedzi READ=3 oraz pustych wyników są objęte testami.
+Filtry normalizują polskie znaki i uwzględniają pola rodzinne. Wyszukiwanie
+korzysta ze wspólnej prywatności obecności oraz bariery publikacji.
+
+Migracja 0006 dodaje profile i trwały limit 20 operacji / 10 sekund na konto.
+Strony po 20 osób mają kursor po numerze, globalnie do 10000 profili. Odczyt
+strumieniuje kandydatów. 50 testów Rust i pięć zestawów procesu/TCP przeszło;
+Clippy i RustSec bez ostrzeżeń. [Raport](VERIFICATION-2026-11-01-dev5.md).
+
+E05 nadal częściowy: WWW, discovery, samoobsługa i administrator online pozostają
+kolejnymi przyrostami. Oryginalnego GG6 nie kwalifikowano. Rozwój nadal lokalny.

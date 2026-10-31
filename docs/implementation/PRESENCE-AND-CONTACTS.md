@@ -1,6 +1,6 @@
 # Obecność i kontakty — dev.4
 
-Implementacja E04 jest lokalna. Źródła formatu: `libgadu-protocol-reference`,
+Implementacja E04 jest lokalna. Źródła formatu: `libgadu-wire-reference`,
 `libgadu-legacy-reference` i `gg-retro-compatibility-reference` z THIRD_PARTY.toml.
 Parsery i logika transakcji są własną implementacją; nie kopiowano kodu tych serwerów.
 

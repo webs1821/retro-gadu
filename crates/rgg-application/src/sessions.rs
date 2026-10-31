@@ -62,6 +62,7 @@ enum Request {
     Initial(SessionKey, Reply<()>),
     Privacy(SessionKey, Vec<ContactRule>, Presence, Reply<()>),
     Presence(SessionKey, Presence, Reply<()>),
+    Profile(SessionKey, crate::directory::Profile, Reply<()>),
     Archive(SessionKey, ArchiveSegment, Reply<ArchiveResult>),
     Export(SessionKey, Reply<ContactArchive>),
     AbortArchive(SessionKey, Reply<()>),
@@ -142,6 +143,13 @@ impl AccountHandle {
     pub async fn abort_archive(&self, key: SessionKey) -> Result<(), MessagingError> {
         self.call(|r| Request::AbortArchive(key, r)).await
     }
+    pub async fn profile(
+        &self,
+        key: SessionKey,
+        profile: crate::directory::Profile,
+    ) -> Result<(), MessagingError> {
+        self.call(|r| Request::Profile(key, profile, r)).await
+    }
     pub async fn accept(
         &self,
         key: SessionKey,
@@ -182,6 +190,10 @@ pub struct SessionHub {
 pub struct PresencePublication {
     pub entries: Vec<VisiblePresence>,
     pub revision: u64,
+    _permit: OwnedRwLockReadGuard<()>,
+}
+pub struct DirectoryPublication {
+    pub result: crate::directory::ReadResult,
     _permit: OwnedRwLockReadGuard<()>,
 }
 impl SessionHub {
@@ -275,6 +287,21 @@ impl SessionHub {
             tasks.abort_all();
             while tasks.join_next().await.is_some() {}
         }
+    }
+    pub async fn directory(
+        &self,
+        key: &SessionKey,
+        query: crate::directory::Read,
+    ) -> Result<DirectoryPublication, MessagingError> {
+        let permit = self.publication.clone().read_owned().await;
+        let result = self
+            .repository
+            .read_directory(key, query, self.clock.unix_seconds())
+            .await?;
+        Ok(DirectoryPublication {
+            result,
+            _permit: permit,
+        })
     }
 }
 
@@ -436,6 +463,15 @@ impl AccountActor {
                     if result.is_ok() {
                         self.revision.fetch_add(1, Ordering::Release);
                     }
+                    let _ = reply.send(result);
+                }
+                Request::Profile(key, profile, reply) => {
+                    let _permit = self.publication.clone().write_owned().await;
+                    let result = async {
+                        self.valid(&key, true, true)?;
+                        self.repository.replace_profile(&key, profile, now).await
+                    }
+                    .await;
                     let _ = reply.send(result);
                 }
                 Request::Archive(key, segment, reply) => {

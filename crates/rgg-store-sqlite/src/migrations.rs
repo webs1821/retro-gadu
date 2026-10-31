@@ -51,6 +51,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0005_presence_contacts.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    6,
+                    "public profiles".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0006_public_profiles.sql").into(),
+                    false,
+                ),
             ])
         })
     }

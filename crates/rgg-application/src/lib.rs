@@ -5,6 +5,7 @@
 
 pub mod accounts;
 pub mod contacts;
+pub mod directory;
 pub mod messaging;
 pub mod presence;
 pub mod sessions;

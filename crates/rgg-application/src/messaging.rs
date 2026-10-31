@@ -166,7 +166,11 @@ impl Authenticator {
 
 #[async_trait]
 pub trait MessagingRepository:
-    Send + Sync + crate::presence::PresenceRepository + crate::contacts::ContactArchiveRepository
+    Send
+    + Sync
+    + crate::presence::PresenceRepository
+    + crate::contacts::ContactArchiveRepository
+    + crate::directory::DirectoryRepository
 {
     /// Caller has stopped the previous socket before this atomic attachment.
     async fn attach_session_if_current(

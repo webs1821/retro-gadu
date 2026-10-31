@@ -25,8 +25,8 @@ wyniku testów działającego gg-retro.
 | Lista kontaktów, import/eksport, subskrypcje | częściowe: subskrypcje i archiwum gotowe lokalnie; upload wymaga końcowego fragmentu krótszego niż 2047 B, ACK odroczone | 4000 kontaktów, granice fragmentów, staging, EOF/timeout, 2 awarie przy commit | nie sprawdzono |
 | Formatowanie wiadomości i konferencje | podstawowe style tekstu gotowe lokalnie; konferencje odrzucane | CP1250, bold/italic/underline/RGB, nieobsługiwane opcje bez ACK sukcesu | nie sprawdzono |
 | Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | brak | — | — |
-| Katalog: własny profil READ/WRITE | brak | — | — |
-| Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | brak | — | — |
+| Katalog: własny profil READ/WRITE | gotowe lokalnie: dobrowolność, zastępowanie, usuwanie i własność | `profile_tests`, `gg6_directory.py` | nie sprawdzono |
+| Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | gotowe lokalnie dla GG6; zakres lat zamiast dokładnej daty | polskie filtry, strony 20/20/1, rzadkie pola, prywatność, trwały limit | nie sprawdzono |
 | Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |
 | Rejestracja WWW | brak | — | — |
 | Statystyki online/zarejestrowani z respektowaniem niewidoczności | brak | — | — |

@@ -11,8 +11,8 @@ use rgg_application::{
     sessions::{AccountHandle, IoFence, SessionHub},
 };
 use rgg_protocol::{
-    frame::Frame, gg6, gg6_contacts as archive_wire, gg6_messages as wire,
-    gg6_presence as presence_wire, legacy_hash::gg32,
+    frame::Frame, gg6, gg6_contacts as archive_wire, gg6_directory as directory_wire,
+    gg6_messages as wire, gg6_presence as presence_wire, legacy_hash::gg32,
 };
 use std::{collections::HashMap, net::IpAddr, sync::Arc, time::Duration};
 use subtle::ConstantTimeEq;
@@ -396,6 +396,56 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                                 .await??;
                             }
                         }
+                    }
+                }
+                0x14 if ready => {
+                    let (operation, sequence) =
+                        directory_wire::header(&frame.payload).ok_or("directory header")?;
+                    match directory_wire::decode(&frame.payload) {
+                        Err(_) => {
+                            send(
+                                socket,
+                                directory_wire::failure(operation, sequence),
+                                &ctx.limits,
+                            )
+                            .await?
+                        }
+                        Ok(request) => match request.operation {
+                            directory_wire::Operation::Write(profile) => {
+                                let response = match actor.profile(key.clone(), profile).await {
+                                    Ok(()) => directory_wire::written(sequence),
+                                    Err(MessagingError::Invalid | MessagingError::Quota) => {
+                                        directory_wire::failure(operation, sequence)
+                                    }
+                                    Err(e) => return Err(e.into()),
+                                };
+                                send(socket, response, &ctx.limits).await?;
+                            }
+                            directory_wire::Operation::Read(query) => {
+                                timeout(Duration::from_millis(ctx.limits.write_millis), async {
+                                    match ctx.hub.directory(&key, query).await {
+                                        Ok(publication) => {
+                                            let response = directory_wire::result(
+                                                sequence,
+                                                key.user,
+                                                &publication.result,
+                                            )?;
+                                            socket.io.send(response).await?;
+                                            drop(publication);
+                                        }
+                                        Err(MessagingError::Invalid | MessagingError::Quota) => {
+                                            socket
+                                                .io
+                                                .send(directory_wire::failure(operation, sequence))
+                                                .await?
+                                        }
+                                        Err(e) => return Err(e.into()),
+                                    }
+                                    Ok::<(), Failure>(())
+                                })
+                                .await??;
+                            }
+                        },
                     }
                 }
                 0xb if ready => {

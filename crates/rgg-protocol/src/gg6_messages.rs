@@ -23,6 +23,7 @@ pub fn inbound_limit(kind: u32) -> usize {
     match kind {
         0x15 => 106,
         0x16 => 2048,
+        0x14 => 4096,
         0x8 | 0x12 => 0,
         0xf | 0x10 => 2000,
         0xd | 0xe => 5,

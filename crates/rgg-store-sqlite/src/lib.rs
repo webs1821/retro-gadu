@@ -11,6 +11,9 @@ mod migrations;
 mod presence;
 #[cfg(test)]
 mod presence_tests;
+#[cfg(test)]
+mod profile_tests;
+mod public_profiles;
 use crate::database as sqlx;
 pub mod directory;
 
@@ -24,7 +27,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 5;
+pub const SCHEMA_VERSION: i64 = 6;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {

@@ -78,19 +78,7 @@ impl PresenceRepository for SqliteStore {
         }
         let mut out = Vec::with_capacity(rows.len());
         for r in rows {
-            let mut p = Presence::offline();
-            if r.get::<i64, _>("visible") == 1 {
-                p.availability = match r.get::<Option<String>, _>("availability").as_deref() {
-                    Some("available") => Availability::Available,
-                    Some("away") => Availability::Away,
-                    Some("invisible") => Availability::Invisible,
-                    _ => Availability::Offline,
-                };
-                p.description = r.get("description");
-                p.return_at = r.get::<Option<i64>, _>("return_at").map(|v| v as u32);
-                p.friends_only = r.get::<i64, _>("friends_only") != 0;
-                p.validate().map_err(|_| MessagingError::Integrity)?;
-            }
+            let p = record_presence(&r)?;
             out.push(VisiblePresence {
                 user: UserId::new(r.get::<i64, _>("peer") as u32)
                     .map_err(|_| MessagingError::Integrity)?,
@@ -104,4 +92,21 @@ impl PresenceRepository for SqliteStore {
         tx.commit().await.map_err(db)?;
         Ok(out)
     }
+}
+
+pub(crate) fn record_presence(r: &sqlx::sqlite::SqliteRow) -> Result<Presence, MessagingError> {
+    let mut p = Presence::offline();
+    if r.get::<i64, _>("visible") == 1 {
+        p.availability = match r.get::<Option<String>, _>("availability").as_deref() {
+            Some("available") => Availability::Available,
+            Some("away") => Availability::Away,
+            Some("invisible") => Availability::Invisible,
+            _ => Availability::Offline,
+        };
+        p.description = r.get("description");
+        p.return_at = r.get::<Option<i64>, _>("return_at").map(|v| v as u32);
+        p.friends_only = r.get::<i64, _>("friends_only") != 0;
+        p.validate().map_err(|_| MessagingError::Integrity)?;
+    }
+    Ok(p)
 }

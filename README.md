@@ -29,6 +29,12 @@ można przechowywać i pobierać jako osobne, wersjonowane archiwum. Niepełny u
 nie nadpisuje poprzedniej listy. Upload zakończony pełnym blokiem 2047 B bez
 terminatora pozostaje świadomie ograniczony; szczegóły opisuje kontrakt poniżej.
 
+Wersja **0.1.0-dev.5** dodaje dobrowolny katalog publiczny GG6: odczyt i zapis
+własnego profilu, polskie filtry, zakres lat urodzenia, stronicowanie i limit
+zapytań odporny na reconnect. Widoczność statusu w wynikach respektuje prywatność.
+
+- [Kontrakt katalogu](docs/implementation/PUBLIC-DIRECTORY.md)
+- [Weryfikacja dev.5](docs/implementation/VERIFICATION-2026-11-01-dev5.md)
 - [Kontrakt obecności i kontaktów](docs/implementation/PRESENCE-AND-CONTACTS.md)
 - [Weryfikacja dev.4](docs/implementation/VERIFICATION-2026-11-01-dev4.md)
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md)
@@ -73,6 +79,7 @@ python tests/lifecycle.py --binary target/debug/rgg-server
 python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+python tests/gg6_directory.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 cargo build --workspace --locked --features rgg-server/test-hooks
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
@@ -80,7 +87,7 @@ cargo build --workspace --locked
 cargo audit
 ```
 
-Testy `lifecycle.py`, `accounts_cli.py` oraz oba zestawy `gg6_*.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
+Testy `lifecycle.py`, `accounts_cli.py` oraz zestawy `gg6_*.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
 syntetycznej bazy i losowego portu loopback. Jeśli ustawiono `CARGO_TARGET_DIR`,
 ścieżkę do pliku wykonywalnego należy odpowiednio zmienić.
 Do audytu użyto `cargo-audit 0.22.2`, instalowanego przez
@@ -201,7 +208,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.4](docs/implementation/cargo-audit-2026-11-01-dev4.json).
+[raporcie audytu dev.5](docs/implementation/cargo-audit-2026-11-01-dev5.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.
