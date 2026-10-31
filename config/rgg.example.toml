@@ -2,3 +2,24 @@
 data_dir = "../data"
 http_bind = "127.0.0.1:8088"
 shutdown_seconds = 5
+
+# Enable only after initializing this data directory and creating local accounts.
+# In WSL, use a Linux filesystem path for data_dir and keys.toml (see README).
+# gg_bind = "127.0.0.1:8074"
+
+# Defaults, shown explicitly for local protocol testing:
+[network]
+max_connections = 64
+per_ip = 16
+login_seconds = 5
+initial_seconds = 5
+idle_seconds = 90
+write_millis = 2000
+
+[queue]
+per_recipient_messages = 1000
+per_sender_messages = 1000
+global_messages = 10000
+per_recipient_bytes = 4194304
+global_bytes = 33554432
+ttl_seconds = 2592000

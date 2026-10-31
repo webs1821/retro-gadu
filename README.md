@@ -16,14 +16,19 @@ Drugi przyrost dodaje konta obsługiwane przez lokalne CLI: szyfrowane hasła,
 keyring, transakcyjne zaproszenia i przydział numerów, trwałą rezerwację numerów
 usuniętych kont oraz testy równoczesnych rejestracji.
 
-**Serwer nie obsługuje jeszcze logowania klienta ani rozmów GG.** Nie uruchamia publicznego
-nasłuchu GG. TCP i przejście pakiet → komenda → zdarzenie → pakiet są obecnie
-sprawdzane w odizolowanym teście integracyjnym.
+Wersja **0.1.0-dev.3** dodaje lokalny nasłuch GG6, logowanie LOGIN60/GG32,
+sesje kont, ping/pong oraz trwałe wiadomości tekstowe online i offline.
+Wiadomości czekają na zakończenie synchronizacji blokad klienta. Potwierdzenie
+dla nadawcy następuje po zatwierdzeniu zapisu w SQLite, a kolejka przeżywa restart.
+Podstawowe style tekstu i Windows-1250 są obsługiwane. Obecność kontaktów,
+obrazy, konferencje, katalog i pozostałe braki opisuje macierz zgodności.
+Testy TCP i awarii są automatyczne; oryginalnego klienta GG6 jeszcze nie kwalifikowano.
 
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md)
 - [Macierz funkcjonalności i braków](docs/implementation/PARITY.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md)
-- [Wyniki weryfikacji](docs/implementation/VERIFICATION-2026-10-31.md)
+- [Wyniki weryfikacji dev.3](docs/implementation/VERIFICATION-2026-10-31-dev3.md)
+- [Zasady sesji, kolejki i ograniczenia GG6](docs/implementation/SESSIONS-AND-DELIVERY.md)
 - [Pochodzenie użytych elementów](THIRD_PARTY.toml)
 - [Recenzje planu](docs/reviews/ROZLICZENIE_UWAG.md)
 
@@ -59,14 +64,22 @@ cargo test --workspace --locked
 cargo build --workspace --locked
 python tests/lifecycle.py --binary target/debug/rgg-server
 python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+cargo build --workspace --locked --features rgg-server/test-hooks
+python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
+cargo build --workspace --locked
 cargo audit
 ```
 
-Testy `lifecycle.py` i `accounts_cli.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
+Testy `lifecycle.py`, `accounts_cli.py` i `gg6_sessions.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
 syntetycznej bazy i losowego portu loopback. Jeśli ustawiono `CARGO_TARGET_DIR`,
 ścieżkę do pliku wykonywalnego należy odpowiednio zmienić.
 Do audytu użyto `cargo-audit 0.22.2`, instalowanego przez
 `cargo install cargo-audit --version 0.22.2 --locked`.
+
+Funkcja kompilacji `test-hooks` jest przeznaczona wyłącznie do wymuszania awarii
+w testach. Zwykły build nie odczytuje zmiennych `RGG_TEST_CRASH` ani
+`RGG_TEST_DROP_WAKEUPS`. Ostatni build powyżej przywraca zwykły plik wykonywalny.
 
 Workflow CI jest przygotowany jako plik lokalny. Nie został uruchomiony na GitHubie;
 repozytorium nie ma jeszcze zdalnego adresu.
@@ -86,6 +99,20 @@ target/debug/rgg-admin stats --data-dir /tmp/rgg-dev-data
 
 Aby serwer używał tych samych danych, ustaw w jego konfiguracji
 `data_dir = "/tmp/rgg-dev-data"`. Ten katalog służy wyłącznie jednorazowym próbom.
+
+Po przygotowaniu kont w tym katalogu włącz port protokołu w lokalnej konfiguracji:
+
+```toml
+data_dir = "/tmp/rgg-dev-data"
+http_bind = "127.0.0.1:8088"
+gg_bind = "127.0.0.1:8074"
+```
+
+Uruchom `rgg-server --config <ścieżka-do-tego-pliku>`. Brak `gg_bind` oznacza
+tryb samego HTTP. Po jego włączeniu serwer wymaga istniejącego `keys.toml` i
+weryfikuje klucze kont przed otwarciem obsługi połączeń. Oba porty muszą wskazywać
+loopback. Nie ma jeszcze HTTP discovery dla oryginalnego GG; testy używają
+bezpośredniego połączenia TCP i osobnych kont syntetycznych.
 
 Interaktywny pomocnik przekazuje hasło i kod przez standardowe wejście,
 bez umieszczania ich w argumentach procesu. Bezpośredni `account-create` przyjmuje
@@ -117,10 +144,10 @@ kopie i odzyskiwanie pozostają kolejnymi zadaniami.
 | Moduł | Odpowiedzialność |
 |---|---|
 | `rgg-domain` | Identyfikatory i czyste reguły danych |
-| `rgg-application` | Komendy, zdarzenia, przypadki użycia i porty infrastruktury |
+| `rgg-application` | Uwierzytelnianie, aktorzy kont, sesje, komendy i porty infrastruktury |
 | `rgg-protocol` | Czyste dekodery/enkodery i reguły formatu GG |
 | `rgg-store-sqlite` | Implementacja portów, migracje, trwałość i wyłączne posiadanie danych |
-| `rgg-transport` | Adapter strumienia TCP do ograniczonych ramek |
+| `rgg-transport` | Nasłuch GG6, cykl połączenia, limity i pojedynczy writer sesji |
 | `rgg-http` | Endpointy HTTP zależne od portów aplikacji |
 | `rgg-server` | Konfiguracja, składanie modułów, sygnały i cykl życia |
 | `rgg-credentials` | Koperty sekretów, keyring, losowe zaproszenia i ich skróty |
@@ -130,9 +157,13 @@ kopie i odzyskiwanie pozostają kolejnymi zadaniami.
 flowchart TD
     Server[rgg-server] --> HTTP[rgg-http]
     Server --> Store[rgg-store-sqlite]
+    Server --> Transport[rgg-transport]
+    Server --> Credentials[rgg-credentials]
     HTTP --> App[rgg-application]
     Store --> App
-    Transport[rgg-transport] --> Protocol[rgg-protocol]
+    Transport --> Protocol[rgg-protocol]
+    Transport --> App
+    Credentials --> App
     Protocol --> App
     Protocol --> Domain[rgg-domain]
     App --> Domain
@@ -161,7 +192,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu](docs/implementation/cargo-audit-2026-10-31.json).
+[raporcie audytu dev.3](docs/implementation/cargo-audit-2026-10-31-dev3.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

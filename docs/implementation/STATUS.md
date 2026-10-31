@@ -47,7 +47,7 @@ sesji, atomowego sprawdzania generacji przy skutkach komend oraz bramki gotowoś
 po synchronizacji prywatności. Biblioteka potrafi czytać stare klucze i pisać
 aktywnym, ale operacyjna, wznawialna rotacja nie jest jeszcze zaimplementowana.
 
-### Najbliższe zadania E02b / E03
+### Zadania zaplanowane po dev.2 (realizacja poniżej)
 
 1. GG_LOGIN60 i niezależny klient testowy, bez przejmowania produkcyjnego klienta.
 2. Koordynator aktorów kont, zatrzymanie starego writer-a przed nową sesją,
@@ -56,3 +56,28 @@ aktywnym, ale operacyjna, wznawialna rotacja nie jest jeszcze zaimplementowana.
 4. Trwała kolejka offline, ACK nadawcy po commit, FIFO, stan niepotwierdzonego
    odbioru GG6, recovery epoki i testy awarii/ponowień.
 5. Kolejne funkcje z macierzy zgodności; klient natywny kwalifikowany osobno.
+
+## 2026-10-31 — E02b / E03: logowanie, sesje i trwałe wiadomości GG6
+
+Wersja `0.1.0-dev.3`, implementacja `93f8fa8`. LOGIN60/GG32 działa na osobnym
+porcie loopback. Aktor konta zarządza sesją, zatrzymuje poprzedni transport
+przed zmianą generacji i sprawdza credential_version. Skutki komend mają
+atomowe sprawdzenie sesji/epoki w SQLite. Ready wymaga zakończenia listy
+prywatności; blokady są zachowywane przy niepełnej synchronizacji i restarcie.
+
+Migracja 0004 dodaje sesje, reguły kontaktów, wiadomości, dostarczenia i próby.
+Tekst CP1250 oraz podstawowe style przechodzą przez trwałą kolejkę. ACK=3 wychodzi
+po commit, FIFO nie zależy od seq ani zegara, a recovery nowej epoki odzyskuje
+niezakończone lease. Zapis do TCP ma osobny stan bez obietnicy odbioru GG6.
+Są limity, TTL, czyszczenie treści, ograniczona historia i izolacja wolnego klienta.
+
+Wynik: 37 testów Rust, testy CLI i cyklu życia oraz pięć grup testów TCP.
+Dodatkowy build testowy przeszedł cztery kontrolowane awarie na granicach commit
+i wysyłki. Końcowy zwykły build również przeszedł wszystkie zestawy procesu.
+Clippy, formatowanie, pochodzenie i RustSec: poprawnie; 0 znanych podatności
+i 0 ostrzeżeń. [Pełny raport](VERIFICATION-2026-10-31-dev3.md).
+
+Zakres tej prośby jest zaimplementowany i przetestowany lokalnie. E02 nadal
+wymaga operacyjnej rotacji kluczy, a kwalifikacja klienta natywnego jest otwarta.
+Kolejne funkcje to pełna obecność i listy kontaktów, następnie brakujące elementy
+z macierzy. Warunek rozważenia podmiany gg-retro pozostaje niespełniony.

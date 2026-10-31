@@ -19,10 +19,14 @@ jobs:
       - run: python tools/gg32_vectors.py
       - run: cargo metadata --locked --format-version 1 | python tools/dependency_inventory.py
       - run: cargo fmt --all -- --check
-      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
       - run: cargo test --workspace --locked
       - run: cargo build --workspace --locked
       - run: python tests/lifecycle.py --binary target/debug/rgg-server
       - run: python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: cargo build --workspace --locked --features rgg-server/test-hooks
+      - run: python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
+      - run: cargo build --workspace --locked
       - run: cargo install cargo-audit --version 0.22.2 --locked
       - run: cargo audit
