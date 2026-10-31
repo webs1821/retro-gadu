@@ -1,0 +1,21 @@
+[package]
+name = "rgg-credentials"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+[dependencies]
+rgg-domain.workspace = true
+rgg-application.workspace = true
+zeroize.workspace = true
+chacha20poly1305.workspace = true
+rand.workspace = true
+sha2.workspace = true
+hex.workspace = true
+serde.workspace = true
+toml.workspace = true
+thiserror.workspace = true
+[dev-dependencies]
+tempfile.workspace = true
+[lints]
+workspace = true

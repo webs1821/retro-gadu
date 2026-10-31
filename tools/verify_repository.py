@@ -52,6 +52,8 @@ def verify():
         "rgg-store-sqlite": {"rgg-domain", "rgg-application"},
         "rgg-transport": {"rgg-domain", "rgg-application", "rgg-protocol"},
         "rgg-http": {"rgg-domain", "rgg-application"},
+        "rgg-credentials": {"rgg-domain", "rgg-application"},
+        "rgg-admin": {"rgg-domain", "rgg-application", "rgg-store-sqlite", "rgg-credentials"},
         "rgg-server": {"rgg-domain", "rgg-application", "rgg-protocol", "rgg-store-sqlite", "rgg-transport", "rgg-http"},
     }
     root_manifest = tomllib.loads((ROOT / "Cargo.toml").read_text(encoding="utf-8"))
@@ -64,14 +66,21 @@ def verify():
         dependencies = crate.get("dependencies", {})
         check({d for d in dependencies if d.startswith("rgg-")} <= allowed[name], f"Forbidden crate dependency: {name}")
         if name in {"rgg-domain", "rgg-application", "rgg-protocol"}:
-            check(not {"sqlx", "axum"} & dependencies.keys(), f"Infrastructure leaked into {name}")
+            check(not any(d == "axum" or d == "sqlx" or d.startswith("sqlx-") for d in dependencies), f"Infrastructure leaked into {name}")
         if name in {"rgg-domain", "rgg-protocol"}:
             check("tokio" not in dependencies, f"Runtime dependency in pure crate: {name}")
         for source in (ROOT / member / "src").rglob("*.rs"):
             text = source.read_text(encoding="utf-8")
             check("SPDX-License-Identifier: AGPL-3.0-or-later" in text[:500], f"Missing license notice: {source}")
             check("SPDX-FileCopyrightText:" in text[:500], f"Missing author notice: {source}")
-    print(f"OK: {len(ids)} provenance records, {len(allowed)} crate boundaries, source notices")
+    storage = ROOT / "crates/rgg-store-sqlite"
+    scripts = {p.name for p in (storage / "migrations").glob("*.sql")}
+    embedded = set(re.findall(r'include_str!\(\s*"\.\./migrations/([^\"]+)"\s*\)', (storage / "src/migrations.rs").read_text(encoding="utf-8")))
+    check(scripts == embedded, "Every migration must be embedded exactly in the registered source set")
+    maximum = max(int(name.split("_", 1)[0]) for name in scripts)
+    schema = re.search(r"SCHEMA_VERSION: i64 = (\d+)", (storage / "src/lib.rs").read_text(encoding="utf-8"))
+    check(schema is not None and int(schema.group(1)) == maximum, "Schema version does not match embedded migrations")
+    print(f"OK: {len(ids)} provenance records, {len(allowed)} crate boundaries, {len(scripts)} migrations, source notices")
 
 
 if __name__ == "__main__":

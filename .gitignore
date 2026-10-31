@@ -9,3 +9,5 @@
 .env
 .secrets/
 __pycache__/
+**/keys.toml
+/.private/

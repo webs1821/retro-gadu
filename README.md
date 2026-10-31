@@ -12,13 +12,18 @@ blokada katalogu danych na poziomie systemu operacyjnego, SQLite WAL/FULL,
 migracje, identyfikator uruchomienia, HTTP live/ready i kontrolowane zamknięcie.
 Są również fundamenty kodeka GG6, parser logowania i port GG32.
 
-**Serwer nie obsługuje jeszcze kont ani rozmów GG.** Nie uruchamia publicznego
+Drugi przyrost dodaje konta obsługiwane przez lokalne CLI: szyfrowane hasła,
+keyring, transakcyjne zaproszenia i przydział numerów, trwałą rezerwację numerów
+usuniętych kont oraz testy równoczesnych rejestracji.
+
+**Serwer nie obsługuje jeszcze logowania klienta ani rozmów GG.** Nie uruchamia publicznego
 nasłuchu GG. TCP i przejście pakiet → komenda → zdarzenie → pakiet są obecnie
 sprawdzane w odizolowanym teście integracyjnym.
 
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md)
 - [Macierz funkcjonalności i braków](docs/implementation/PARITY.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md)
+- [Wyniki weryfikacji](docs/implementation/VERIFICATION-2026-10-31.md)
 - [Pochodzenie użytych elementów](THIRD_PARTY.toml)
 - [Recenzje planu](docs/reviews/ROZLICZENIE_UWAG.md)
 
@@ -47,19 +52,65 @@ W WSL zalecany jest katalog danych w linuksowym systemie plików, np.
 ```sh
 python tools/verify_repository.py
 python tools/gg32_vectors.py
+cargo metadata --locked --format-version 1 | python tools/dependency_inventory.py
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked
 cargo build --workspace --locked
 python tests/lifecycle.py --binary target/debug/rgg-server
+python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+cargo audit
 ```
 
-Ostatni test wymaga Linuksa/WSL i używa wyłącznie katalogu tymczasowego,
+Testy `lifecycle.py` i `accounts_cli.py` wymagają Linuksa/WSL i używają wyłącznie katalogu tymczasowego,
 syntetycznej bazy i losowego portu loopback. Jeśli ustawiono `CARGO_TARGET_DIR`,
 ścieżkę do pliku wykonywalnego należy odpowiednio zmienić.
+Do audytu użyto `cargo-audit 0.22.2`, instalowanego przez
+`cargo install cargo-audit --version 0.22.2 --locked`.
 
 Workflow CI jest przygotowany jako plik lokalny. Nie został uruchomiony na GitHubie;
 repozytorium nie ma jeszcze zdalnego adresu.
+
+## Lokalne konta i zaproszenia
+
+Zatrzymaj proces rGG przed pracą narzędziem administratora. Oba programy
+używają tej samej blokady katalogu; CLI odmawia dostępu, gdy działa serwer.
+W Linux/WSL można przygotować jednorazowe dane testowe tak:
+
+```sh
+target/debug/rgg-admin init --data-dir /tmp/rgg-dev-data
+target/debug/rgg-admin invite --data-dir /tmp/rgg-dev-data --count 2 --uses 3
+python tools/create_account.py --admin target/debug/rgg-admin --data-dir /tmp/rgg-dev-data
+target/debug/rgg-admin stats --data-dir /tmp/rgg-dev-data
+```
+
+Aby serwer używał tych samych danych, ustaw w jego konfiguracji
+`data_dir = "/tmp/rgg-dev-data"`. Ten katalog służy wyłącznie jednorazowym próbom.
+
+Interaktywny pomocnik przekazuje hasło i kod przez standardowe wejście,
+bez umieszczania ich w argumentach procesu. Bezpośredni `account-create` przyjmuje
+JSON na stdin: `requested_uin` (liczba albo null), `invite`, `password`, `email`.
+Hasło na tym etapie ma 8–15 drukowalnych znaków ASCII bez spacji, zgodnie z polityką
+dotychczasowego gg-retro. Adres e-mail zapisuje się jako **niezweryfikowany**.
+
+Puste pole numeru oznacza pierwszy wolny numer od 112233. Numer ręczny może być
+niższy; nie przesuwa automatycznego licznika do wysokiej wartości. Zaproszenie
+jest zużywane dopiero wraz z zatwierdzeniem utworzenia konta. Kolizja numeru,
+błąd szyfrowania i nieudana rejestracja nie zużywają zaproszenia.
+Obecne CLI tworzy nowe kody rGG; importer kont i zaproszeń z gg-retro pozostaje do wykonania.
+
+`retire --uin <numer> --data-dir <katalog>` usuwa rekord konta i trwale rezerwuje
+numer. Nie jest to obietnica usunięcia jego dawnych danych z kopii ani śladów
+w plikach systemowych. Nie ma jeszcze interfejsu WWW ani zdalnego administratora.
+
+Hasła są przechowywane w kopertach XChaCha20-Poly1305 z losowym nonce; powiązanie
+z numerem, wersją i identyfikatorem klucza chroni przed podmienianiem rekordów.
+Baza utrzymuje historię użytych par klucz–nonce także po usunięciu konta i odrzuca kolizję.
+`keys.toml` musi być zachowany razem z informacją, do której bazy należy.
+Na Linuksie program wymaga dostępu do pliku kluczy wyłącznie dla właściciela;
+w WSL używaj linuksowego systemu plików. Brak lub niewłaściwy klucz dla istniejących
+kont jest błędem, a nie powodem do wygenerowania zamiennika. Automatyczna rotacja,
+kopie i odzyskiwanie pozostają kolejnymi zadaniami.
 
 ## Podział kodu
 
@@ -72,6 +123,8 @@ repozytorium nie ma jeszcze zdalnego adresu.
 | `rgg-transport` | Adapter strumienia TCP do ograniczonych ramek |
 | `rgg-http` | Endpointy HTTP zależne od portów aplikacji |
 | `rgg-server` | Konfiguracja, składanie modułów, sygnały i cykl życia |
+| `rgg-credentials` | Koperty sekretów, keyring, losowe zaproszenia i ich skróty |
+| `rgg-admin` | Lokalne operacje na kontach i zaproszeniach pod blokadą danych |
 
 ```mermaid
 flowchart TD
@@ -105,3 +158,10 @@ Oryginalny gg-retro ma niestandardową licencję MIS, nie MIT.
 Wersje zewnętrznych bibliotek Rust są przypięte w `Cargo.lock`. Ich własne
 licencje pozostają w mocy; rejestr pochodzenia kodu źródłowego rGG nie zastępuje
 inwentaryzacji tych zależności ani przyszłego audytu wydania.
+
+Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
+w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
+[raporcie audytu](docs/implementation/cargo-audit-2026-10-31.json).
+Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
+nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
+Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

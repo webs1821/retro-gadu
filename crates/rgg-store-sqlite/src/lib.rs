@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 
+mod accounts;
+mod database;
+mod migrations;
+use crate::database as sqlx;
 pub mod directory;
 
 use async_trait::async_trait;
@@ -13,7 +17,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 1;
+pub const SCHEMA_VERSION: i64 = 3;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {
@@ -101,7 +105,10 @@ impl SqliteStore {
                 return Err(OpenError::NewerSchema);
             }
         }
-        sqlx::migrate!("./migrations").run(pool).await?;
+        sqlx::migrate::Migrator::new(migrations::EmbeddedMigrations)
+            .await?
+            .run(pool)
+            .await?;
         let mut entropy = [0u8; 16];
         rand::rngs::OsRng
             .try_fill_bytes(&mut entropy)
@@ -169,7 +176,7 @@ mod tests {
             .fetch_one(&second.pool)
             .await
             .unwrap();
-        assert_eq!(migrations, 1);
+        assert_eq!(migrations, SCHEMA_VERSION);
         second.close().await;
     }
 
@@ -178,7 +185,7 @@ mod tests {
         let root = tempfile::tempdir().unwrap();
         let store = SqliteStore::open(root.path()).await.unwrap();
         let epoch = store.process_epoch().to_owned();
-        sqlx::query("UPDATE _sqlx_migrations SET version=9999")
+        sqlx::query("UPDATE _sqlx_migrations SET version=9999 WHERE version=(SELECT max(version) FROM _sqlx_migrations)")
             .execute(&store.pool)
             .await
             .unwrap();

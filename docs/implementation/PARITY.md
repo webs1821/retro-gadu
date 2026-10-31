@@ -15,7 +15,8 @@ wyniku testów działającego gg-retro.
 | OS lock, SQLite WAL/FULL, migracje, nowa epoka po awarii | gotowe lokalnie | testy store + `lifecycle.py` | nie dotyczy |
 | Ramkowanie GG, fragmentacja, limit, niepełny EOF | gotowe lokalnie | `frame::tests`, `rgg-transport::tests` | nie sprawdzono |
 | Parser LOGIN60, CP1250, GG32 | częściowe: parser i algorytm | testy `gg6`, `legacy_hash`; syntetyczne wektory | nie sprawdzono |
-| Konta, zaszyfrowane hasła, bezpieczne logowanie | brak | — | — |
+| Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI; rotacja operacyjna i importer brak | `accounts::tests`, `rgg-credentials::tests`, `accounts_cli.py` | nie dotyczy |
+| Logowanie klienta GG | brak | — | — |
 | Generacje sesji, zastąpienie sesji, reconnect GG po restarcie | brak | — | — |
 | Trwała kolejka offline, FIFO, ACK po commit | brak | — | — |
 | Retry po awarii i uczciwy stan „zapisano do TCP bez potwierdzenia klienta” | brak | — | — |
@@ -26,12 +27,13 @@ wyniku testów działającego gg-retro.
 | Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | brak | — | — |
 | Katalog: własny profil READ/WRITE | brak | — | — |
 | Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | brak | — | — |
-| Rejestracja WWW, zaproszenia 3 użycia, numery ręczne/od 112233 | brak | — | — |
+| Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |
+| Rejestracja WWW | brak | — | — |
 | Statystyki online/zarejestrowani z respektowaniem niewidoczności | brak | — | — |
 | Konfigurowana domena i legacy HTTP discovery | brak | — | — |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | brak w nowym projekcie | — | — |
 | Limity połączeń, żądań, pamięci i kolejki | częściowe: granica ramki; reszta brak | test oversize | — |
-| Administrator, rotacja kluczy, backup/restore, importer | brak | — | — |
+| Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI i walidacja kluczy; reszta brak | `accounts_cli.py` | nie dotyczy |
 | Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | brak | — | — |
 
 ## Warunek rozważenia podmiany

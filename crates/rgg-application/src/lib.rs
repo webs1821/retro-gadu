@@ -3,6 +3,8 @@
 
 //! Use cases and infrastructure ports. No wire layouts, SQL types or HTTP framework.
 
+pub mod accounts;
+
 pub mod contracts {
     #[derive(Clone, Debug, PartialEq, Eq)]
     pub enum Command {
