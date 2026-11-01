@@ -27,7 +27,14 @@ Normalny build bez hooków. Kopie zawierają bazę i klucze, bez config/plików 
 Dev.13: keys-status/keys-rotate/keys-resume z obowiązkowym backupem, zachowaniem
 starszych kluczy i wznowieniem po przerwaniu. 71 testów Rust, 3 awarie rotacji,
 backupy i logowanie po restore sprawdzone; [raport](VERIFICATION-2026-11-01-dev13.md).
-Następny wybrany temat: importer gg-retro na danych syntetycznych, bez dostępu do produkcyjnej bazy.
+Importer gg-retro: wykonana inwentaryzacja lokalnego czystego forka 0.8.3 i
+kontrola źródła tools/inspect_gg_retro.py (read-only, pinned schema/checksums,
+liczniki i luki). Testy Windows/Linux przeszły. [Mapowanie i dalsze prace](IMPORT-GG-RETRO.md).
+Nie ma jeszcze konwersji do rGG ani weryfikacji hasła ggv1. Stare zaproszenia to
+SHA256 case-sensitive 24–128 ASCII, inne niż rGG; wymagają adaptera zachowującego
+used/active. Brak historii usuniętych UIN oraz pełnej prywatności wymaga jawnego
+raportu. Źródło prywatnego klucza ggv1: plik 32 raw bytes; AAD UIN little endian.
+Następny temat: właściwy importer na danych syntetycznych, bez produkcyjnej bazy.
 
 Następne luki do parytetu: patcher/pakiet klienta, konfiguracja docelowej domeny,
 importer dotychczasowego gg-retro, lokalny kontener, pomiary i testy natywne.

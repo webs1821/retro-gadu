@@ -63,6 +63,7 @@ Wersja **0.1.0-dev.13** dodaje rotację kluczy z obowiązkową kopią i wznowien
 po awarii. Zachowuje starsze klucze, hasła użytkowników i ich wersje uprawnień.
 
 - [Rotacja kluczy](docs/implementation/KEY-ROTATION.md)
+- [Kontrola danych gg-retro przed importem](docs/implementation/IMPORT-GG-RETRO.md)
 - [Weryfikacja dev.13](docs/implementation/VERIFICATION-2026-11-01-dev13.md)
 - [Kopie i odtwarzanie](docs/implementation/BACKUPS.md)
 - [Weryfikacja dev.12](docs/implementation/VERIFICATION-2026-11-01-dev12.md)

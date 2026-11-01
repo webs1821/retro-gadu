@@ -211,3 +211,12 @@ nonce. Starsze klucze pozostają; hasła i credential_version nie zmieniają si�
 procesu i logowanie przed/po wznowieniu. Starszy backup odtwarza się niezależnie.
 Regresje backup/CLI/kolejki, Clippy i RustSec poprawne; normalny build bez hooków.
 [Kontrakt](KEY-ROTATION.md), [wyniki](VERIFICATION-2026-11-01-dev13.md).
+
+## 2026-11-01 — inspekcja źródła przed importerem
+
+Odczyt wyłącznie kodu przypiętego forka 0.8.3: 9 tabel, 11 migracji, brak historii
+usuniętych UIN i inne kodowanie zaproszeń. Nowe inspect_gg_retro.py generuje
+raport liczników i luk, bez zmiany źródła, celu lub ujawniania sekretów.
+Testy Windows i Linux przeszły, łącznie z odmową zmienianego źródła.
+To jeszcze nie importer/dry-run konwersji; migration_ready zawsze false.
+[Zakres, mapowanie i wyniki](IMPORT-GG-RETRO.md). Binarki pozostają dev.13.

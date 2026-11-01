@@ -1,0 +1,475 @@
+{
+  "format": 1,
+  "project": "webs1821/gg-retro",
+  "version": "0.8.3",
+  "commit": "ed9640cc247764754b5e47891053eb07a53f76d5",
+  "migrations": [
+    {
+      "version": 20251227104911,
+      "path": "server/migrations/20251227104911_createUsers.sql",
+      "sha384": "bdd1c2dc4fde33e06e31a35622ce9dc64f9b2f893c66e851498aac495ca075ebf4b206fbab828fa0d91b76572e0f2e83"
+    },
+    {
+      "version": 20251231120000,
+      "path": "server/migrations/20251231120000_createTokens.sql",
+      "sha384": "a8b2b4fc457680778e940bcc138a85215c8ab80925b23edfb9658493eb5b55166a336a2fa72d7e48a6730542d2776061"
+    },
+    {
+      "version": 20251231135137,
+      "path": "server/migrations/20251231135137_createMessages.sql",
+      "sha384": "82e29a5318b21a8d27d93d34b7b896dda70c8bdd6a0f2cad0f1274ef60a8fc20a3c4b803f3030549d7a4c43e5575a5cc"
+    },
+    {
+      "version": 20260102083950,
+      "path": "server/migrations/20260102083950_addFormatting.sql",
+      "sha384": "9f65ef231ccc59048bb69ec5a1c99615d9e86feaf41afbb423bbaeaf060c2c47ee71a273dced3b09ab6fbdf33c6644cd"
+    },
+    {
+      "version": 20261030000000,
+      "path": "server/migrations/20261030000000_contactLists.sql",
+      "sha384": "79b935b9d7c8a34f1363b586f243474d93321db5b986544bda766ca0bdbd3267e07e35ec884006f86294fe01acf10024"
+    },
+    {
+      "version": 20261030010000,
+      "path": "server/migrations/20261030010000_registration.sql",
+      "sha384": "777e92168704c289d87cc838766b24c4156d33b554b5549ae72bb2804bcae47b37c2a32859ef57fee03cae7cb7995205"
+    },
+    {
+      "version": 20261030020000,
+      "path": "server/migrations/20261030020000_images.sql",
+      "sha384": "de1bfcbba7840c8ae91bce614083efddf8474e5df667098e9dd47241704b0ba5693c640d5bce9fd2e33f8d0ca8ca33b8"
+    },
+    {
+      "version": 20261030030000,
+      "path": "server/migrations/20261030030000_classicImages.sql",
+      "sha384": "4a6427376a6b44088b712a580a45148c034ad30ba84ff274a5a67d29cc078445920cb6e3363a9c9f9dd3743bd5bbfd49"
+    },
+    {
+      "version": 20261030040000,
+      "path": "server/migrations/20261030040000_conferences.sql",
+      "sha384": "7db6a97806304faa65002ba2c4d3ee4f9251438327d382bfda67b41a0ef29c4d99fcffd725ae807127bb875dbb44eb45"
+    },
+    {
+      "version": 20261031000000,
+      "path": "server/migrations/20261031000000_offlinePresence.sql",
+      "sha384": "a275bc9f16d30ed4be95526e438661af30088200f3e95f0c43a24d8334db2938d7a37f4ad5d6c4c874f8b5fe2123a016"
+    },
+    {
+      "version": 20261031010000,
+      "path": "server/migrations/20261031010000_publicDirectory.sql",
+      "sha384": "be7857f2bda94b3be9bd61e78df256329e1f81d9e1aea2c24af1bc0dccfbe8c70f9c3cf7e2396cee8479af36178e66f5"
+    }
+  ],
+  "tables": {
+    "contact_lists": [
+      {
+        "name": "uin",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "data",
+        "type": "BLOB",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "updated_at",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "CURRENT_TIMESTAMP",
+        "pk": 0
+      }
+    ],
+    "message_images": [
+      {
+        "name": "message_id",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "size",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 2
+      },
+      {
+        "name": "crc32",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 3
+      }
+    ],
+    "messages": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "recipient_uin",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "sender_uin",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "seq",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "time",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "class",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "message",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "default": "CURRENT_TIMESTAMP",
+        "pk": 0
+      },
+      {
+        "name": "delivered_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "formatting",
+        "type": "BLOB",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "conference",
+        "type": "BLOB",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      }
+    ],
+    "offline_presence": [
+      {
+        "name": "uin",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "status",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "description",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "return_time",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "privacy",
+        "type": "BLOB",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      }
+    ],
+    "public_profiles": [
+      {
+        "name": "uin",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "firstname",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "lastname",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "nickname",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "city",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "familyname",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "familycity",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "birthyear",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": "0",
+        "pk": 0
+      },
+      {
+        "name": "gender",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": "0",
+        "pk": 0
+      },
+      {
+        "name": "first_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "last_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "nick_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "city_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "familyname_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      },
+      {
+        "name": "familycity_key",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "''",
+        "pk": 0
+      }
+    ],
+    "registration_invites": [
+      {
+        "name": "code_hash",
+        "type": "BLOB",
+        "notnull": 1,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "max_uses",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": "3",
+        "pk": 0
+      },
+      {
+        "name": "used",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": "0",
+        "pk": 0
+      },
+      {
+        "name": "active",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": "1",
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": "CURRENT_TIMESTAMP",
+        "pk": 0
+      },
+      {
+        "name": "last_used_at",
+        "type": "TEXT",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      }
+    ],
+    "registration_state": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "next_uin",
+        "type": "INTEGER",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      }
+    ],
+    "tokens": [
+      {
+        "name": "id",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "token_id",
+        "type": "CHAR(32)",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "captcha_code",
+        "type": "CHAR(4)",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "default": "CURRENT_TIMESTAMP",
+        "pk": 0
+      },
+      {
+        "name": "used_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      }
+    ],
+    "users": [
+      {
+        "name": "uin",
+        "type": "INTEGER",
+        "notnull": 0,
+        "default": null,
+        "pk": 1
+      },
+      {
+        "name": "name",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "email",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "password",
+        "type": "TEXT",
+        "notnull": 1,
+        "default": null,
+        "pk": 0
+      },
+      {
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "notnull": 0,
+        "default": "CURRENT_TIMESTAMP",
+        "pk": 0
+      },
+      {
+        "name": "registration_invite_hash",
+        "type": "BLOB",
+        "notnull": 0,
+        "default": null,
+        "pk": 0
+      }
+    ]
+  }
+}
