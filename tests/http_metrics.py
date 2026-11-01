@@ -33,7 +33,7 @@ def metrics(lab):
             key,value=match.groups();assert key not in values and key.split("{")[0] in types
             values[key]=float(value)
     assert len(types)==12 and len(values)==19,(types,values)
-    assert values['rgg_database_schema_version']==11
+    assert values['rgg_database_schema_version']==12
     assert abs(values['rgg_snapshot_timestamp_seconds']-time.time())<3
     return values
 

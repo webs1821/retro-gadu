@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
-//! Authenticated offline changes. A future online API must also stop/fence every account socket.
+//! Authenticated offline changes and the shared atomic secret/audit update used by online changes.
 use crate::{SqliteStore, database as sqlx, key_maintenance::decode};
-use rgg_application::accounts::{AccountError, LegacyPassword, SecretError, SecretProtector};
+use rgg_application::accounts::{
+    AccountError, LegacyPassword, SealedSecret, SecretError, SecretProtector,
+};
 use rgg_domain::UserId;
 use sqlx::Row;
 
@@ -12,10 +14,51 @@ fn storage(_: sqlx::Error) -> AccountError {
 
 pub struct PasswordAudit {
     pub id: i64,
+    pub actor: String,
     pub user: u32,
     pub previous_version: i64,
     pub credential_version: i64,
     pub occurred_at: i64,
+}
+
+pub(crate) async fn write_password_tx(
+    tx: &mut sqlx::Transaction<'_, sqlx::Sqlite>,
+    user: UserId,
+    previous: i64,
+    new: &SealedSecret,
+    actor: &'static str,
+    now: i64,
+) -> Result<i64, AccountError> {
+    let version = previous
+        .checked_add(1)
+        .ok_or(AccountError::StaleCredential)?;
+    match sqlx::query("INSERT INTO secret_nonces(key_id,nonce) VALUES(?,?)")
+        .bind(&new.key_id)
+        .bind(new.nonce.as_slice())
+        .execute(&mut **tx)
+        .await
+    {
+        Ok(_) => (),
+        Err(sqlx::Error::Database(e)) if e.is_unique_violation() => {
+            return Err(SecretError::NonceReuse.into());
+        }
+        Err(e) => return Err(storage(e)),
+    }
+    let changed = sqlx::query("UPDATE accounts SET credential_version=?,secret_version=?,key_id=?,nonce=?,ciphertext=? WHERE uin=? AND credential_version=? AND active=1")
+        .bind(version).bind(i64::from(new.version)).bind(&new.key_id).bind(new.nonce.as_slice()).bind(new.ciphertext.as_slice())
+        .bind(i64::from(user.get())).bind(previous).execute(&mut **tx).await.map_err(storage)?.rows_affected();
+    if changed != 1 {
+        return Err(AccountError::StaleCredential);
+    }
+    sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES(?,'password_changed',?,?,?,?)")
+        .bind(actor).bind(i64::from(user.get())).bind(previous).bind(version).bind(now).execute(&mut **tx).await.map_err(storage)?;
+    sqlx::query("DELETE FROM admin_audit WHERE occurred_at<?")
+        .bind(now.saturating_sub(2592000))
+        .execute(&mut **tx)
+        .await
+        .map_err(storage)?;
+    sqlx::query("DELETE FROM admin_audit WHERE id IN (SELECT id FROM admin_audit ORDER BY id DESC LIMIT -1 OFFSET 10000)").execute(&mut **tx).await.map_err(storage)?;
+    Ok(version)
 }
 
 impl SqliteStore {
@@ -53,36 +96,20 @@ impl SqliteStore {
         }
         drop(saved);
         let previous: i64 = row.try_get("credential_version").map_err(storage)?;
-        let version = previous
-            .checked_add(1)
-            .ok_or(AccountError::StaleCredential)?;
         let new = protector.seal(user, replacement)?;
-        match sqlx::query("INSERT INTO secret_nonces(key_id,nonce) VALUES(?,?)")
-            .bind(&new.key_id)
-            .bind(new.nonce.as_slice())
-            .execute(&mut *tx)
-            .await
-        {
-            Ok(_) => (),
-            Err(sqlx::Error::Database(e)) if e.is_unique_violation() => {
-                return Err(SecretError::NonceReuse.into());
-            }
-            Err(e) => return Err(storage(e)),
-        }
-        let changed=sqlx::query("UPDATE accounts SET credential_version=?,secret_version=?,key_id=?,nonce=?,ciphertext=? WHERE uin=? AND credential_version=? AND active=1")
-            .bind(version).bind(i64::from(new.version)).bind(new.key_id).bind(new.nonce.as_slice()).bind(new.ciphertext)
-            .bind(i64::from(user.get())).bind(previous).execute(&mut *tx).await.map_err(storage)?.rows_affected();
-        if changed != 1 {
-            return Err(AccountError::StaleCredential);
-        }
-        sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES('local_cli_with_current_password','password_changed',?,?,?,unixepoch())")
-            .bind(i64::from(user.get())).bind(previous).bind(version).execute(&mut *tx).await.map_err(storage)?;
-        // Bound retained metadata on every change. Reads also exclude events older than 30 days.
-        sqlx::query("DELETE FROM admin_audit WHERE occurred_at<unixepoch()-2592000")
-            .execute(&mut *tx)
+        let now = sqlx::query_scalar("SELECT unixepoch()")
+            .fetch_one(&mut *tx)
             .await
             .map_err(storage)?;
-        sqlx::query("DELETE FROM admin_audit WHERE id IN (SELECT id FROM admin_audit ORDER BY id DESC LIMIT -1 OFFSET 10000)").execute(&mut *tx).await.map_err(storage)?;
+        let version = write_password_tx(
+            &mut tx,
+            user,
+            previous,
+            &new,
+            "local_cli_with_current_password",
+            now,
+        )
+        .await?;
         #[cfg(feature = "test-hooks")]
         if std::env::var("RGG_TEST_PASSWORD_CRASH").as_deref() == Ok("before_password_commit") {
             std::process::exit(86);
@@ -95,12 +122,13 @@ impl SqliteStore {
         Ok(version)
     }
     pub async fn password_audit(&self) -> Result<Vec<PasswordAudit>, AccountError> {
-        let rows=sqlx::query("SELECT id,target_uin,previous_version,credential_version,occurred_at FROM admin_audit WHERE occurred_at>=unixepoch()-2592000 ORDER BY id DESC LIMIT 100")
+        let rows=sqlx::query("SELECT id,actor,target_uin,previous_version,credential_version,occurred_at FROM admin_audit WHERE occurred_at>=unixepoch()-2592000 ORDER BY id DESC LIMIT 100")
             .fetch_all(&self.pool).await.map_err(storage)?;
         rows.into_iter()
             .map(|r| {
                 Ok(PasswordAudit {
                     id: r.try_get("id").map_err(storage)?,
+                    actor: r.try_get("actor").map_err(storage)?,
                     user: r
                         .try_get::<i64, _>("target_uin")
                         .map_err(storage)?

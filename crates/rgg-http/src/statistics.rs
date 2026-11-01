@@ -83,6 +83,18 @@ pub(crate) async fn home(State(state): State<HttpState>) -> Response {
             .replace("{{online}}", &s.publicly_online.to_string())
             .replace("{{registration_link}}", registration)
             .replace(
+                "{{password_link}}",
+                if state
+                    .website
+                    .as_ref()
+                    .is_some_and(|w| w.passwords.is_some())
+                {
+                    "<a class=\"button secondary\" href=\"/password\">Zmień hasło</a>"
+                } else {
+                    ""
+                },
+            )
+            .replace(
                 "{{patcher_link}}",
                 if state.website.as_ref().is_some_and(|w| w.patcher.is_some()) {
                     "<a class=\"button secondary\" href=\"/patcher\">Przygotuj własny plik GG</a>"

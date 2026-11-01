@@ -3,6 +3,10 @@
 //! Bounded per-account actors. No account actor ever waits on another account actor.
 use crate::messaging::*;
 use crate::{
+    accounts::AccountError,
+    password::{AuthorizedPasswordChange, PasswordRepository},
+};
+use crate::{
     contacts::{ArchiveResult, ArchiveSegment, ContactArchive},
     presence::{Presence, VisiblePresence},
 };
@@ -73,6 +77,11 @@ enum Request {
     Written(SessionKey, DeliveryLease, Reply<()>),
     Closed([u8; 16], Reply<()>),
     Revoke(i64, Reply<()>),
+    Password(
+        AuthorizedPasswordChange,
+        Arc<dyn PasswordRepository>,
+        oneshot::Sender<Result<i64, AccountError>>,
+    ),
 }
 
 pub struct AccountHandle {
@@ -202,6 +211,30 @@ pub struct ImagePublication {
     _permit: OwnedRwLockReadGuard<()>,
 }
 impl SessionHub {
+    pub(crate) fn now(&self) -> i64 {
+        self.clock.unix_seconds()
+    }
+    pub(crate) async fn change_password(
+        &self,
+        change: AuthorizedPasswordChange,
+        repository: Arc<dyn PasswordRepository>,
+    ) -> Result<i64, AccountError> {
+        let handle = self
+            .account(change.user())
+            .await
+            .map_err(|_| AccountError::Busy)?;
+        let (reply, receive) = oneshot::channel();
+        tokio::time::timeout(Duration::from_secs(12), async {
+            handle
+                .sender
+                .send(Request::Password(change, repository, reply))
+                .await
+                .map_err(|_| AccountError::Busy)?;
+            receive.await.map_err(|_| AccountError::Busy)?
+        })
+        .await
+        .map_err(|_| AccountError::Busy)?
+    }
     pub async fn set_image_limit(&self, key: &SessionKey, kib: u8) -> Result<(), MessagingError> {
         let _permit = self.publication.clone().write_owned().await;
         self.repository.set_image_limit(key, kib).await?;
@@ -440,6 +473,14 @@ impl AccountActor {
         if identity.user != self.user || fence.stopped.is_cancelled() {
             return Err(MessagingError::Stale);
         }
+        // A proof checked before a password change must not disconnect a newer valid session.
+        if !self
+            .repository
+            .credential_is_current(self.user, identity.credential_version)
+            .await?
+        {
+            return Err(MessagingError::Stale);
+        }
         if let Some(old) = &self.active {
             old.fence.barrier(true).await?;
         }
@@ -490,6 +531,37 @@ impl AccountActor {
             let request = tokio::select! {biased;_=self.stop.cancelled()=>break,request=receiver.recv()=>match request{Some(r)=>r,None=>break}};
             let now = self.clock.unix_seconds();
             match request {
+                Request::Password(change, repository, reply) => {
+                    if reply.is_closed() {
+                        continue;
+                    }
+                    let result = async {
+                        if change.user() != self.user
+                            || !repository.password_change_is_current(&change).await?
+                        {
+                            return Err(AccountError::StaleCredential);
+                        }
+                        if let Some(active) = &self.active {
+                            active
+                                .fence
+                                .barrier(true)
+                                .await
+                                .map_err(|_| AccountError::Busy)?;
+                        }
+                        let _permit = self.publication.clone().write_owned().await;
+                        if reply.is_closed() {
+                            return Err(AccountError::Busy);
+                        }
+                        let version = repository
+                            .commit_password_change(&change, self.clock.unix_seconds())
+                            .await?;
+                        self.active = None;
+                        self.revision.fetch_add(1, Ordering::Release);
+                        Ok(version)
+                    }
+                    .await;
+                    let _ = reply.send(result);
+                }
                 Request::Attach(identity, id, fence, reply) => {
                     let _ = reply.send(self.attach(identity, id, fence).await);
                 }

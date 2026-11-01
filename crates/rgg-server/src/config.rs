@@ -18,6 +18,8 @@ pub struct Config {
     #[serde(default)]
     pub web_registration: bool,
     #[serde(default)]
+    pub web_password_change: bool,
+    #[serde(default)]
     pub web_public_stats: bool,
     pub downloads_manifest: Option<PathBuf>,
     pub client_patcher: Option<rgg_http::patcher::Settings>,
@@ -52,6 +54,8 @@ pub enum ConfigError {
     LegacyDiscovery,
     #[error("web_registration requires a GG listener and initialized account keyring")]
     WebRegistration,
+    #[error("web_password_change requires a GG listener and initialized account keyring")]
+    WebPasswordChange,
     #[error("metrics must use a separate loopback endpoint")]
     MetricsEndpoint,
     #[error(
@@ -80,6 +84,9 @@ impl Config {
         }
         if config.web_registration && config.gg_bind.is_none() {
             return Err(ConfigError::WebRegistration);
+        }
+        if config.web_password_change && config.gg_bind.is_none() {
+            return Err(ConfigError::WebPasswordChange);
         }
         if config
             .metrics_bind
@@ -126,6 +133,26 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn password_website_requires_gg_and_is_disabled_by_default() {
+        let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n";
+        assert!(
+            !Config::parse(base, Path::new("."))
+                .unwrap()
+                .web_password_change
+        );
+        assert!(matches!(
+            Config::parse(&format!("{base}web_password_change=true"), Path::new(".")),
+            Err(ConfigError::WebPasswordChange)
+        ));
+        assert!(
+            Config::parse(
+                &format!("{base}web_password_change=true\ngg_bind='127.0.0.1:0'"),
+                Path::new(".")
+            )
+            .is_ok()
+        );
+    }
     #[test]
     fn browser_patcher_is_opt_in_and_validates_hostname_before_database_open() {
         let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n";

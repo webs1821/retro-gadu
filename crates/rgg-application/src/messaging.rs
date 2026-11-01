@@ -178,6 +178,11 @@ pub trait MessagingRepository:
     + crate::directory::DirectoryRepository
     + crate::images::ImageRepository
 {
+    async fn credential_is_current(
+        &self,
+        user: UserId,
+        version: i64,
+    ) -> Result<bool, MessagingError>;
     /// Caller has stopped the previous socket before this atomic attachment.
     async fn attach_session_if_current(
         &self,

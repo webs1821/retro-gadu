@@ -27,6 +27,12 @@ use tokio::sync::Semaphore;
 use zeroize::Zeroizing;
 
 const COOKIE: &str = "rgg_register";
+pub(crate) const PASSWORD_COOKIE: &str = "rgg_password";
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum FormPurpose {
+    Registration,
+    Password,
+}
 // Capacity exceeds all admissions possible during the ten-minute retention window.
 const MAX_TOKENS: usize = 2048;
 const MAX_SOURCE_IPS: usize = 2048;
@@ -50,7 +56,7 @@ impl Budget {
     }
 }
 struct Gate {
-    tokens: HashMap<[u8; 32], (IpAddr, Instant)>,
+    tokens: HashMap<[u8; 32], (IpAddr, Instant, FormPurpose)>,
     ips: HashMap<IpAddr, Budget>,
     global: Budget,
 }
@@ -63,7 +69,7 @@ impl Gate {
         }
     }
     fn purge(&mut self, now: Instant) {
-        self.tokens.retain(|_, (_, expires)| *expires > now);
+        self.tokens.retain(|_, (_, expires, _)| *expires > now);
         self.ips
             .retain(|_, b| now.saturating_duration_since(b.since) < Duration::from_secs(600));
     }
@@ -88,20 +94,40 @@ impl Gate {
         Ok(())
     }
     fn issue(&mut self, token: [u8; 32], ip: IpAddr, now: Instant) -> Result<(), StatusCode> {
+        self.issue_for(token, ip, now, FormPurpose::Registration)
+    }
+    fn issue_for(
+        &mut self,
+        token: [u8; 32],
+        ip: IpAddr,
+        now: Instant,
+        purpose: FormPurpose,
+    ) -> Result<(), StatusCode> {
         self.purge(now);
         if self.tokens.len() >= MAX_TOKENS || self.tokens.contains_key(&token) {
             return Err(StatusCode::SERVICE_UNAVAILABLE);
         }
         self.tokens
-            .insert(token, (ip, now + Duration::from_secs(600)));
+            .insert(token, (ip, now + Duration::from_secs(600), purpose));
         Ok(())
     }
     fn consume(&mut self, token: [u8; 32], ip: IpAddr, now: Instant) -> bool {
+        self.consume_for(token, ip, now, FormPurpose::Registration)
+    }
+    fn consume_for(
+        &mut self,
+        token: [u8; 32],
+        ip: IpAddr,
+        now: Instant,
+        purpose: FormPurpose,
+    ) -> bool {
         self.purge(now);
         if !self
             .tokens
             .get(&token)
-            .is_some_and(|(owner, expires)| *owner == ip && *expires > now)
+            .is_some_and(|(owner, expires, issued_for)| {
+                *owner == ip && *expires > now && *issued_for == purpose
+            })
         {
             return false;
         }
@@ -114,6 +140,7 @@ pub(crate) struct Website {
     pub(crate) statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
     pub(crate) downloads: Option<Arc<crate::downloads::Catalog>>,
     pub(crate) patcher: Option<crate::patcher::Settings>,
+    pub(crate) passwords: Option<Arc<rgg_application::password::PasswordService>>,
     authority: String,
     origin: String,
     gate: Mutex<Gate>,
@@ -124,6 +151,7 @@ impl Website {
         service: Option<Arc<RegistrationService>>,
         statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
         downloads: Option<Arc<crate::downloads::Catalog>>,
+        passwords: Option<Arc<rgg_application::password::PasswordService>>,
         patcher: Option<crate::patcher::Settings>,
         address: SocketAddr,
     ) -> Result<Self, &'static str> {
@@ -132,6 +160,7 @@ impl Website {
             || (service.is_none()
                 && statistics.is_none()
                 && downloads.is_none()
+                && passwords.is_none()
                 && patcher.is_none())
             || patcher.as_ref().is_some_and(|settings| !settings.valid())
         {
@@ -142,6 +171,7 @@ impl Website {
             statistics,
             downloads,
             patcher,
+            passwords,
             authority: address.to_string(),
             origin: format!("http://{address}"),
             gate: Mutex::new(Gate::new(Instant::now())),
@@ -154,6 +184,32 @@ impl Website {
             && headers
                 .get("sec-fetch-site")
                 .is_none_or(|v| v == "same-origin" || v == "none")
+    }
+    pub(crate) fn issue_password_token(&self, ip: IpAddr) -> Result<String, StatusCode> {
+        let mut token = [0u8; 32];
+        rand::rngs::OsRng
+            .try_fill_bytes(&mut token)
+            .map_err(|_| StatusCode::SERVICE_UNAVAILABLE)?;
+        self.gate
+            .lock()
+            .map_err(|_| StatusCode::SERVICE_UNAVAILABLE)?
+            .issue_for(token, ip, Instant::now(), FormPurpose::Password)?;
+        Ok(hex::encode(token))
+    }
+    pub(crate) fn consume_password_token(
+        &self,
+        headers: &HeaderMap,
+        submitted: &str,
+        ip: IpAddr,
+    ) -> bool {
+        match (cookie_named(headers, PASSWORD_COOKIE), token(submitted)) {
+            (Some(cookie), Some(submitted)) if cookie.ct_eq(&submitted).unwrap_u8() == 1 => self
+                .gate
+                .lock()
+                .map(|mut gate| gate.consume_for(cookie, ip, Instant::now(), FormPurpose::Password))
+                .unwrap_or(false),
+            _ => false,
+        }
     }
 }
 fn single_header(headers: &HeaderMap, name: header::HeaderName) -> Option<&str> {
@@ -184,8 +240,11 @@ fn secured(mut response: Response) -> Response {
     response
 }
 pub(crate) fn notice(status: StatusCode, message: &str) -> Response {
+    notice_at(status, message, "/register")
+}
+pub(crate) fn notice_at(status: StatusCode, message: &str, path: &'static str) -> Response {
     // Callers supply only fixed messages or a validated numeric UIN, never raw input/errors.
-    secured((status,Html(format!("<!doctype html><html lang=\"pl\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Retro Gadu</title><link rel=\"stylesheet\" href=\"/assets/registration.css\"><main><p class=\"brand\">Retro Gadu <span>rGG</span></p><h1>{message}</h1><p><a href=\"/register\">Wróć do formularza</a></p></main></html>"))).into_response())
+    secured((status,Html(format!("<!doctype html><html lang=\"pl\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><title>Retro Gadu</title><link rel=\"stylesheet\" href=\"/assets/registration.css\"><main><p class=\"brand\">Retro Gadu <span>rGG</span></p><h1>{message}</h1><p><a href=\"{path}\">Wróć do formularza</a></p></main></html>"))).into_response())
 }
 pub(crate) fn routes(state: HttpState) -> Router<HttpState> {
     Router::new()
@@ -199,6 +258,10 @@ pub(crate) fn routes(state: HttpState) -> Router<HttpState> {
         .route("/assets/client-patcher-core.js", get(crate::patcher::core))
         .route("/assets/client-patch-plan.json", get(crate::patcher::plan))
         .route("/register", get(form).post(submit))
+        .route(
+            "/password",
+            get(crate::password_change::form).post(crate::password_change::submit),
+        )
         .route("/assets/registration.css", get(styles))
         .layer(DefaultBodyLimit::max(4096))
         .route_layer(middleware::from_fn_with_state(state, guard))
@@ -214,6 +277,7 @@ async fn guard(
     };
     let enabled = match request.uri().path() {
         "/register" => web.service.is_some(),
+        "/password" => web.passwords.is_some(),
         "/" | "/api/stats" => web.statistics.is_some(),
         "/assets/registration.css" => true,
         "/downloads" | "/api/downloads" => web.downloads.is_some(),
@@ -229,6 +293,20 @@ async fn guard(
     }
     let patcher_page = request.uri().path() == "/patcher";
     let patcher_route = patcher_page || request.uri().path().starts_with("/assets/client-patch");
+    let password_route = request.uri().path() == "/password";
+    let password_post = password_route && request.method() == Method::POST;
+    if password_route
+        && (request.uri().query().is_some()
+            || (request.headers().contains_key(header::ORIGIN)
+                && single_header(request.headers(), header::ORIGIN) != Some(web.origin.as_str()))
+            || request.headers().get_all("sec-fetch-site").iter().count() > 1)
+    {
+        return notice_at(
+            StatusCode::FORBIDDEN,
+            "Otwórz formularz pod lokalnym adresem tego serwera.",
+            "/password",
+        );
+    }
     if patcher_route {
         if request.method() != Method::GET && request.method() != Method::HEAD {
             return notice(
@@ -280,7 +358,12 @@ async fn guard(
             "Serwer jest zajęty. Spróbuj ponownie.",
         );
     };
-    match tokio::time::timeout(Duration::from_secs(5), next.run(request)).await {
+    match tokio::time::timeout(
+        Duration::from_secs(if password_post { 15 } else { 5 }),
+        next.run(request),
+    )
+    .await
+    {
         Ok(response) => {
             let mut response = secured(response);
             if patcher_page && response.status() == StatusCode::OK {
@@ -357,13 +440,16 @@ fn token(value: &str) -> Option<[u8; 32]> {
     Some(decoded)
 }
 fn cookie(headers: &HeaderMap) -> Option<[u8; 32]> {
+    cookie_named(headers, COOKIE)
+}
+fn cookie_named(headers: &HeaderMap, cookie_name: &str) -> Option<[u8; 32]> {
     let mut found = None;
     for header in headers.get_all(header::COOKIE) {
         for field in header.to_str().ok()?.split(';') {
             let Some((name, value)) = field.trim().split_once('=') else {
                 continue;
             };
-            if name == COOKIE {
+            if name == cookie_name {
                 if found.is_some() {
                     return None;
                 }
@@ -486,6 +572,20 @@ async fn submit(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn csrf_tokens_cannot_cross_registration_and_password_forms() {
+        let now = Instant::now();
+        let ip = "127.0.0.1".parse().unwrap();
+        let mut gate = Gate::new(now);
+        gate.issue([1; 32], ip, now).unwrap();
+        assert!(!gate.consume_for([1; 32], ip, now, FormPurpose::Password));
+        assert!(gate.consume([1; 32], ip, now));
+        gate.issue_for([2; 32], ip, now, FormPurpose::Password)
+            .unwrap();
+        assert!(!gate.consume([2; 32], ip, now));
+        assert!(gate.consume_for([2; 32], ip, now, FormPurpose::Password));
+        assert!(!gate.consume_for([2; 32], ip, now, FormPurpose::Password));
+    }
     #[test]
     fn csrf_is_single_use_ip_bound_expiring_and_bounded() {
         let now = Instant::now();

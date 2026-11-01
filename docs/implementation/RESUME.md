@@ -1,6 +1,28 @@
-# Punkt wznowienia — 2026-11-01, dev.20
+# Punkt wznowienia — 2026-11-01, dev.21
 
-## Najnowsza implementacja: patcher w przeglądarce
+## Najnowsza implementacja: zmiana hasła WWW
+
+Dev.21, schema12, 95 testów Rust, 21 grup regresji TCP/HTTP/CLI przeszło.
+Opt-in web_password_change=true, /password, wymaga GG/keyringu, samodzielnie
+bez rejestracji/statystyk. Pełne obecne hasło, 5 prób/konto/600s trwale,
+nieznany numer bez alokacji. Cel CSRF osobny od rejestracji, cookie HttpOnly,
+Path=/password, SameSite=Strict, wspólne limity HTTP; POST deadline15s.
+Komenda aktora zawiera tylko wersję i zaszyfrowany sekret. Bariera socketu
+i publikacji przed atomową zmianą nonce/secret/version/generation, lease→Pending,
+usunięciem sesji/presence/staging oraz audytem. Reszta danych zachowana.
+Stary dowód logowania nie może zamknąć nowej poprawnej sesji — sprawdzany także
+przed barierą attach, a nie dopiero w końcowej transakcji.
+
+Testy przed/po commit (exit86), stare/nowe kopie, rzeczywista migracja dev20
+11→12 i zachowanie AUTOINCREMENT przy pustym audycie przeszły. CLI pokazuje
+prawdziwego aktora. 190 bibliotek i 9 rekordów pochodzenia; zależności bez zmian.
+Podgląd formularza obejrzany bez wpisywania haseł; serwer i karta zamknięte.
+Normalne binarki bez test-hooks. PASSWORD-WEB.md i VERIFICATION-2026-11-01-dev21.md.
+Obraz i krótki pomiar R0 nadal dev19, bez nowej kwalifikacji kontenera.
+Baseline dev20: /tmp/rgg-baseline-dev20, commit18e3a1a, schema11.
+Nadal brak resetu bez starego hasła, profilu TLS/proxy, natywnego klienta i długiego soak.
+
+## Poprzednia implementacja: patcher w przeglądarce
 
 Dev.20, schema11, 10 modułów, 190 wersji zależności, 89 testów Rust.
 Opt-in [client_patcher] default_host: 1..16 ASCII alnum z pojedynczymi . / -.

@@ -20,6 +20,9 @@ mod operations;
 #[cfg(test)]
 mod operations_tests;
 pub mod password_maintenance;
+mod password_web;
+#[cfg(test)]
+mod password_web_tests;
 mod presence;
 #[cfg(test)]
 mod presence_tests;
@@ -42,7 +45,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 11;
+pub const SCHEMA_VERSION: i64 = 12;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {

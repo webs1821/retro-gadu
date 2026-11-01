@@ -3,6 +3,7 @@
 pub mod downloads;
 mod legacy;
 pub mod metrics;
+mod password_change;
 pub mod patcher;
 mod statistics;
 mod website;
@@ -47,11 +48,12 @@ impl HttpState {
         service: Option<Arc<rgg_application::registration::RegistrationService>>,
         statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
         downloads: Option<Arc<downloads::Catalog>>,
+        passwords: Option<Arc<rgg_application::password::PasswordService>>,
         patcher: Option<patcher::Settings>,
         address: std::net::SocketAddr,
     ) -> Result<Self, &'static str> {
         self.website = Some(Arc::new(website::Website::new(
-            service, statistics, downloads, patcher, address,
+            service, statistics, downloads, passwords, patcher, address,
         )?));
         Ok(self)
     }

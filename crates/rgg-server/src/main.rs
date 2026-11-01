@@ -64,6 +64,15 @@ async fn run() -> Result<(), Error> {
         return Err("unexpected extra argument".into());
     }
     let config = config::Config::load(&config_file)?;
+    if config.web_password_change
+        && config
+            .data_dir
+            .join("keys.pending")
+            .symlink_metadata()
+            .is_ok()
+    {
+        return Err("resume pending key rotation before enabling password changes".into());
+    }
     let downloads = config
         .downloads_manifest
         .as_deref()
@@ -73,6 +82,7 @@ async fn run() -> Result<(), Error> {
     let store = Arc::new(SqliteStore::open(&config.data_dir).await?);
     let prepared = async {
         let mut registration = None;
+        let mut passwords = None;
         let gg = if let Some(bind) = config.gg_bind {
             let ring = Arc::new(rgg_credentials::Keyring::load(
                 &config.data_dir.join("keys.toml"),
@@ -99,6 +109,13 @@ async fn run() -> Result<(), Error> {
                 Arc::new(SystemClock),
                 config.queue.clone(),
             ));
+            if config.web_password_change {
+                passwords = Some(Arc::new(rgg_application::password::PasswordService::new(
+                    store.clone(),
+                    ring.clone(),
+                    hub.clone(),
+                )?));
+            }
             let context = Arc::new(rgg_transport::server::Context {
                 hub,
                 authentication: Authenticator::new(store.clone(), ring)?,
@@ -114,10 +131,10 @@ async fn run() -> Result<(), Error> {
             Some(address) => Some(tokio::net::TcpListener::bind(address).await?),
             None => None,
         };
-        Ok::<_, Error>((listener, gg, registration, metrics))
+        Ok::<_, Error>((listener, gg, registration, metrics, passwords))
     }
     .await;
-    let (listener, gg, registration, metrics) = match prepared {
+    let (listener, gg, registration, metrics, passwords) = match prepared {
         Ok(value) => value,
         Err(error) => {
             store.close().await;
@@ -130,6 +147,7 @@ async fn run() -> Result<(), Error> {
         || config.web_public_stats
         || downloads.is_some()
         || config.client_patcher.is_some()
+        || passwords.is_some()
     {
         let statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>> =
             if config.web_public_stats {
@@ -141,6 +159,7 @@ async fn run() -> Result<(), Error> {
             registration,
             statistics,
             downloads,
+            passwords,
             config.client_patcher,
             address,
         )?

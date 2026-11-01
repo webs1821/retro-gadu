@@ -129,6 +129,8 @@ pub enum AccountError {
     UnchangedPassword,
     #[error("offline password change refuses an account with an active session")]
     ActiveSession,
+    #[error("account operation is busy")]
+    Busy,
     #[error("account storage unavailable")]
     Storage,
     #[error(transparent)]

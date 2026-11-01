@@ -42,6 +42,6 @@ pub async fn change(store: &SqliteStore, user: UserId) -> Result<Value, Error> {
 }
 pub async fn audit(store: &SqliteStore) -> Result<Value, Error> {
     let rows = store.password_audit().await?;
-    let events:Vec<Value>=rows.into_iter().map(|r|json!({"id":r.id,"actor":"local_cli_with_current_password","action":"password_changed","uin":r.user,"previous_version":r.previous_version,"credential_version":r.credential_version,"occurred_at":r.occurred_at})).collect();
+    let events:Vec<Value>=rows.into_iter().map(|r|json!({"id":r.id,"actor":r.actor,"action":"password_changed","uin":r.user,"previous_version":r.previous_version,"credential_version":r.credential_version,"occurred_at":r.occurred_at})).collect();
     Ok(json!({"events":events,"limit":100,"window_days":30}))
 }

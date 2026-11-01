@@ -37,6 +37,7 @@ jobs:
       - run: python tests/gg6_directory.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_discovery.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_registration.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/http_password.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/legacy_invitations.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_statistics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
@@ -48,6 +49,7 @@ jobs:
       - run: python tests/gg6_conferences.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_images.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: cargo build --workspace --locked --features rgg-server/test-hooks
+      - run: python tests/http_password.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: python tests/gg6_conferences.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults

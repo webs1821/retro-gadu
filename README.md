@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.20**, schemat SQLite **11**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.21**, schemat SQLite **12**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -17,6 +17,8 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   nadawcy, z autoryzacją odbiorcy, limitami i weryfikacją CRC.
 - Opcjonalne lokalne discovery HTTP, rejestracja na zaproszenia, wybór numeru,
   strona główna, liczniki i katalog pobierania plików wskazanych w manifeście.
+- Opcjonalna zmiana hasła przez WWW: pełne obecne hasło, trwały limit prób,
+  zamknięcie starej sesji i zachowanie wiadomości, kontaktów oraz profilu.
 - Lokalne CLI: konta, rezerwacje usuniętych numerów, kompletne kopie i restore,
   rotacja kluczy z kopią i wznowieniem, zgodność starych kodów zaproszeń
   i uwierzytelniona zmiana hasła z ograniczonym audytem.
@@ -46,6 +48,7 @@ pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożenio
 - [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.19 i pomiar R0](docs/implementation/VERIFICATION-2026-11-01-r0.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
 - [Patcher przeglądarkowy](docs/implementation/BROWSER-PATCHER.md), [weryfikacja dev.20](docs/implementation/VERIFICATION-2026-11-01-dev20.md)
+- [Zmiana hasła przez WWW](docs/implementation/PASSWORD-WEB.md), [weryfikacja dev.21](docs/implementation/VERIFICATION-2026-11-01-dev21.md)
 - [Ograniczenia HTTP](docs/implementation/HTTP-LIMITS.md), [weryfikacja dev.18](docs/implementation/VERIFICATION-2026-11-01-dev18.md)
 - [Pakiet klienta](docs/implementation/CLIENT-PACKAGES.md), [weryfikacja dev.17](docs/implementation/VERIFICATION-2026-11-01-dev17.md)
 - [Zmiana hasła](docs/implementation/PASSWORD-CHANGE.md), [weryfikacja dev.16](docs/implementation/VERIFICATION-2026-11-01-dev16.md)
@@ -93,6 +96,7 @@ python tests/accounts_cli.py --admin target/debug/rgg-admin --server target/debu
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_directory.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+python tests/http_password.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/http_discovery.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 cargo build --workspace --locked --features rgg-server/test-hooks

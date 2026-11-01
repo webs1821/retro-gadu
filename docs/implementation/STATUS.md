@@ -356,3 +356,18 @@ zły plik, przygotowano i pobrano poprawny, porównano hash z dysku i sprawdzono
 usunięcie starego linku po zmianie adresu. Natywnego klienta nie uruchamiano.
 Podgląd wyłączony. Obraz/R0 nadal odnosi się do dev.19; nie powtarzano go.
 [Kontrakt](BROWSER-PATCHER.md), [weryfikacja](VERIFICATION-2026-11-01-dev20.md).
+
+## 2026-11-01 — dev.21: zmiana hasła przez WWW
+
+Dodano samodzielny opcjonalny formularz z pełnym obecnym hasłem, trwałym limitem
+5 prób/10 minut i oddzielnym celem CSRF. Komenda aktora zatrzymuje stary
+transport przed zmianą sekretu; transakcja obejmuje nonce, wersję, sesję,
+zwolnienie lease i audyt. Stary dowód logowania nie wyrzuca nowszej sesji.
+Migracja 11→12 zachowuje historię i najwyższe ID nawet przy pustym audycie.
+
+95 testów Rust, Clippy i 21 grup regresji rzeczywistych HTTP/TCP/CLI przeszły.
+Sprawdzono dwie awarie procesu, kopie przed/po zmianie oraz prawdziwą migrację
+ze starszej binarki dev.20, również po restore starego archiwum. Formularz
+obejrzano w przeglądarce; zapis testowano klientem HTTP na danych syntetycznych.
+Podgląd zatrzymany. Brak push, zmian produkcji i nowej kwalifikacji obrazu.
+[Kontrakt](PASSWORD-WEB.md), [raport](VERIFICATION-2026-11-01-dev21.md).

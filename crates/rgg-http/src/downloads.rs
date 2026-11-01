@@ -173,7 +173,7 @@ pub(crate) async fn page(State(state): State<HttpState>) -> Response {
         cards.push_str(&format!("<section class=\"artifact\"><p class=\"badge\">{kind} · {} B</p><h2>{}</h2><p>{}</p><a class=\"button\" href=\"/downloads/{}\" download=\"{}\">Pobierz {}</a><details><summary>Pochodzenie i suma kontrolna</summary><p><a href=\"{}\" rel=\"noreferrer noopener\">Źródło pliku</a></p><p>{}</p><p>SHA-256: <code>{}</code></p></details></section>",item.size,escape(&item.title),escape(&item.instructions),item.id,item.file,escape(&item.title),escape(&item.source_url),escape(&item.license),item.sha256));
     }
     let links = format!(
-        "{}{}{}",
+        "{}{}{}{}",
         if web.statistics.is_some() {
             "<a href=\"/\">Strona główna</a> "
         } else {
@@ -186,6 +186,11 @@ pub(crate) async fn page(State(state): State<HttpState>) -> Response {
         },
         if web.patcher.is_some() {
             " <a href=\"/patcher\">Przygotuj własny plik GG</a>"
+        } else {
+            ""
+        },
+        if web.passwords.is_some() {
+            " <a href=\"/password\">Zmień hasło</a>"
         } else {
             ""
         }

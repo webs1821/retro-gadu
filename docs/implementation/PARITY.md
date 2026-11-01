@@ -16,7 +16,7 @@ wyniku testów działającego gg-retro.
 | Ramkowanie GG, fragmentacja, limit, niepełny EOF | gotowe lokalnie | `frame::tests`, `rgg-transport::tests` | nie sprawdzono |
 | Parser LOGIN60, CP1250, GG32 | gotowe lokalnie | testy protokołu i `gg6_sessions.py` | nie sprawdzono |
 | Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI i WWW, offline rotacja kluczy ze wznowieniem; importer ggv1 gotowy na sztucznych danych | accounts::tests, credentials::tests, accounts_cli.py, keys_cli.py | nie dotyczy |
-| Zmiana hasła | gotowe lokalne CLI, pełne obecne hasło, atomowy nonce/wersja/audyt; samoobsługa WWW i reset nie są wdrożone | password_cli.py: GG6, dane i stare/nowe kopie, dwie awarie; testy nonce/session/version/audit | nie sprawdzono |
+| Zmiana hasła | gotowe lokalnie: offline CLI oraz opcjonalne WWW z pełnym obecnym hasłem, trwałym limitem, barierą sesji i atomowym nonce/wersją/audytem; reset bez starego hasła niezaimplementowany | password_cli.py, http_password.py, password_web_tests: stare/nowe logowanie, lease i dane, kopie, konkurencja, dwie awarie, migracja 11→12 | formularz: obejrzany w przeglądarce; logowanie GG6: testy syntetyczne |
 | Logowanie klienta GG | gotowe lokalnie dla LOGIN60/GG32 | logowanie poprawne/błędne, obcy UIN, stare wyzwanie, timeout, pakiet przed loginem | nie sprawdzono |
 | Generacje sesji, zastąpienie sesji, reconnect GG po restarcie | sesje i ponowne otwarcie TCP gotowe lokalnie; automatyczny reconnect oryginalnego klienta niepotwierdzony | bariera zamknięcia, stale credentials, stary detach, FIN po SIGTERM | nie sprawdzono |
 | Trwała kolejka offline, FIFO, ACK po commit | gotowe lokalnie dla tekstu GG6 | `messaging_tests`, `gg6_sessions.py`, powtarzany seq i cofnięty zegar | nie sprawdzono |

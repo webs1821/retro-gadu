@@ -93,6 +93,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0011_password_audit.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    12,
+                    "web password change".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0012_web_password.sql").into(),
+                    false,
+                ),
             ])
         })
     }

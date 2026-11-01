@@ -9,6 +9,7 @@ shutdown_seconds = 5
 # gg_bind = "127.0.0.1:8074"
 # legacy_discovery = true # Requires gg_bind with a loopback IPv4 address.
 # web_registration = true # Local /register; requires gg_bind and an initialized keyring.
+# web_password_change = true # Local /password; requires gg_bind, keyring, no pending rotation.
 # web_public_stats = true # Local / and /api/stats; counts only publicly visible presence.
 # downloads_manifest = 'downloads/manifest.toml' # Optional verified client/installer artifacts.
 

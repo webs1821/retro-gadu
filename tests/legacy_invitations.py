@@ -49,7 +49,7 @@ def migration(lab,server,admin):
     accounts=lab.sql('SELECT * FROM accounts');old_admin=lab.admin
     backup=lab.root/'old-backup';create(lab,backup)
     lab.binary=server;lab.admin=admin;lab.run('stats')
-    assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(11,)]
+    assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(12,)]
     assert lab.sql('SELECT count(*) FROM legacy_invitations')==[(0,)] and lab.sql('SELECT * FROM accounts')==accounts
     assert lab.sql('SELECT used FROM invitations')==[(3,)] and lab.sql('SELECT uin FROM retired_uins')==[(3,)]
     verify(lab,backup,ok=False) # new verifier deliberately requires its exact current schema

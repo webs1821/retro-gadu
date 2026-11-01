@@ -52,7 +52,11 @@ async fn expire(tx: &mut Tx<'_>, now: i64) -> Result<(), MessagingError> {
     sqlx::query("DELETE FROM messages WHERE id IN (SELECT message_id FROM deliveries WHERE terminal_at IS NOT NULL ORDER BY terminal_at DESC,message_id DESC LIMIT -1 OFFSET 100000)").execute(&mut **tx).await.map_err(db)?;
     Ok(())
 }
-async fn release_user(tx: &mut Tx<'_>, user: UserId, now: i64) -> Result<(), MessagingError> {
+pub(crate) async fn release_user(
+    tx: &mut Tx<'_>,
+    user: UserId,
+    now: i64,
+) -> Result<(), MessagingError> {
     sqlx::query("UPDATE delivery_attempts SET outcome='Interrupted',completed_at=? WHERE outcome IS NULL AND message_id IN (SELECT message_id FROM deliveries WHERE recipient=? AND state='Leased')")
         .bind(now).bind(i64::from(user.get())).execute(&mut **tx).await.map_err(db)?;
     sqlx::query("UPDATE deliveries SET state='Pending',lease_token=NULL,session_id=NULL,epoch=NULL,generation=NULL,lease_until=NULL WHERE recipient=? AND state='Leased'")
@@ -97,6 +101,14 @@ pub(crate) async fn replace_privacy_tx(
 
 #[async_trait]
 impl MessagingRepository for SqliteStore {
+    async fn credential_is_current(
+        &self,
+        user: UserId,
+        version: i64,
+    ) -> Result<bool, MessagingError> {
+        sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM accounts WHERE uin=? AND active=1 AND credential_version=? AND session_generation<9223372036854775807 AND EXISTS(SELECT 1 FROM runtime_state WHERE id=1 AND process_epoch=?))")
+            .bind(i64::from(user.get())).bind(version).bind(&self.epoch).fetch_one(&self.pool).await.map_err(db)
+    }
     async fn attach_session_if_current(
         &self,
         user: UserId,
