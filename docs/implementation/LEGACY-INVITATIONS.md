@@ -29,6 +29,6 @@ co wykona migrację. Nowy weryfikator kopii wymaga schematu 9 i odrzuca starszą
 kopię bez modyfikacji. Ta ścieżka została sprawdzona na zachowanych binarkach.
 
 Od dev.15 [importer całego forka](IMPORT-GG-RETRO.md) wypełnia tę tabelę w tej samej
-transakcji co konta i pozostałe dane. Bieżący schemat to 10; procedury kopii
+transakcji co konta i pozostałe dane. Bieżący schemat to 11; procedury kopii
 opisuje [BACKUPS](BACKUPS.md). Nie ma synchronizacji pliku jawnych kodów ani
 publicznej operacji administracyjnej.

@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.15**, schemat SQLite **10**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.16**, schemat SQLite **11**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -18,7 +18,8 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 - Opcjonalne lokalne discovery HTTP, rejestracja na zaproszenia, wybór numeru,
   strona główna, liczniki i katalog pobierania plików wskazanych w manifeście.
 - Lokalne CLI: konta, rezerwacje usuniętych numerów, kompletne kopie i restore,
-  rotacja kluczy z kopią i wznowieniem, zgodność starych kodów zaproszeń.
+  rotacja kluczy z kopią i wznowieniem, zgodność starych kodów zaproszeń
+  i uwierzytelniona zmiana hasła z ograniczonym audytem.
 - Import przypiętej wersji gg-retro 0.8.3 do nowego katalogu: kontrola sekretów,
   ponowne szyfrowanie, zachowanie danych i liczników, transakcja oraz blokada
   startu po nieukończonym imporcie. Testowano wyłącznie sztuczną bazę.
@@ -29,6 +30,7 @@ pracy m.in. granice uploadu kontaktów, pakiet klienta i profil wdrożeniowy.
 
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
+- [Zmiana hasła](docs/implementation/PASSWORD-CHANGE.md), [weryfikacja dev.16](docs/implementation/VERIFICATION-2026-11-01-dev16.md)
 - [Import gg-retro](docs/implementation/IMPORT-GG-RETRO.md), [weryfikacja dev.15](docs/implementation/VERIFICATION-2026-11-01-dev15.md)
 - [Kopie i odtwarzanie](docs/implementation/BACKUPS.md), [rotacja kluczy](docs/implementation/KEY-ROTATION.md)
 - [Sesje i kolejka](docs/implementation/SESSIONS-AND-DELIVERY.md), [obecność i kontakty](docs/implementation/PRESENCE-AND-CONTACTS.md)
@@ -206,7 +208,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.15](docs/implementation/cargo-audit-2026-11-01-dev15.json).
+[raporcie audytu dev.16](docs/implementation/cargo-audit-2026-11-01-dev16.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

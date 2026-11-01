@@ -49,7 +49,7 @@ def normal(server,admin,root):
     assert not (root/'data').exists();done=command(admin,key,data,root/'data');assert done['imported']
     lab=lab_for(server,admin,root)
     try:
-        assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(10,)]
+        assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(11,)]
         assert lab.sql('SELECT uin FROM retired_uins')==[(4,)] and lab.sql('SELECT next_uin FROM number_allocator')==[(112250,)]
         assert lab.sql('SELECT flags FROM contact_rules WHERE owner=1 ORDER BY peer')==[(2,),(4,)]
         assert lab.sql('SELECT friends_only FROM account_privacy WHERE uin=1')==[(1,)]
@@ -127,7 +127,7 @@ def migration(server,admin,root,baseline):
         seed(lab,CODE,used=2);prepare(lab);assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(9,)]
         backup=root/'schema9';create(lab,backup)
         lab.binary=server;lab.admin=admin;lab.run('stats')
-        assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(10,)]
+        assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(11,)]
         assert lab.sql('SELECT used,active FROM legacy_invitations')==[(2,1)] and lab.sql('SELECT count(*) FROM import_receipt')==[(0,)]
         restored=root/'restored9';p=subprocess.run([str(baseline/'rgg-admin'),'restore','--backup',str(backup),'--data-dir',str(restored)],capture_output=True,timeout=15);assert p.returncode==0,p.stderr
         p=subprocess.run([str(admin),'stats','--data-dir',str(restored)],capture_output=True,timeout=15);assert p.returncode==0 and json.loads(p.stdout)['registered']==2

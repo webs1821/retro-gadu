@@ -1,7 +1,7 @@
 # Import gg-retro — dev.15
 
 Lokalny importer przenosi **spójny, nieaktywny obraz** przypiętego gg-retro 0.8.3
-do nowego katalogu rGG (schemat 10). Nie łączy się z produkcją, nie zmienia źródła,
+do nowego katalogu rGG (schemat 10 w dev.15, 11 w dev.16). Nie łączy się z produkcją, nie zmienia źródła,
 nie nadpisuje celu i nie wypisuje haseł. Testy używają wyłącznie danych syntetycznych.
 
 ## Przygotowanie i komendy

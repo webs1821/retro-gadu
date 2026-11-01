@@ -56,6 +56,9 @@ Po domyślnie 10 s (`network.archive_seconds`, zakres 1–60) sesja jest zamykan
 staging porzucany, a poprzednia wersja pozostaje dostępna.
 
 Potwierdzenia wszystkich fragmentów są odroczone do publikacji (maks. 130).
+Przegląd przypiętego libgadu 9eb2aa0 (2026-11-01) potwierdził, że funkcja
+gg_userlist_request wysyła wszystkie fragmenty przed oczekiwaniem na odpowiedzi.
+Nie daje to jednak dowodu zachowania zamkniętego GG6.
 Klient wysyłający kolejne fragmenty dopiero po ACK może wymagać innego,
 osobno udowodnionego profilu. Nie wymyślamy nieudokumentowanych kodów błędów.
 Eksport nie ma tej niejednoznaczności: końcowy pakiet ma odrębny typ GET_REPLY.

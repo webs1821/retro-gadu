@@ -8,7 +8,7 @@ use rgg_domain::UserId;
 use sqlx::Row;
 use std::collections::BTreeMap;
 type Failure = &'static str;
-fn decode(row: &sqlx::sqlite::SqliteRow) -> Result<(UserId, SealedSecret), Failure> {
+pub(crate) fn decode(row: &sqlx::sqlite::SqliteRow) -> Result<(UserId, SealedSecret), Failure> {
     let number: i64 = row.try_get("uin").map_err(|_| "invalid credential row")?;
     let user = UserId::new(number.try_into().map_err(|_| "invalid credential row")?)
         .map_err(|_| "invalid credential row")?;

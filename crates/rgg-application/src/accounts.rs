@@ -22,6 +22,17 @@ impl LegacyPassword {
     pub fn expose(&self) -> &[u8] {
         &self.0
     }
+    /// Compare the complete password in a fixed-size padded buffer, not its GG32 response.
+    pub fn matches(&self, other: &Self) -> bool {
+        use subtle::ConstantTimeEq;
+        let mut left = Zeroizing::new([0u8; 16]);
+        let mut right = Zeroizing::new([0u8; 16]);
+        left[..self.0.len()].copy_from_slice(&self.0);
+        right[..other.0.len()].copy_from_slice(&other.0);
+        left[15] = self.0.len() as u8;
+        right[15] = other.0.len() as u8;
+        bool::from(left.as_slice().ct_eq(right.as_slice()))
+    }
 }
 
 #[derive(Clone)]
@@ -112,6 +123,12 @@ pub enum AccountError {
     Inactive,
     #[error("credential version is no longer current")]
     StaleCredential,
+    #[error("current password is incorrect")]
+    IncorrectPassword,
+    #[error("new password must differ from the current password")]
+    UnchangedPassword,
+    #[error("offline password change refuses an account with an active session")]
+    ActiveSession,
     #[error("account storage unavailable")]
     Storage,
     #[error(transparent)]

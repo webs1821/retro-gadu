@@ -244,3 +244,18 @@ nowego katalogu. Migracja rzeczywistych binarek dev.14 oraz restore schematu 9
 przeszły, podobnie jak pełna regresja funkcji. Brak nowych zewnętrznych wersji
 bibliotek, 0 podatności/ostrzeżeń RustSec. Wszystkie dane syntetyczne.
 [Kontrakt](IMPORT-GG-RETRO.md), [wyniki](VERIFICATION-2026-11-01-dev15.md).
+
+
+## 2026-11-01 — uwierzytelniona zmiana hasła offline, dev.16
+
+Schemat 11 z ograniczonym audytem. CLI i interaktywny pomocnik przyjmują pełne
+obecne hasło; świeży szyfrogram, nonce, credential_version i audyt mają jeden
+commit. Konta, dane rozmów, profile, kontakty i zaproszenia pozostają zachowane.
+77 testów Rust, rzeczywiste logowania GG6 i odtworzenie kopii sprzed/po zmianie,
+dwa przerwania procesu oraz migracja i restore dev.15 przeszły. Importer wraz
+z trzema awariami nadal działa. [Kontrakt](PASSWORD-CHANGE.md),
+[raport](VERIFICATION-2026-11-01-dev16.md). Nadal lokalnie, bez push/wdrożenia.
+
+Przegląd referencji list kontaktów nie rozstrzygnął końca pełnego bloku dla
+zamkniętego GG6; libgadu wysyła fragmenty bez czekania na ACK. Nie zmieniano
+ograniczonego profilu uploadu na podstawie heurystyki.

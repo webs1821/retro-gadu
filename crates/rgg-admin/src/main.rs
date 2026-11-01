@@ -3,6 +3,7 @@
 mod backup;
 mod import;
 mod keys;
+mod password;
 use rgg_application::accounts::{AccountRepository, LegacyPassword, Registration, SecretProtector};
 use rgg_credentials::{Keyring, invitation_digest, legacy_invitation_digest, new_invitation};
 use rgg_domain::UserId;
@@ -40,9 +41,10 @@ async fn run() -> Result<Value, Error> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume|import-check|import-apply> [options]")?;
+        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume|import-check|import-apply|password-change|password-audit> [options]")?;
     let allowed: &[&str] = match command.as_str() {
-        "init" | "account-create" | "stats" => &["--data-dir"],
+        "init" | "account-create" | "stats" | "password-audit" => &["--data-dir"],
+        "password-change" => &["--data-dir", "--uin"],
         "invite" => &["--data-dir", "--count", "--uses"],
         "retire" => &["--data-dir", "--uin"],
         "backup-create" => &["--data-dir", "--output"],
@@ -86,6 +88,14 @@ async fn run() -> Result<Value, Error> {
         .await;
     }
     let path = PathBuf::from(options.get("--data-dir").ok_or("--data-dir is required")?);
+    if command.starts_with("password-") {
+        if !path.join("rgg.sqlite").is_file() || !path.join("keys.toml").is_file() {
+            return Err("password maintenance requires initialized data".into());
+        }
+        if command == "password-change" {
+            let _: UserId = UserId::new(options.get("--uin").ok_or("--uin is required")?.parse()?)?;
+        }
+    }
     if command.starts_with("keys-") {
         if !path.join("rgg.sqlite").is_file() || !path.join("keys.toml").is_file() {
             return Err("key maintenance requires initialized data".into());
@@ -145,6 +155,14 @@ async fn execute(
         return Ok(json!({"initialized": true}));
     }
     match command {
+        "password-change" => {
+            password::change(
+                store,
+                UserId::new(options.get("--uin").ok_or("--uin is required")?.parse()?)?,
+            )
+            .await
+        }
+        "password-audit" => password::audit(store).await,
         "backup-create" => {
             backup::create(
                 store,

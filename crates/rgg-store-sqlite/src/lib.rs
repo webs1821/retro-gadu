@@ -16,6 +16,7 @@ mod messaging;
 #[cfg(test)]
 mod messaging_tests;
 mod migrations;
+pub mod password_maintenance;
 mod presence;
 #[cfg(test)]
 mod presence_tests;
@@ -38,7 +39,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 10;
+pub const SCHEMA_VERSION: i64 = 11;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {
@@ -187,6 +188,9 @@ impl SqliteStore {
             .execute(&mut *tx)
             .await?;
         sqlx::query("DELETE FROM contact_staging")
+            .execute(&mut *tx)
+            .await?;
+        sqlx::query("DELETE FROM admin_audit WHERE occurred_at<unixepoch()-2592000")
             .execute(&mut *tx)
             .await?;
         sqlx::query("INSERT INTO runtime_state(id,process_epoch,started_at) VALUES(1,?,unixepoch()) ON CONFLICT(id) DO UPDATE SET process_epoch=excluded.process_epoch,started_at=excluded.started_at")

@@ -86,6 +86,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0010_import_receipt.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    11,
+                    "password audit".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0011_password_audit.sql").into(),
+                    false,
+                ),
             ])
         })
     }
