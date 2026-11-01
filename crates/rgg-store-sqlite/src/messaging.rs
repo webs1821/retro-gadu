@@ -36,9 +36,11 @@ async fn purge_bodies(tx: &mut Tx<'_>) -> Result<(), MessagingError> {
 async fn privacy_rejections(tx: &mut Tx<'_>, user: UserId, now: i64) -> Result<(), MessagingError> {
     sqlx::query("UPDATE deliveries SET state='RejectedByPrivacy',terminal_at=?,reason='blocked' WHERE recipient=? AND state='Pending' AND message_id IN (SELECT m.id FROM messages m JOIN contact_rules r ON r.owner=m.recipient AND r.peer=m.sender WHERE (r.flags & 4)!=0)")
         .bind(now).bind(i64::from(user.get())).execute(&mut **tx).await.map_err(db)?;
+    crate::images::revoke(tx, now).await?;
     purge_bodies(tx).await
 }
 async fn expire(tx: &mut Tx<'_>, now: i64) -> Result<(), MessagingError> {
+    crate::images::revoke(tx, now).await?;
     // A live writer owns Leased until its transport barrier, even if UTC jumps forward.
     sqlx::query("UPDATE deliveries SET state='Expired',terminal_at=?,reason='ttl' WHERE state='Pending' AND message_id IN (SELECT id FROM messages WHERE expires_at<=?)")
         .bind(now).bind(now).execute(&mut **tx).await.map_err(db)?;
@@ -123,7 +125,7 @@ impl MessagingRepository for SqliteStore {
             .execute(&mut *tx)
             .await
             .map_err(db)?;
-        sqlx::query("INSERT INTO account_sessions(uin,session_id,epoch,generation,credential_version,ready) VALUES(?,?,?,?,?,0) ON CONFLICT(uin) DO UPDATE SET session_id=excluded.session_id,epoch=excluded.epoch,generation=excluded.generation,credential_version=excluded.credential_version,ready=0")
+        sqlx::query("INSERT INTO account_sessions(uin,session_id,epoch,generation,credential_version,ready) VALUES(?,?,?,?,?,0) ON CONFLICT(uin) DO UPDATE SET session_id=excluded.session_id,epoch=excluded.epoch,generation=excluded.generation,credential_version=excluded.credential_version,ready=0,image_limit_kib=0")
             .bind(i64::from(user.get())).bind(id.as_slice()).bind(&self.epoch).bind(generation).bind(credential_version).execute(&mut *tx).await.map_err(db)?;
         tx.commit().await.map_err(db)?;
         Ok(SessionKey {
@@ -253,6 +255,10 @@ impl MessagingRepository for SqliteStore {
         now: i64,
         limits: &QueueLimits,
     ) -> Result<i64, MessagingError> {
+        let images = rgg_application::images::references(&message.styles)?;
+        if !images.is_empty() && message.recipient == session.user {
+            return Err(MessagingError::Invalid);
+        }
         if message.presentation & !12 != 0
             || message.styles.len() > 256
             || message
@@ -288,6 +294,22 @@ impl MessagingRepository for SqliteStore {
             return Err(MessagingError::Rejected);
         }
         expire(&mut tx, now).await?;
+        if !images.is_empty() {
+            let blocked:i64=sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM contact_rules WHERE owner=? AND peer=? AND (flags&4)!=0)").bind(i64::from(session.user.get())).bind(i64::from(message.recipient.get())).fetch_one(&mut *tx).await.map_err(db)?;
+            if blocked != 0 {
+                return Err(MessagingError::Rejected);
+            }
+            let counts=sqlx::query("SELECT count(*) total,COALESCE(sum(sender=? OR recipient=?),0) sender_count,COALESCE(sum(sender=? OR recipient=?),0) recipient_count FROM image_offers").bind(i64::from(session.user.get())).bind(i64::from(session.user.get())).bind(i64::from(message.recipient.get())).bind(i64::from(message.recipient.get())).fetch_one(&mut *tx).await.map_err(db)?;
+            use rgg_application::images::{MAX_OFFERS, MAX_OFFERS_PER_USER};
+            if counts.get::<i64, _>("total") as usize + images.len() > MAX_OFFERS
+                || counts.get::<i64, _>("sender_count") as usize + images.len()
+                    > MAX_OFFERS_PER_USER
+                || counts.get::<i64, _>("recipient_count") as usize + images.len()
+                    > MAX_OFFERS_PER_USER
+            {
+                return Err(MessagingError::Quota);
+            }
+        }
         let row=sqlx::query("SELECT count(*) AS total,COALESCE(sum(m.payload_bytes),0) AS bytes,COALESCE(sum(m.recipient=?),0) AS recipient_count,COALESCE(sum(CASE WHEN m.recipient=? THEN m.payload_bytes ELSE 0 END),0) AS recipient_bytes,COALESCE(sum(m.sender=?),0) AS sender_count FROM messages m JOIN deliveries d ON d.message_id=m.id WHERE d.state IN ('Pending','Leased')")
             .bind(i64::from(message.recipient.get())).bind(i64::from(message.recipient.get())).bind(i64::from(session.user.get())).fetch_one(&mut *tx).await.map_err(db)?;
         if row.get::<i64, _>("total") >= i64::from(limits.global_messages)
@@ -311,6 +333,9 @@ impl MessagingRepository for SqliteStore {
             .bind(i64::from(session.user.get())).bind(i64::from(message.recipient.get())).bind(i64::from(message.client_sequence)).bind(i64::from(message.presentation))
             .bind(message.text.as_str()).bind(styles).bind(conference).bind(size as i64).bind(now).bind(now+i64::from(limits.ttl_seconds)).bind(target).execute(&mut *tx).await.map_err(db)?.last_insert_rowid();
         sqlx::query("INSERT INTO deliveries(message_id,recipient,enqueue_order,state) VALUES(?,?,?,'Pending')").bind(id).bind(i64::from(message.recipient.get())).bind(id).execute(&mut *tx).await.map_err(db)?;
+        for image in images {
+            sqlx::query("INSERT INTO image_offers(message_id,sender,recipient,size,crc32,expires_at) VALUES(?,?,?,?,?,?)").bind(id).bind(i64::from(session.user.get())).bind(i64::from(message.recipient.get())).bind(i64::from(image.size)).bind(i64::from(image.crc32)).bind(now+i64::from(limits.ttl_seconds)).execute(&mut *tx).await.map_err(db)?;
+        }
         #[cfg(feature = "test-hooks")]
         if message.client_sequence == 0xfeed
             && std::env::var("RGG_TEST_CRASH").as_deref() == Ok("before_accept_commit")
@@ -366,13 +391,19 @@ impl MessagingRepository for SqliteStore {
             .and_then(|v| MessageText::new(v).ok())
             .zip(encoded.and_then(|v| serde_json::from_str::<Vec<TextStyle>>(&v).ok()))
             .zip(context.zip(sender))
-            .filter(|(_, (context, sender))| {
+            .filter(|((text, styles), (context, sender))| {
                 row.get::<i64, _>("payload_version") == 1
+                    && styles.len() <= 256
+                    && styles
+                        .iter()
+                        .all(|s| usize::from(s.position) <= text.as_str().chars().count())
+                    && rgg_application::images::references(styles).is_ok()
                     && row.get::<i64, _>("recipient") == i64::from(session.user.get())
                     && context.validate_for(*sender, session.user).is_ok()
             });
         let Some(((text, styles), (conference, sender))) = parsed else {
             sqlx::query("UPDATE deliveries SET state='Rejected',terminal_at=?,reason='payload_integrity' WHERE message_id=? AND state='Pending'").bind(now).bind(id).execute(&mut *tx).await.map_err(db)?;
+            crate::images::revoke(&mut tx, now).await?;
             purge_bodies(&mut tx).await?;
             tx.commit().await.map_err(db)?;
             return Err(MessagingError::Integrity);
@@ -490,6 +521,12 @@ async fn transition(
     .await
     .map_err(db)?;
     if written {
+        sqlx::query("UPDATE image_offers SET expires_at=? WHERE message_id=?")
+            .bind(now.saturating_add(rgg_application::images::OFFER_RETENTION_SECONDS))
+            .bind(lease.id)
+            .execute(&mut *tx)
+            .await
+            .map_err(db)?;
         purge_bodies(&mut tx).await?;
     }
     tx.commit().await.map_err(db)

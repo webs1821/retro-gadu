@@ -7,6 +7,7 @@ pub mod accounts;
 pub mod conferences;
 pub mod contacts;
 pub mod directory;
+pub mod images;
 pub mod messaging;
 pub mod presence;
 pub mod registration;

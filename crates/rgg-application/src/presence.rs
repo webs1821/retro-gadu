@@ -52,6 +52,7 @@ impl Presence {
 pub struct VisiblePresence {
     pub user: UserId,
     pub presence: Presence,
+    pub image_limit_kib: u8,
 }
 /// The subject's policy controls disclosure; a viewer may additionally block the subject.
 pub fn effective_presence_for(presence: &Presence, subject_rule: u8, viewer_rule: u8) -> Presence {

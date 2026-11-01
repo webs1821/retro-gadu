@@ -32,6 +32,8 @@ pub struct TextStyle {
     pub italic: bool,
     pub underline: bool,
     pub color: Option<[u8; 3]>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub image: Option<crate::images::ImageId>,
 }
 
 #[derive(Clone, Debug)]
@@ -174,6 +176,7 @@ pub trait MessagingRepository:
     + crate::presence::PresenceRepository
     + crate::contacts::ContactArchiveRepository
     + crate::directory::DirectoryRepository
+    + crate::images::ImageRepository
 {
     /// Caller has stopped the previous socket before this atomic attachment.
     async fn attach_session_if_current(

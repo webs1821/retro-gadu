@@ -6,6 +6,9 @@ mod accounts;
 mod conference_tests;
 mod contacts;
 mod database;
+#[cfg(test)]
+mod image_tests;
+mod images;
 mod messaging;
 #[cfg(test)]
 mod messaging_tests;
@@ -32,7 +35,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 7;
+pub const SCHEMA_VERSION: i64 = 8;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {

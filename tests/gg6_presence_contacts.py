@@ -37,7 +37,8 @@ def parse_status(body, sized):
     while body:
         assert len(body) >= 14
         user, = struct.unpack("<I", body[:4]); state = body[4]
-        assert body[5:14] == bytes(9), "unexpected metadata disclosure"
+        assert body[5:12] == bytes(7) and body[13] == 0, "unexpected metadata disclosure"
+        assert body[12] == (255 if state in (2,3,4,5) else 0), "unexpected image capability"
         body = body[14:]; text = ""; stamp = None
         if state in (4, 5, 0x15):
             if sized:

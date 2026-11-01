@@ -196,7 +196,103 @@ pub struct DirectoryPublication {
     pub result: crate::directory::ReadResult,
     _permit: OwnedRwLockReadGuard<()>,
 }
+pub struct ImagePublication {
+    pub status: u32,
+    pub response: Option<(UserId, crate::images::ImageControl)>,
+    _permit: OwnedRwLockReadGuard<()>,
+}
 impl SessionHub {
+    pub async fn set_image_limit(&self, key: &SessionKey, kib: u8) -> Result<(), MessagingError> {
+        let _permit = self.publication.clone().write_owned().await;
+        self.repository.set_image_limit(key, kib).await?;
+        self.revision.fetch_add(1, Ordering::Release);
+        Ok(())
+    }
+    pub async fn image_command(
+        &self,
+        key: &SessionKey,
+        peer: UserId,
+        control: crate::images::ImageControl,
+        transfers: &dyn crate::images::ImageTransfers,
+    ) -> Result<ImagePublication, MessagingError> {
+        use crate::images::ImageControl;
+        let permit = self.publication.clone().read_owned().await;
+        if !self.repository.session_is_current(key).await? {
+            return Err(MessagingError::Stale);
+        }
+        control.validate()?;
+        let (status, response) = if let ImageControl::Request(image) = control {
+            match self
+                .repository
+                .authorize_image(key, peer, image, self.clock.unix_seconds())
+                .await
+            {
+                Ok(route) => match transfers.request(route) {
+                    Ok(()) => (2, None),
+                    Err(MessagingError::Quota) => (4, None),
+                    Err(e) => return Err(e),
+                },
+                Err(MessagingError::Rejected | MessagingError::NotReady) => {
+                    (6, Some((peer, ImageControl::Missing(image))))
+                }
+                Err(e) => return Err(e),
+            }
+        } else {
+            match transfers.reply(key, peer, control) {
+                Ok(()) => (2, None),
+                Err(
+                    MessagingError::Rejected | MessagingError::Invalid | MessagingError::Integrity,
+                ) => (6, None),
+                Err(e) => return Err(e),
+            }
+        };
+        Ok(ImagePublication {
+            status,
+            response,
+            _permit: permit,
+        })
+    }
+    pub async fn next_image(
+        &self,
+        key: &SessionKey,
+        transfers: &dyn crate::images::ImageTransfers,
+    ) -> Result<ImagePublication, MessagingError> {
+        let permit = self.publication.clone().read_owned().await;
+        let mut response = None;
+        if let Some(action) = transfers.next(key) {
+            if !self.repository.session_is_current(key).await? {
+                transfers.cancel(&action.route);
+                return Err(MessagingError::Stale);
+            }
+            if self
+                .repository
+                .image_route_current(&action.route, self.clock.unix_seconds())
+                .await?
+            {
+                response = Some((
+                    if action.to_sender {
+                        action.route.recipient.user
+                    } else {
+                        action.route.sender.user
+                    },
+                    action.control,
+                ));
+            } else {
+                transfers.cancel(&action.route);
+                if !action.to_sender {
+                    response = Some((
+                        action.route.sender.user,
+                        crate::images::ImageControl::Missing(action.route.image),
+                    ));
+                }
+            }
+        }
+        Ok(ImagePublication {
+            status: 2,
+            response,
+            _permit: permit,
+        })
+    }
     pub fn new(
         repository: Arc<dyn MessagingRepository>,
         clock: Arc<dyn Clock>,

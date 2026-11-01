@@ -1,0 +1,12 @@
+[package]
+name = "rgg-transfers"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+[dependencies]
+rgg-application.workspace = true
+rgg-domain.workspace = true
+crc.workspace = true
+[lints]
+workspace = true

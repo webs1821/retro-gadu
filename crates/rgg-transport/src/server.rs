@@ -66,6 +66,7 @@ pub struct Context {
     pub hub: Arc<SessionHub>,
     pub authentication: Authenticator,
     pub limits: Limits,
+    pub images: Arc<dyn rgg_application::images::ImageTransfers>,
 }
 struct Proof {
     seed: u32,
@@ -119,6 +120,7 @@ struct Socket {
     _stopped: DropGuard,
     actor: Option<Arc<AccountHandle>>,
     id: [u8; 16],
+    key: Option<SessionKey>,
 }
 type Failure = Box<dyn std::error::Error + Send + Sync>;
 async fn send(socket: &mut Socket, frame: Frame, limits: &Limits) -> Result<(), Failure> {
@@ -132,7 +134,7 @@ async fn send(socket: &mut Socket, frame: Frame, limits: &Limits) -> Result<(), 
 #[derive(Default)]
 struct PresenceCache {
     revision: u64,
-    entries: HashMap<u32, Presence>,
+    entries: HashMap<u32, (Presence, u8)>,
 }
 async fn publish_presence(
     socket: &mut Socket,
@@ -153,7 +155,9 @@ async fn publish_presence(
             }
         } else {
             for view in &publication.entries {
-                if cache.entries.get(&view.user.get()) != Some(&view.presence) {
+                if cache.entries.get(&view.user.get())
+                    != Some(&(view.presence.clone(), view.image_limit_kib))
+                {
                     socket.io.send(presence_wire::changed(view)?).await?;
                 }
             }
@@ -161,7 +165,7 @@ async fn publish_presence(
         cache.entries = publication
             .entries
             .iter()
-            .map(|v| (v.user.get(), v.presence.clone()))
+            .map(|v| (v.user.get(), (v.presence.clone(), v.image_limit_kib)))
             .collect();
         cache.revision = publication.revision;
         Ok::<(), Failure>(())
@@ -213,6 +217,7 @@ async fn connection(stream: TcpStream, context: Arc<Context>) {
         _stopped: fence.stopped.clone().drop_guard(),
         actor: None,
         id: [0; 16],
+        key: None,
     };
     let _ = tokio::select! {biased;
         _=context.hub.shutdown.cancelled()=>Ok(()),_=fence.stop.cancelled()=>Ok(()),
@@ -223,6 +228,9 @@ async fn connection(stream: TcpStream, context: Arc<Context>) {
     }
     let _ = timeout(Duration::from_millis(200), socket.io.get_mut().shutdown()).await;
     let cleanup = socket.actor.clone().map(|actor| (actor, socket.id));
+    if let Some(key) = &socket.key {
+        context.images.disconnect(key);
+    }
     drop(socket);
     if let Some((actor, id)) = cleanup {
         let _ = actor.closed(id).await;
@@ -269,6 +277,8 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
         .try_fill_bytes(&mut socket.id)
         .map_err(|_| "random unavailable")?;
     let key = actor.attach(identity, socket.id, fence.clone()).await?;
+    socket.key = Some(key.clone());
+    ctx.hub.set_image_limit(&key, login.image_limit_kib).await?;
     send(socket, wire::empty(3), &ctx.limits).await?;
     let mut ready = false;
     let mut staging = None;
@@ -451,6 +461,51 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                 0xb if ready => {
                     let (recipient, sequence, no_ack) =
                         wire::message_header(&frame.payload).ok_or("message header")?;
+                    if frame.payload.get(12) == Some(&0) {
+                        match rgg_protocol::gg6_images::decode(&frame.payload) {
+                            Ok((peer, control)) => {
+                                timeout(Duration::from_millis(ctx.limits.write_millis), async {
+                                    let publication = ctx
+                                        .hub
+                                        .image_command(&key, peer, control, ctx.images.as_ref())
+                                        .await?;
+                                    if !no_ack {
+                                        socket
+                                            .io
+                                            .send(wire::acknowledgement(
+                                                publication.status,
+                                                recipient,
+                                                sequence,
+                                            ))
+                                            .await?;
+                                    }
+                                    if let Some((sender, control)) = &publication.response {
+                                        socket
+                                            .io
+                                            .send(rgg_protocol::gg6_images::received(
+                                                *sender, 0, control,
+                                            )?)
+                                            .await?;
+                                    }
+                                    drop(publication);
+                                    Ok::<(), Failure>(())
+                                })
+                                .await??;
+                                ctx.hub.wake(peer).await;
+                            }
+                            Err(_) => {
+                                if !no_ack {
+                                    send(
+                                        socket,
+                                        wire::acknowledgement(6, recipient, sequence),
+                                        &ctx.limits,
+                                    )
+                                    .await?;
+                                }
+                            }
+                        }
+                        continue;
+                    }
                     let status = match wire::decode_message(&frame.payload) {
                         Err(_) => 6,
                         Ok(message) => {
@@ -488,6 +543,23 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
             }
         } else {
             publish_presence(socket, ctx, &key, &mut presence_cache, false).await?;
+            let image_sent = timeout(Duration::from_millis(ctx.limits.write_millis), async {
+                let publication = ctx.hub.next_image(&key, ctx.images.as_ref()).await?;
+                let present = publication.response.is_some();
+                if let Some((sender, control)) = &publication.response {
+                    socket
+                        .io
+                        .send(rgg_protocol::gg6_images::received(*sender, 0, control)?)
+                        .await?;
+                }
+                drop(publication);
+                Ok::<_, Failure>(present)
+            })
+            .await??;
+            if image_sent {
+                drain = true;
+                continue;
+            }
             // The monotonic deadline includes the claim wait; UTC is never a write authorization.
             let deadline = Instant::now() + Duration::from_millis(ctx.limits.write_millis);
             if let Some(lease) = timeout_at(deadline, actor.claim(key.clone())).await?? {

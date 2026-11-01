@@ -73,8 +73,14 @@ fn entry(out: &mut BytesMut, view: &VisiblePresence, sized: bool) -> Result<(), 
     };
     out.put_u32_le(view.user.get());
     out.put_u8(status);
-    // DCC addresses, client fingerprints and image capability are not published in this profile.
-    out.extend_from_slice(&[0; 9]);
+    // DCC addresses and client fingerprints remain private. Offline/hidden has no capability.
+    out.extend_from_slice(&[0; 7]);
+    out.put_u8(if p.availability == Availability::Offline {
+        0
+    } else {
+        view.image_limit_kib
+    });
+    out.put_u8(0);
     if let Some(text) = &p.description {
         let bytes = encode_text(text)?;
         if bytes.len() > 70 {
@@ -130,6 +136,7 @@ mod tests {
         let v = VisiblePresence {
             user: UserId::new(5).unwrap(),
             presence: p,
+            image_limit_kib: 255,
         };
         let a = snapshot(std::slice::from_ref(&v)).unwrap();
         let b = changed(&v).unwrap();

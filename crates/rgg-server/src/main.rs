@@ -95,6 +95,7 @@ async fn run() -> Result<(), Error> {
                 hub,
                 authentication: Authenticator::new(store.clone(), ring)?,
                 limits: config.network.clone(),
+                images: Arc::new(rgg_transfers::Images::default()),
             });
             Some((tokio::net::TcpListener::bind(bind).await?, context))
         } else {

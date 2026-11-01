@@ -7,6 +7,7 @@ pub mod frame;
 pub mod gg6;
 pub mod gg6_contacts;
 pub mod gg6_directory;
+pub mod gg6_images;
 pub mod gg6_messages;
 pub mod gg6_presence;
 pub mod legacy_hash;

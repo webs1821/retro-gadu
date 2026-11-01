@@ -24,7 +24,7 @@ wyniku testów działającego gg-retro.
 | Blokowanie i egzekwowanie prywatności przed pierwszą wiadomością | gotowe lokalnie dla NOTIFY FIRST/LAST/EMPTY i ADD/REMOVE | bramka Ready, blokady offline po restarcie, bez wskrzeszania po odblokowaniu | nie sprawdzono |
 | Lista kontaktów, import/eksport, subskrypcje | częściowe: subskrypcje i archiwum gotowe lokalnie; upload wymaga końcowego fragmentu krótszego niż 2047 B, ACK odroczone | 4000 kontaktów, granice fragmentów, staging, EOF/timeout, 2 awarie przy commit | nie sprawdzono |
 | Formatowanie wiadomości i konferencje | gotowe lokalnie: style i konferencje do 32 osób; jedna kopia na pakiet klienta | CP1250, bold/italic/underline/RGB, cztery osoby online/offline, brak dodatkowego fan-out, prywatność i awarie | nie sprawdzono |
-| Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | brak | — | — |
+| Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | gotowe lokalnie; bez trwałego cache, do 255 KiB | image_tests, rgg-transfers, gg6_images.py: TCP/restart, CRC, limity, polityka, sesje, awarie i migracja | nie sprawdzono |
 | Katalog: własny profil READ/WRITE | gotowe lokalnie: dobrowolność, zastępowanie, usuwanie i własność | `profile_tests`, `gg6_directory.py` | nie sprawdzono |
 | Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | gotowe lokalnie dla GG6; zakres lat zamiast dokładnej daty | polskie filtry, strony 20/20/1, rzadkie pola, prywatność, trwały limit | nie sprawdzono |
 | Zaproszenia 3 użycia, numery ręczne/od 112233 | gotowe lokalnie przez CLI i WWW | test 12 konkurencyjnych rejestracji, kolizji numeru i rollback; `accounts_cli.py` | nie dotyczy |

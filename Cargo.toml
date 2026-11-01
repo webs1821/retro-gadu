@@ -1,14 +1,16 @@
 [workspace]
-members = ["crates/rgg-domain", "crates/rgg-application", "crates/rgg-protocol", "crates/rgg-store-sqlite", "crates/rgg-transport", "crates/rgg-http", "crates/rgg-server", "crates/rgg-credentials", "crates/rgg-admin"]
+members = ["crates/rgg-domain", "crates/rgg-application", "crates/rgg-protocol", "crates/rgg-store-sqlite", "crates/rgg-transport", "crates/rgg-http", "crates/rgg-server", "crates/rgg-credentials", "crates/rgg-admin", "crates/rgg-transfers"]
 resolver = "3"
 
 [workspace.package]
-version = "0.1.0-dev.9"
+version = "0.1.0-dev.10"
 edition = "2024"
 license = "AGPL-3.0-or-later"
 authors = ["webs1821"]
 
 [workspace.dependencies]
+crc = "3.4.0"
+rgg-transfers = { path = "crates/rgg-transfers" }
 rgg-domain = { path = "crates/rgg-domain" }
 rgg-protocol = { path = "crates/rgg-protocol" }
 rgg-application = { path = "crates/rgg-application" }

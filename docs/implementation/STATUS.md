@@ -171,3 +171,15 @@ Ochrona odbiorcy, kwoty i ACK pozostają takie jak w zwykłej wiadomości.
 przeszła na końcowym zwykłym buildzie. Brak nowych zależności zewnętrznych.
 [Kontrakt](CONFERENCES.md), [wyniki](VERIFICATION-2026-11-01-dev9.md).
 E06 nadal wymaga obrazków i kwalifikacji klienta natywnego. Wszystko lokalnie.
+
+## 2026-11-01 — obrazki GG6, dev.10
+
+Schemat 8 i dziesiąty moduł `rgg-transfers`. Trwałe oferty w transakcji wiadomości,
+klasyczne pobieranie od połączonego nadawcy, składanie/CRC w RAM, limity klienta
+i serwera. Uprawnienia są zależne od odbiorcy, obu sesji i blokad; osobne bramki
+publikacji chronią każdy zapis TCP. Historia wiadomości nie usuwa ofert.
+
+68 testów Rust oraz nowe testy TCP/awarii/migracji; szczegóły w
+[raporcie dev.10](VERIFICATION-2026-11-01-dev10.md) i [kontrakcie](IMAGES.md).
+CRC korzysta z już obecnego crc 3.4.0, bez nowej zewnętrznej wersji biblioteki.
+Plan i recenzje pozostają niezmienione. Brak push i wdrożenia rGG.

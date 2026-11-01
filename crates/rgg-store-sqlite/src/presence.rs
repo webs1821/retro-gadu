@@ -71,7 +71,7 @@ impl PresenceRepository for SqliteStore {
             Some(0) => return Err(MessagingError::NotReady),
             _ => {}
         }
-        let rows=sqlx::query("SELECT watch.peer,watch.flags viewer_flags,COALESCE(policy.flags,0) subject_flags,COALESCE(priv.friends_only,0) friends_only,p.availability,p.description,p.return_at,CASE WHEN p.availability='offline' AND p.session_id IS NULL THEN 1 WHEN s.ready=1 AND s.epoch=? AND s.session_id=p.session_id AND a.active=1 AND a.credential_version=s.credential_version AND a.session_generation=s.generation THEN 1 ELSE 0 END visible FROM contact_rules watch LEFT JOIN accounts a ON a.uin=watch.peer LEFT JOIN account_presence p ON p.uin=watch.peer LEFT JOIN account_sessions s ON s.uin=watch.peer LEFT JOIN account_privacy priv ON priv.uin=watch.peer LEFT JOIN contact_rules policy ON policy.owner=watch.peer AND policy.peer=watch.owner WHERE watch.owner=? AND (watch.flags&1)!=0 ORDER BY watch.peer LIMIT 4001")
+        let rows=sqlx::query("SELECT s.image_limit_kib,watch.peer,watch.flags viewer_flags,COALESCE(policy.flags,0) subject_flags,COALESCE(priv.friends_only,0) friends_only,p.availability,p.description,p.return_at,CASE WHEN p.availability='offline' AND p.session_id IS NULL THEN 1 WHEN s.ready=1 AND s.epoch=? AND s.session_id=p.session_id AND a.active=1 AND a.credential_version=s.credential_version AND a.session_generation=s.generation THEN 1 ELSE 0 END visible FROM contact_rules watch LEFT JOIN accounts a ON a.uin=watch.peer LEFT JOIN account_presence p ON p.uin=watch.peer LEFT JOIN account_sessions s ON s.uin=watch.peer LEFT JOIN account_privacy priv ON priv.uin=watch.peer LEFT JOIN contact_rules policy ON policy.owner=watch.peer AND policy.peer=watch.owner WHERE watch.owner=? AND (watch.flags&1)!=0 ORDER BY watch.peer LIMIT 4001")
             .bind(&key.epoch).bind(i64::from(key.user.get())).fetch_all(&mut *tx).await.map_err(db)?;
         if rows.len() > 4000 {
             return Err(MessagingError::Quota);
@@ -79,7 +79,21 @@ impl PresenceRepository for SqliteStore {
         let mut out = Vec::with_capacity(rows.len());
         for r in rows {
             let p = record_presence(&r)?;
+            let visible = effective_presence_for(
+                &p,
+                r.get::<i64, _>("subject_flags") as u8,
+                r.get::<i64, _>("viewer_flags") as u8,
+            );
+            let image_limit_kib = if matches!(
+                visible.availability,
+                Availability::Available | Availability::Away
+            ) {
+                r.get::<Option<i64>, _>("image_limit_kib").unwrap_or(0) as u8
+            } else {
+                0
+            };
             out.push(VisiblePresence {
+                image_limit_kib,
                 user: UserId::new(r.get::<i64, _>("peer") as u32)
                     .map_err(|_| MessagingError::Integrity)?,
                 presence: effective_presence_for(

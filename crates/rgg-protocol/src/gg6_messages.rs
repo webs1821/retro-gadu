@@ -152,7 +152,7 @@ pub fn decode_message(body: &[u8]) -> Result<MessageBundle, DecodeError> {
                     let position = u16::from_le_bytes([rich[0], rich[1]]);
                     let flags = rich[2];
                     rich = &rich[3..];
-                    if flags & !15 != 0 || usize::from(position) > end {
+                    if flags & !143 != 0 || usize::from(position) > end {
                         return Err(DecodeError::Length);
                     }
                     let color = if flags & 8 != 0 {
@@ -165,18 +165,34 @@ pub fn decode_message(body: &[u8]) -> Result<MessageBundle, DecodeError> {
                     } else {
                         None
                     };
+                    let image = if flags & 128 != 0 {
+                        if rich.len() < 10 || rich[..2] != [9, 1] {
+                            return Err(DecodeError::Length);
+                        }
+                        let id = rgg_application::images::ImageId {
+                            size: word(rich, 2),
+                            crc32: word(rich, 6),
+                        };
+                        id.validate().map_err(|_| DecodeError::Length)?;
+                        rich = &rich[10..];
+                        Some(id)
+                    } else {
+                        None
+                    };
                     styles.push(TextStyle {
                         position,
                         bold: flags & 1 != 0,
                         italic: flags & 2 != 0,
                         underline: flags & 4 != 0,
                         color,
+                        image,
                     });
                 }
             }
             _ => return Err(DecodeError::Length),
         }
     }
+    rgg_application::images::references(&styles).map_err(|_| DecodeError::Length)?;
     Ok(MessageBundle {
         recipient: UserId::new(target).map_err(|_| DecodeError::UserNumber)?,
         client_sequence: word(body, 4),
@@ -204,6 +220,7 @@ pub fn received(lease: &DeliveryLease) -> Result<Frame, DecodeError> {
         .conference
         .validate_for(lease.sender, lease.recipient)
         .map_err(|_| DecodeError::Length)?;
+    rgg_application::images::references(&lease.styles).map_err(|_| DecodeError::Length)?;
     let text = encode_text(lease.text.as_str())?;
     if text.len() > 2000 || lease.styles.len() > 256 {
         return Err(DecodeError::Length);
@@ -240,10 +257,16 @@ pub fn received(lease: &DeliveryLease) -> Result<Frame, DecodeError> {
                 u8::from(s.bold)
                     | (u8::from(s.italic) * 2)
                     | (u8::from(s.underline) * 4)
-                    | (u8::from(s.color.is_some()) * 8),
+                    | (u8::from(s.color.is_some()) * 8)
+                    | (u8::from(s.image.is_some()) * 128),
             );
             if let Some(rgb) = s.color {
                 styles.extend_from_slice(&rgb);
+            }
+            if let Some(image) = s.image {
+                styles.extend_from_slice(&[9, 1]);
+                styles.put_u32_le(image.size);
+                styles.put_u32_le(image.crc32);
             }
         }
         b.put_u8(2);
@@ -258,6 +281,51 @@ pub fn received(lease: &DeliveryLease) -> Result<Frame, DecodeError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn image_descriptor_after_color_roundtrips_and_rejects_truncation_and_limits() {
+        let mut body = BytesMut::new();
+        for v in [2u32, 7, 8] {
+            body.put_u32_le(v);
+        }
+        body.extend_from_slice(&[160, 0, 2, 16, 0, 0, 0, 136, 255, 0, 127, 9, 1]);
+        body.put_u32_le(255 * 1024);
+        body.put_u32_le(0x12345678);
+        let m = decode_message(&body).unwrap();
+        assert_eq!(m.styles[0].image.unwrap().size, 255 * 1024);
+        let lease = DeliveryLease {
+            id: 1,
+            token: [0; 16],
+            sender: UserId::new(1).unwrap(),
+            recipient: m.recipient,
+            client_sequence: 7,
+            accepted_at: 100,
+            presentation: m.presentation,
+            queued: false,
+            text: m.text,
+            styles: m.styles,
+            conference: m.conference,
+        };
+        assert_eq!(&received(&lease).unwrap().payload[16..], &body[12..]);
+        for end in 15..body.len() {
+            assert!(decode_message(&body[..end]).is_err());
+        }
+        for size in [0, 255 * 1024 + 1, u32::MAX] {
+            let mut invalid = body.to_vec();
+            invalid[25..29].copy_from_slice(&size.to_le_bytes());
+            assert!(decode_message(&invalid).is_err());
+        }
+        let mut too_many = body[..14].to_vec();
+        let mut rich = Vec::new();
+        for crc in 0u32..9 {
+            rich.extend_from_slice(&[0, 0, 128, 9, 1]);
+            rich.extend_from_slice(&1u32.to_le_bytes());
+            rich.extend_from_slice(&crc.to_le_bytes());
+        }
+        too_many.push(2);
+        too_many.extend_from_slice(&(rich.len() as u16).to_le_bytes());
+        too_many.extend(rich);
+        assert!(decode_message(&too_many).is_err());
+    }
     #[test]
     fn conference_options_preserve_order_accept_styles_in_either_order_and_bound_counts() {
         let header = [2u32, 9, 8]

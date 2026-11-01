@@ -54,7 +54,8 @@ def verify():
         "rgg-http": {"rgg-domain", "rgg-application"},
         "rgg-credentials": {"rgg-domain", "rgg-application"},
         "rgg-admin": {"rgg-domain", "rgg-application", "rgg-store-sqlite", "rgg-credentials"},
-        "rgg-server": {"rgg-domain", "rgg-application", "rgg-protocol", "rgg-store-sqlite", "rgg-transport", "rgg-http", "rgg-credentials"},
+        "rgg-transfers": {"rgg-domain", "rgg-application"},
+        "rgg-server": {"rgg-transfers", "rgg-domain", "rgg-application", "rgg-protocol", "rgg-store-sqlite", "rgg-transport", "rgg-http", "rgg-credentials"},
     }
     root_manifest = tomllib.loads((ROOT / "Cargo.toml").read_text(encoding="utf-8"))
     check(root_manifest["workspace"]["lints"]["rust"]["unsafe_code"] == "forbid", "Own unsafe code must remain forbidden")

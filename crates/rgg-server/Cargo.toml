@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 [dependencies]
+rgg-transfers.workspace = true
 rgg-application.workspace = true
 rgg-credentials.workspace = true
 rgg-transport.workspace = true
