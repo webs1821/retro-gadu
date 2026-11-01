@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.21**, schemat SQLite **12**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.22**, schemat SQLite **12**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -33,7 +33,8 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 - HTTP ma limity gniazd globalnie/na IP oraz czasu bezczynności, zablokowanego
   zapisu i całego połączenia. Syntetyczny pomiar online/offline jest powtarzalny.
 - Prywatne metryki na osobnym, opcjonalnym porcie loopback: sesje, kolejka,
-  przechowywane rekordy i bajty. Ograniczone zapytania i stały zestaw etykiet.
+  przechowywane rekordy i bajty, liczniki wyników oraz histogramy czasu logowania,
+  przyjęcia i dostarczania. Ograniczone zapytania i stały zestaw etykiet.
 - Przypięty lokalny obraz dev.19 z kompletem źródeł; sprawdzone 22 zestawy
   kontroli i krótki profil R0 (100 sesji, 10 wiadomości/s, 1 CPU/256 MiB).
   Starsza próba dev.18 obejmuje też trwały wolumen, restart i backup/restore.
@@ -47,6 +48,7 @@ pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożenio
 - [Kontener lokalny](docs/implementation/CONTAINERS.md), [raport obrazu dev.18](docs/implementation/VERIFICATION-2026-11-01-container.md)
 - [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.19 i pomiar R0](docs/implementation/VERIFICATION-2026-11-01-r0.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
+- [Liczniki i histogramy](docs/implementation/RUNTIME-METRICS.md), [weryfikacja dev.22](docs/implementation/VERIFICATION-2026-11-01-dev22.md)
 - [Patcher przeglądarkowy](docs/implementation/BROWSER-PATCHER.md), [weryfikacja dev.20](docs/implementation/VERIFICATION-2026-11-01-dev20.md)
 - [Zmiana hasła przez WWW](docs/implementation/PASSWORD-WEB.md), [weryfikacja dev.21](docs/implementation/VERIFICATION-2026-11-01-dev21.md)
 - [Ograniczenia HTTP](docs/implementation/HTTP-LIMITS.md), [weryfikacja dev.18](docs/implementation/VERIFICATION-2026-11-01-dev18.md)

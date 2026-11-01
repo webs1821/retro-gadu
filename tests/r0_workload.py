@@ -37,8 +37,8 @@ def metric_snapshot(host, port):
         connection.request('GET', '/metrics')
         response = connection.getresponse()
         assert response.status == 200, 'metrics unavailable'
-        body = response.read(8193)
-        assert len(body) <= 8192
+        body = response.read(16385)
+        assert len(body) <= 16384
         result = {}
         for line in body.decode().splitlines():
             if line and not line.startswith('#'):

@@ -1,6 +1,27 @@
-# Punkt wznowienia — 2026-11-01, dev.21
+# Punkt wznowienia — 2026-11-01, dev.22
 
-## Najnowsza implementacja: zmiana hasła WWW
+## Najnowsza implementacja: runtime metryk
+
+Dev.22, schema12, 100 testów Rust, Clippy all-targets/all-features bez ostrzeżeń.
+Jeden RuntimeTelemetry współdzielony przez transport i osobny metrics router.
+Stałe kategorie, mutex bez I/O/await i snapshot <2KiB; snapshot/format poza DB
+cache. +5 rodzin, łącznie17 rodzin/112szeregów, export<16KiB. Countery resetują
+się z procesem, nie są księgą zdarzeń ani potwierdzeniem odbioru GG6.
+Histogramy obejmują login, accept (bez ACK) i delivery (claim+TCP+record DB).
+Ukończone puste claim pomijane; timeout/cancel też przed otrzymaniem lease liczone.
+Guards liczą anulowanie i zwalniają gauge po drop rzeczywistego socketu.
+
+16 grup regresji przeszło po dostosowaniu czytnika R0 z8 do16KiB; progi
+wydajności bez zmian. Raport zachowuje poprzedni błąd czytnika. Slow reader
+ujawnił zbyt późny początek pierwszej wersji pomiaru — poprawiony; sprawdzono
+timeout, Interrupted i brak Leased. 5 zestawów --faults także przeszło.
+Odtworzono zwykłe binarki bez test-hooks; końcowe runtime_metrics/http_metrics/
+r0_smoke powtórzono po poprawce zakresu. Plan i schema bez zmian, nadal
+190 bibliotek, 9 rekordów pochodzenia. Bez push, wdrożenia i nowego obrazu.
+RUNTIME-METRICS.md, VERIFICATION-2026-11-01-dev22.md i dwa surowe JSON.
+Ostatni sprawdzony obraz i pełny krótki R0 nadal dev19 (niżej).
+
+## Poprzednia implementacja: zmiana hasła WWW
 
 Dev.21, schema12, 95 testów Rust, 21 grup regresji TCP/HTTP/CLI przeszło.
 Opt-in web_password_change=true, /password, wymaga GG/keyringu, samodzielnie

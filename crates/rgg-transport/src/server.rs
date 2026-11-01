@@ -9,6 +9,9 @@ use rgg_application::{
     messaging::{Authenticator, MessagingError, PasswordProof, SessionKey},
     presence::{Availability, Presence},
     sessions::{AccountHandle, IoFence, SessionHub},
+    telemetry::{
+        Admission, ConnectionEnd, ConnectionObservation, Operation, Outcome, RuntimeTelemetry,
+    },
 };
 use rgg_protocol::{
     frame::Frame, gg6, gg6_contacts as archive_wire, gg6_directory as directory_wire,
@@ -67,6 +70,7 @@ pub struct Context {
     pub authentication: Authenticator,
     pub limits: Limits,
     pub images: Arc<dyn rgg_application::images::ImageTransfers>,
+    pub telemetry: Arc<RuntimeTelemetry>,
 }
 struct Proof {
     seed: u32,
@@ -121,8 +125,88 @@ struct Socket {
     actor: Option<Arc<AccountHandle>>,
     id: [u8; 16],
     key: Option<SessionKey>,
+    // Dropped after the socket, including when its task is aborted.
+    observation: ConnectionObservation,
 }
 type Failure = Box<dyn std::error::Error + Send + Sync>;
+#[derive(Debug, thiserror::Error)]
+enum ConversationStop {
+    #[error("closed")]
+    Closed,
+    #[error("login required")]
+    LoginRequired,
+    #[error("idle deadline")]
+    Idle,
+    #[error("initial state deadline")]
+    Initial,
+    #[error("ambiguous or incomplete contact upload")]
+    Upload,
+    #[error("packet rate")]
+    Rate,
+    #[error("unexpected command")]
+    Unexpected,
+}
+fn application_outcome(error: &MessagingError) -> Outcome {
+    match error {
+        MessagingError::Stale => Outcome::Stale,
+        MessagingError::NotReady => Outcome::NotReady,
+        MessagingError::Rejected => Outcome::Rejected,
+        MessagingError::Quota => Outcome::Quota,
+        MessagingError::Invalid => Outcome::Invalid,
+        MessagingError::Storage => Outcome::Storage,
+        MessagingError::Integrity => Outcome::Integrity,
+        MessagingError::Busy => Outcome::Busy,
+    }
+}
+fn failure_outcome(error: &Failure) -> Outcome {
+    if let Some(error) = error.downcast_ref::<MessagingError>() {
+        return application_outcome(error);
+    }
+    if error.is::<tokio::time::error::Elapsed>() {
+        return Outcome::Timeout;
+    }
+    if error.is::<gg6::DecodeError>() {
+        return Outcome::Invalid;
+    }
+    if let Some(error) = error.downcast_ref::<TransportError>() {
+        return match error {
+            TransportError::Frame(_) => Outcome::Invalid,
+            TransportError::Io(error) if error.kind() == std::io::ErrorKind::InvalidData => {
+                Outcome::Invalid
+            }
+            TransportError::Io(_) => Outcome::Transport,
+        };
+    }
+    if let Some(error) = error.downcast_ref::<ConversationStop>() {
+        return match error {
+            ConversationStop::Closed => Outcome::Transport,
+            ConversationStop::LoginRequired | ConversationStop::Unexpected => Outcome::Invalid,
+            ConversationStop::Idle | ConversationStop::Initial | ConversationStop::Upload => {
+                Outcome::Timeout
+            }
+            ConversationStop::Rate => Outcome::Other,
+        };
+    }
+    Outcome::Other
+}
+fn connection_end(result: &Result<(), Failure>) -> ConnectionEnd {
+    let Err(error) = result else {
+        return ConnectionEnd::Finished;
+    };
+    match error.downcast_ref::<ConversationStop>() {
+        Some(ConversationStop::Closed) => return ConnectionEnd::PeerClosed,
+        Some(ConversationStop::Rate) => return ConnectionEnd::Rate,
+        _ => (),
+    }
+    match failure_outcome(error) {
+        Outcome::Invalid => ConnectionEnd::Protocol,
+        Outcome::Timeout => ConnectionEnd::Timeout,
+        Outcome::Transport => ConnectionEnd::Io,
+        Outcome::Storage => ConnectionEnd::Storage,
+        Outcome::Stale => ConnectionEnd::Stale,
+        _ => ConnectionEnd::Other,
+    }
+}
 async fn send(socket: &mut Socket, frame: Frame, limits: &Limits) -> Result<(), Failure> {
     timeout(
         Duration::from_millis(limits.write_millis),
@@ -188,10 +272,13 @@ pub async fn serve(listener: TcpListener, context: Arc<Context>) -> std::io::Res
             incoming=listener.accept()=>{
                 let (stream,address)=match incoming{Ok(v)=>v,Err(e)=>break Err(e)};let ip=address.ip();let now=Instant::now();
                 arrivals.retain(|_,(_,last)|now.duration_since(*last)<Duration::from_secs(60));
-                if !arrivals.contains_key(&ip)&&arrivals.len()>=512{continue;}
+                if !arrivals.contains_key(&ip)&&arrivals.len()>=512{context.telemetry.admission(Admission::AddressCapacity);continue;}
                 let (tokens,last)=arrivals.entry(ip).or_insert((64.0,now));*tokens=(*tokens+now.duration_since(*last).as_secs_f64()*16.0).min(64.0);*last=now;
-                if *tokens<1.0||tasks.len()>=context.limits.max_connections||ips.get(&ip).copied().unwrap_or(0)>=context.limits.per_ip{continue;}*tokens-=1.0;
+                if *tokens<1.0{context.telemetry.admission(Admission::Rate);continue;}
+                if tasks.len()>=context.limits.max_connections{context.telemetry.admission(Admission::GlobalLimit);continue;}
+                if ips.get(&ip).copied().unwrap_or(0)>=context.limits.per_ip{context.telemetry.admission(Admission::IpLimit);continue;}*tokens-=1.0;
                 stream.set_nodelay(true)?;socket2::SockRef::from(&stream).set_send_buffer_size(32*1024)?;
+                context.telemetry.admission(Admission::Accepted);
                 *ips.entry(ip).or_default()+=1;let ctx=context.clone();tasks.spawn(async move{connection(stream,ctx).await;ip});
             }
         }
@@ -218,11 +305,14 @@ async fn connection(stream: TcpStream, context: Arc<Context>) {
         actor: None,
         id: [0; 16],
         key: None,
+        observation: context.telemetry.connection(),
     };
-    let _ = tokio::select! {biased;
-        _=context.hub.shutdown.cancelled()=>Ok(()),_=fence.stop.cancelled()=>Ok(()),
-        result=conversation(&mut socket,&context,&fence)=>result,
+    let end = tokio::select! {biased;
+        _=context.hub.shutdown.cancelled()=>ConnectionEnd::Shutdown,
+        _=fence.stop.cancelled()=>ConnectionEnd::Replaced,
+        result=conversation(&mut socket,&context,&fence)=>connection_end(&result),
     };
+    socket.observation.finish(end);
     if fence.replaced() && socket.io.write_buffer().is_empty() {
         let _ = timeout(Duration::from_millis(200), socket.io.send(wire::empty(0xb))).await;
     }
@@ -237,17 +327,19 @@ async fn connection(stream: TcpStream, context: Arc<Context>) {
     }
 }
 async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Result<(), Failure> {
+    let mut login_observation = ctx.telemetry.operation(Operation::Login);
     let mut random = [0; 4];
-    rand::rngs::OsRng
-        .try_fill_bytes(&mut random)
-        .map_err(|_| "random unavailable")?;
+    rand::rngs::OsRng.try_fill_bytes(&mut random).map_err(|_| {
+        login_observation.finish(Outcome::Other);
+        "random unavailable"
+    })?;
     let seed = u32::from_le_bytes(random);
     let login_deadline = Instant::now() + Duration::from_secs(ctx.limits.login_seconds);
     let login = timeout_at(login_deadline, async {
         send(socket, gg6::welcome(seed), &ctx.limits).await?;
-        let frame = socket.io.next().await.ok_or("closed")??;
+        let frame = socket.io.next().await.ok_or(ConversationStop::Closed)??;
         if frame.kind != gg6::LOGIN60 {
-            return Err("login required".into());
+            return Err(ConversationStop::LoginRequired.into());
         }
         let login = gg6::decode_login(&frame.payload)?;
         presence_wire::from_login(&login)?;
@@ -266,20 +358,42 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
     .await;
     let (login, identity) = match login {
         Ok(Ok(v)) => v,
-        _ => {
+        failed => {
+            login_observation.finish(match &failed {
+                Err(_) => Outcome::Timeout,
+                Ok(Err(error)) => failure_outcome(error),
+                Ok(Ok(_)) => unreachable!("successful branch handled"),
+            });
             send(socket, wire::empty(9), &ctx.limits).await?;
             return Ok(());
         }
     };
-    let actor = ctx.hub.account(login.user).await?;
+    let actor = ctx
+        .hub
+        .account(login.user)
+        .await
+        .inspect_err(|e| login_observation.finish(application_outcome(e)))?;
     socket.actor = Some(actor.clone());
     rand::rngs::OsRng
         .try_fill_bytes(&mut socket.id)
-        .map_err(|_| "random unavailable")?;
-    let key = actor.attach(identity, socket.id, fence.clone()).await?;
+        .map_err(|_| {
+            login_observation.finish(Outcome::Other);
+            "random unavailable"
+        })?;
+    let key = actor
+        .attach(identity, socket.id, fence.clone())
+        .await
+        .inspect_err(|e| login_observation.finish(application_outcome(e)))?;
     socket.key = Some(key.clone());
-    ctx.hub.set_image_limit(&key, login.image_limit_kib).await?;
-    send(socket, wire::empty(3), &ctx.limits).await?;
+    ctx.hub
+        .set_image_limit(&key, login.image_limit_kib)
+        .await
+        .inspect_err(|e| login_observation.finish(application_outcome(e)))?;
+    send(socket, wire::empty(3), &ctx.limits)
+        .await
+        .inspect_err(|e| login_observation.finish(failure_outcome(e)))?;
+    login_observation.finish(Outcome::Success);
+    drop(login_observation);
     let mut ready = false;
     let mut staging = None;
     let mut initial = Instant::now() + Duration::from_secs(ctx.limits.initial_seconds);
@@ -295,10 +409,10 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
     let mut drain = false;
     loop {
         let frame = tokio::select! {biased;
-            _=tokio::time::sleep_until(idle)=>return Err("idle deadline".into()),
-            _=tokio::time::sleep_until(initial),if !ready=>return Err("initial state deadline".into()),
-            _=tokio::time::sleep_until(upload_deadline),if !upload_replies.is_empty()=>return Err("ambiguous or incomplete contact upload".into()),
-            frame=socket.io.next()=>Some(frame.ok_or("closed")??),
+            _=tokio::time::sleep_until(idle)=>return Err(ConversationStop::Idle.into()),
+            _=tokio::time::sleep_until(initial),if !ready=>return Err(ConversationStop::Initial.into()),
+            _=tokio::time::sleep_until(upload_deadline),if !upload_replies.is_empty()=>return Err(ConversationStop::Upload.into()),
+            frame=socket.io.next()=>Some(frame.ok_or(ConversationStop::Closed)??),
             _=actor.wake.notified(),if ready=>None,
             _=poll.tick(),if ready=>None,
             _=std::future::ready(()),if ready&&drain=>None,
@@ -308,7 +422,7 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
             tokens = (tokens + now.duration_since(last).as_secs_f64() * 100.0).min(400.0);
             last = now;
             if tokens < 1.0 {
-                return Err("packet rate".into());
+                return Err(ConversationStop::Rate.into());
             }
             tokens -= 1.0;
             idle = now + Duration::from_secs(ctx.limits.idle_seconds);
@@ -506,12 +620,17 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                         }
                         continue;
                     }
+                    let mut acceptance = ctx.telemetry.operation(Operation::Accept);
                     let status = match wire::decode_message(&frame.payload) {
-                        Err(_) => 6,
+                        Err(_) => {
+                            acceptance.finish(Outcome::Invalid);
+                            6
+                        }
                         Ok(message) => {
                             let user = message.recipient;
                             match actor.accept(key.clone(), message).await {
                                 Ok(_) => {
+                                    acceptance.finish(Outcome::Success);
                                     #[cfg(feature = "test-hooks")]
                                     fault("after_accept_commit", sequence);
                                     #[cfg(feature = "test-hooks")]
@@ -524,9 +643,18 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                                     }
                                     3
                                 }
-                                Err(MessagingError::Quota) => 4,
-                                Err(MessagingError::Rejected | MessagingError::Invalid) => 6,
-                                Err(e) => return Err(e.into()),
+                                Err(MessagingError::Quota) => {
+                                    acceptance.finish(Outcome::Quota);
+                                    4
+                                }
+                                Err(e @ (MessagingError::Rejected | MessagingError::Invalid)) => {
+                                    acceptance.finish(application_outcome(&e));
+                                    6
+                                }
+                                Err(e) => {
+                                    acceptance.finish(application_outcome(&e));
+                                    return Err(e.into());
+                                }
                             }
                         }
                     };
@@ -539,7 +667,7 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                         .await?;
                     }
                 }
-                _ => return Err("unexpected command".into()),
+                _ => return Err(ConversationStop::Unexpected.into()),
             }
         } else {
             publish_presence(socket, ctx, &key, &mut presence_cache, false).await?;
@@ -561,16 +689,31 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
                 continue;
             }
             // The monotonic deadline includes the claim wait; UTC is never a write authorization.
+            let mut delivery = ctx.telemetry.operation(Operation::Delivery);
             let deadline = Instant::now() + Duration::from_millis(ctx.limits.write_millis);
-            if let Some(lease) = timeout_at(deadline, actor.claim(key.clone())).await?? {
+            let claimed = timeout_at(deadline, actor.claim(key.clone()))
+                .await
+                .inspect_err(|_| delivery.finish(Outcome::Timeout))?
+                .inspect_err(|e| delivery.finish(application_outcome(e)))?;
+            if let Some(lease) = claimed {
                 #[cfg(feature = "test-hooks")]
                 fault("before_delivery_write", lease.client_sequence);
-                timeout_at(deadline, socket.io.send(wire::received(&lease)?)).await??;
+                let frame =
+                    wire::received(&lease).inspect_err(|_| delivery.finish(Outcome::Invalid))?;
+                timeout_at(deadline, socket.io.send(frame))
+                    .await
+                    .inspect_err(|_| delivery.finish(Outcome::Timeout))?
+                    .inspect_err(|_| delivery.finish(Outcome::Transport))?;
                 #[cfg(feature = "test-hooks")]
                 fault("after_delivery_write", lease.client_sequence);
-                actor.written(key.clone(), lease).await?;
+                actor
+                    .written(key.clone(), lease)
+                    .await
+                    .inspect_err(|e| delivery.finish(application_outcome(e)))?;
+                delivery.finish(Outcome::Success);
                 drain = true;
             } else {
+                delivery.discard_empty_poll();
                 drain = false;
             }
         }
@@ -580,5 +723,57 @@ async fn conversation(socket: &mut Socket, ctx: &Context, fence: &IoFence) -> Re
 fn fault(stage: &str, sequence: u32) {
     if sequence == 0xfeed && std::env::var("RGG_TEST_CRASH").as_deref() == Ok(stage) {
         std::process::exit(86);
+    }
+}
+
+#[cfg(test)]
+mod telemetry_tests {
+    use super::*;
+    use tokio::io::AsyncReadExt;
+
+    #[tokio::test]
+    async fn abort_drops_the_real_socket_fence_connection_and_operation_observations() {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let mut client = TcpStream::connect(listener.local_addr().unwrap())
+            .await
+            .unwrap();
+        let (stream, _) = listener.accept().await.unwrap();
+        let telemetry = Arc::new(RuntimeTelemetry::default());
+        let telemetry_task = telemetry.clone();
+        let fence = IoFence::new();
+        let stopped = fence.stopped.clone();
+        let (started, received) = tokio::sync::oneshot::channel();
+        let task = tokio::spawn(async move {
+            let _socket = Socket {
+                io: Framed::new(stream, Inbound),
+                _stopped: fence.stopped.drop_guard(),
+                actor: None,
+                id: [0; 16],
+                key: None,
+                observation: telemetry_task.connection(),
+            };
+            let _login = telemetry_task.operation(Operation::Login);
+            started.send(()).unwrap();
+            std::future::pending::<()>().await;
+        });
+        received.await.unwrap();
+        assert_eq!(telemetry.snapshot().active_connections, 1);
+        task.abort();
+        assert!(task.await.unwrap_err().is_cancelled());
+        assert!(stopped.is_cancelled());
+        let snapshot = telemetry.snapshot();
+        assert_eq!(snapshot.active_connections, 0);
+        assert_eq!(snapshot.endings[ConnectionEnd::Cancelled as usize], 1);
+        assert_eq!(
+            snapshot.outcomes[Operation::Login as usize][Outcome::Cancelled as usize],
+            1
+        );
+        assert_eq!(
+            timeout(Duration::from_secs(1), client.read(&mut [0; 1]))
+                .await
+                .unwrap()
+                .unwrap(),
+            0
+        );
     }
 }

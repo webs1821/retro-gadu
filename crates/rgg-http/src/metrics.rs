@@ -11,6 +11,7 @@ use axum::{
     routing::get,
 };
 use rgg_application::operations::{OperationalRepository, OperationalSnapshot};
+use rgg_application::telemetry::RuntimeTelemetry;
 use std::{
     fmt::Write,
     net::SocketAddr,
@@ -25,6 +26,7 @@ use tokio::time::Instant;
 
 struct Metrics {
     repository: Arc<dyn OperationalRepository>,
+    telemetry: Arc<RuntimeTelemetry>,
     ready: Arc<AtomicBool>,
     authority: String,
     origin: String,
@@ -34,6 +36,7 @@ struct Metrics {
 }
 pub fn router(
     repository: Arc<dyn OperationalRepository>,
+    telemetry: Arc<RuntimeTelemetry>,
     health: &HttpState,
     address: SocketAddr,
 ) -> Result<Router, &'static str> {
@@ -42,6 +45,7 @@ pub fn router(
     }
     let state = Arc::new(Metrics {
         repository,
+        telemetry,
         ready: health.ready.clone(),
         authority: address.to_string(),
         origin: format!("http://{address}"),
@@ -139,7 +143,11 @@ async fn scrape(State(state): State<Arc<Metrics>>) -> Response {
                 header::CONTENT_TYPE,
                 "text/plain; version=0.0.4; charset=utf-8",
             )],
-            render(sample, state.started.elapsed().as_secs_f64()),
+            render(
+                sample,
+                state.started.elapsed().as_secs_f64(),
+                state.telemetry.snapshot(),
+            ),
         )
             .into_response(),
         _ => unavailable(),
@@ -155,8 +163,12 @@ fn gauge(output: &mut String, name: &str, help: &str, value: impl std::fmt::Disp
     )
     .expect("String output");
 }
-fn render(s: OperationalSnapshot, uptime: f64) -> String {
-    let mut out = String::with_capacity(4096);
+fn render(
+    s: OperationalSnapshot,
+    uptime: f64,
+    runtime: rgg_application::telemetry::Snapshot,
+) -> String {
+    let mut out = String::with_capacity(16384);
     out.push_str("# HELP rgg_build_info Running binary version.\n# TYPE rgg_build_info gauge\n");
     writeln!(
         out,
@@ -239,6 +251,7 @@ fn render(s: OperationalSnapshot, uptime: f64) -> String {
         "Grants before expiry; other authorization conditions still apply.",
         s.unexpired_image_grants,
     );
+    crate::metrics_runtime::append(&mut out, runtime);
     out
 }
 
@@ -274,6 +287,7 @@ mod tests {
         });
         let state = Arc::new(Metrics {
             repository: repository.clone(),
+            telemetry: Arc::new(RuntimeTelemetry::default()),
             ready: Arc::new(AtomicBool::new(false)),
             authority: "127.0.0.1:9090".into(),
             origin: "http://127.0.0.1:9090".into(),

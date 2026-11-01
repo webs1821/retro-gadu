@@ -371,3 +371,19 @@ ze starszej binarki dev.20, również po restore starego archiwum. Formularz
 obejrzano w przeglądarce; zapis testowano klientem HTTP na danych syntetycznych.
 Podgląd zatrzymany. Brak push, zmian produkcji i nowej kwalifikacji obrazu.
 [Kontrakt](PASSWORD-WEB.md), [raport](VERIFICATION-2026-11-01-dev21.md).
+
+## 2026-11-01 — dev.22: liczniki i histogramy runtime
+
+Dodano stałe liczniki przyjęcia/kończenia połączeń i wyników login/accept/delivery
+oraz histogramy ich czasu monotonicznego. Prywatny eksport ma teraz 17 rodzin
+i 112 szeregów, poniżej 16 KiB. Snapshot jest ograniczony i spójny, bez I/O
+w mutexie i bez danych użytkowników. Anulowanie zadania jest rejestrowane,
+a socket, fence i gauge zwalniane także przy abort. Stan resetuje się z procesem.
+
+100 testów Rust, Clippy, 16 grup regresji i 5 zestawów awaryjnych przeszły.
+Slow reader wskazał, że trzeba objąć pomiarem także claim; poprawka zweryfikowana
+na rzeczywistym TCP, z Interrupted i brakiem pozostawionego Leased. Stary limit
+czytnika R0 zwiększono z 8 do 16 KiB, zachowując progi wydajności i poprzedni
+wynik w raporcie. Końcowe testy runtime/HTTP/smoke powtórzone na zwykłym buildzie.
+Schema12 i 190 bibliotek bez zmian. Brak push, wdrożenia oraz nowego obrazu/R0.
+[Kontrakt](RUNTIME-METRICS.md), [raport](VERIFICATION-2026-11-01-dev22.md).

@@ -15,6 +15,7 @@ pub mod presence;
 pub mod registration;
 pub mod sessions;
 pub mod statistics;
+pub mod telemetry;
 
 pub mod contracts {
     #[derive(Clone, Debug, PartialEq, Eq)]

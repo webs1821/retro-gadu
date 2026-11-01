@@ -1,0 +1,132 @@
+{
+  "schema": 1,
+  "version": "0.1.0-dev.22",
+  "checks": [
+    {
+      "test": "lifecycle",
+      "exit_code": 0,
+      "seconds": 0.293,
+      "output": "PASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\n"
+    },
+    {
+      "test": "runtime_metrics",
+      "exit_code": 0,
+      "seconds": 2.087,
+      "output": "PASS: login outcomes, malformed frames, timeout, replacement and socket release\nPASS: accept results, cumulative histograms, offline replay and volatile reset\nPASS: per-IP/global/rate admission counters and closed connection gauges\n"
+    },
+    {
+      "test": "http_metrics",
+      "exit_code": 0,
+      "seconds": 7.124,
+      "output": "PASS: private gauges, invisible users, offline queue, restart and retirement\nPASS: dedicated endpoint, browser guards, bounded sockets and clean stop\n"
+    },
+    {
+      "test": "http_limits",
+      "exit_code": 0,
+      "seconds": 9.467,
+      "output": "PASS: connection_and_idle_limits\nPASS: traffic_cannot_extend_lifetime\nPASS: stalled_downloads_release_all_capacity\n"
+    },
+    {
+      "test": "http_statistics",
+      "exit_code": 0,
+      "seconds": 1.264,
+      "output": "PASS: snapshot privacy, readiness, replacement, restart and retirement\nPASS: registration integration and independent opt-ins\nPASS: disabled endpoints, Host and shared source-IP budgets\n"
+    },
+    {
+      "test": "http_password",
+      "exit_code": 0,
+      "seconds": 2.322,
+      "output": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\n"
+    },
+    {
+      "test": "gg6_sessions",
+      "exit_code": 0,
+      "seconds": 5.606,
+      "output": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n"
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "exit_code": 0,
+      "seconds": 10.575,
+      "output": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n"
+    },
+    {
+      "test": "gg6_directory",
+      "exit_code": 0,
+      "seconds": 1.239,
+      "output": "PASS: opt-in profiles, native reply forms, Polish filters and persistence\nPASS: directory presence follows viewer privacy\nPASS: directory readiness, malformed fields and persistent rate limit\nPASS: synthetic directory suite; native GG6 qualification remains open\n"
+    },
+    {
+      "test": "gg6_conferences",
+      "exit_code": 0,
+      "seconds": 2.775,
+      "output": "PASS: four participants: one copy each, ordered context/styles, offline restart\nPASS: per-target privacy, malformed contexts and no-ACK\nPASS: participant bound and context bytes charged to quota\n"
+    },
+    {
+      "test": "gg6_images",
+      "exit_code": 0,
+      "seconds": 5.693,
+      "output": "PASS: online verified chunks, recipient authorization and no-ACK\nPASS: offline references, missing sender, restart and post-delivery retrieval\nPASS: ordering CRC blocks malformed packets and session replacement\nPASS: LOGIN60 capacity limits and hidden presence\nPASS: 255 KiB image and conference context grants no additional access\n"
+    },
+    {
+      "test": "http_discovery",
+      "exit_code": 0,
+      "seconds": 0.426,
+      "output": "PASS: disabled/enabled discovery, actual loopback listener, hostile Host ignored, HTTP/1.0 and GG login\nPASS: legacy account operations refused without invitation/account mutations or secret logging\n"
+    },
+    {
+      "test": "http_registration",
+      "exit_code": 0,
+      "seconds": 6.293,
+      "output": "PASS: manual/automatic UIN, invite use, login, messaging and persistence\nPASS: Host/Origin/CSRF, replay, malformed inputs and bounded body\nPASS: twelve concurrent registrations share a three-use invitation\nPASS: request deadline and source-IP budget ignore forwarded headers\n"
+    },
+    {
+      "test": "http_downloads",
+      "exit_code": 0,
+      "seconds": 1.609,
+      "output": "PASS: hash verified immutable snapshot, HTML escaping, headers and integration\nPASS: bad manifests, traversal, duplicates, sizes and symlinks fail before startup\nPASS: independent opt-in, budget and GG isolation\nPASS: four slow streams bounded, disconnect releases capacity\n"
+    },
+    {
+      "test": "http_patcher",
+      "exit_code": 0,
+      "seconds": 0.714,
+      "output": "PASS: opt-in, exact embedded assets, CSP and navigation\nPASS: no upload, Host/Origin/body/query guards, shared budget and early config validation\n"
+    },
+    {
+      "test": "r0_smoke",
+      "exit_code": 1,
+      "seconds": 0.424,
+      "output": "Traceback (most recent call last):\n  File \"/mnt/d/Dokumenty/Documents/RetroGadu/tests/r0_smoke.py\", line 25, in <module>\n    if __name__=='__main__':main()\n  File \"/mnt/d/Dokumenty/Documents/RetroGadu/tests/r0_smoke.py\", line 21, in main\n    report=asyncio.run(run(SimpleNamespace(host='127.0.0.1',gg_port=gg,metrics_port=metrics,sessions=6,offline=2,seconds=5,rate=2)))\n  File \"/usr/local/lib/python3.10/asyncio/runners.py\", line 44, in run\n    return loop.run_until_complete(main)\n  File \"/usr/local/lib/python3.10/asyncio/base_events.py\", line 649, in run_until_complete\n    return future.result()\n  File \"/mnt/d/Dokumenty/Documents/RetroGadu/tests/r0_workload.py\", line 153, in run\n    initial = await snapshot()\n  File \"/mnt/d/Dokumenty/Documents/RetroGadu/tests/r0_workload.py\", line 136, in snapshot\n    return await loop.run_in_executor(None, metric_snapshot, args.host, args.metrics_port)\n  File \"/usr/local/lib/python3.10/concurrent/futures/thread.py\", line 58, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/mnt/d/Dokumenty/Documents/RetroGadu/tests/r0_workload.py\", line 41, in metric_snapshot\n    assert len(body) <= 8192\nAssertionError\n"
+    },
+    {
+      "test": "r0_smoke",
+      "attempt": 2,
+      "exit_code": 0,
+      "seconds": 8.277,
+      "output": "LOAD_EVENT={\"phase\": \"measure_start\", \"at\": 3.506009128, \"sessions\": 6}\nLOAD_EVENT={\"phase\": \"measure_end\", \"at\": 8.507165929}\nLOAD_EVENT={\"phase\": \"offline_replay\", \"messages\": 5}\nLOAD_REPORT={\"format\": 1, \"passed\": true, \"sessions\": 6, \"offline_accounts\": 2, \"rate\": 2, \"duration_seconds\": 5.001, \"scheduled\": 10, \"accepted\": 10, \"online_verified\": 5, \"offline_verified\": 5, \"all_payloads_exact\": true, \"offline_fifo\": true, \"ack_p50_ms\": 4.021, \"ack_p95_ms\": 4.635, \"ack_max_ms\": 4.635, \"online_p95_ms\": 10.084, \"online_max_ms\": 10.084, \"schedule_lag_max_ms\": 1.549, \"achieved_rate\": 1.9995, \"measure_start\": 3.506009128, \"measure_end\": 8.507165929, \"metrics_samples\": [{\"at\": 3.508605691, \"ready_sessions\": 6.0, \"pending\": 0.0, \"queue_bytes\": 0.0}, {\"at\": 4.511789796, \"ready_sessions\": 6.0, \"pending\": 1.0, \"queue_bytes\": 132.0}, {\"at\": 5.514622091, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 396.0}, {\"at\": 6.517894991, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 528.0}, {\"at\": 7.520034763, \"ready_sessions\": 6.0, \"pending\": 4.0, \"queue_bytes\": 528.0}], \"errors\": [], \"native_client_qualified\": false}\nPASS: load driver smoke, 6 sessions/10 messages; R0 not qualified\n"
+    },
+    {
+      "test": "runtime_metrics",
+      "phase": "final_claim_instrumentation",
+      "exit_code": 0,
+      "seconds": 4.043,
+      "output": "PASS: login outcomes, malformed frames, timeout, replacement and socket release\nPASS: accept results, cumulative histograms, offline replay and volatile reset\nPASS: per-IP/global/rate admission counters and closed connection gauges\nPASS: blocked TCP delivery is timed out, counted and released to Pending\n"
+    },
+    {
+      "test": "http_metrics",
+      "phase": "final_claim_instrumentation",
+      "exit_code": 0,
+      "seconds": 7.167,
+      "output": "PASS: private gauges, invisible users, offline queue, restart and retirement\nPASS: dedicated endpoint, browser guards, bounded sockets and clean stop\n"
+    },
+    {
+      "test": "r0_smoke",
+      "phase": "final_claim_instrumentation",
+      "exit_code": 0,
+      "seconds": 8.253,
+      "output": "LOAD_EVENT={\"phase\": \"measure_start\", \"at\": 141.824939398, \"sessions\": 6}\nLOAD_EVENT={\"phase\": \"measure_end\", \"at\": 146.827453098}\nLOAD_EVENT={\"phase\": \"offline_replay\", \"messages\": 5}\nLOAD_REPORT={\"format\": 1, \"passed\": true, \"sessions\": 6, \"offline_accounts\": 2, \"rate\": 2, \"duration_seconds\": 5.003, \"scheduled\": 10, \"accepted\": 10, \"online_verified\": 5, \"offline_verified\": 5, \"all_payloads_exact\": true, \"offline_fifo\": true, \"ack_p50_ms\": 19.272, \"ack_p95_ms\": 23.965, \"ack_max_ms\": 23.965, \"online_p95_ms\": 27.712, \"online_max_ms\": 27.712, \"schedule_lag_max_ms\": 2.58, \"achieved_rate\": 1.999, \"measure_start\": 141.824939398, \"measure_end\": 146.827453098, \"metrics_samples\": [{\"at\": 141.827683801, \"ready_sessions\": 6.0, \"pending\": 0.0, \"queue_bytes\": 0.0}, {\"at\": 142.831103402, \"ready_sessions\": 6.0, \"pending\": 1.0, \"queue_bytes\": 132.0}, {\"at\": 143.834381443, \"ready_sessions\": 6.0, \"pending\": 2.0, \"queue_bytes\": 264.0}, {\"at\": 144.837658345, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 396.0}, {\"at\": 145.840362547, \"ready_sessions\": 6.0, \"pending\": 4.0, \"queue_bytes\": 528.0}], \"errors\": [], \"native_client_qualified\": false}\nPASS: load driver smoke, 6 sessions/10 messages; R0 not qualified\n"
+    }
+  ],
+  "note": "Initial r0 reader allowed only 8 KiB; bounded reader updated to 16 KiB without changing performance thresholds. Slow-reader experiment found a claim timeout before a lease reached transport; final delivery observation includes claim and excludes only completed empty polls.",
+  "latest_checks_passed": true
+}

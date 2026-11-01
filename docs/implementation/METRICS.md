@@ -1,6 +1,6 @@
 # Prywatne metryki operacyjne
 
-Wersja 0.1.0-dev.19. Funkcja jest domyślnie wyłączona. Opcjonalne pole
+Wprowadzono w dev.19, rozszerzono w dev.22. Funkcja jest domyślnie wyłączona. Opcjonalne pole
 `metrics_bind = "127.0.0.1:9090"` na najwyższym poziomie konfiguracji włącza
 osobny listener. Akceptowane są wyłącznie adresy loopback, także IPv6;
 nie można współdzielić tego samego endpointu z HTTP/GG. Port 0 wybiera port
@@ -19,8 +19,10 @@ Własna implementacja na podstawie dokumentacji
 [formatu Prometheus Text 0.0.4](https://prometheus.io/docs/instrumenting/exposition_formats/)
 i [konwencji nazw](https://prometheus.io/docs/practices/naming/), sprawdzonych
 2026-11-01. Nie kopiowano kodu biblioteki eksportera. Odpowiedź UTF-8 z końcowym
-LF, `text/plain; version=0.0.4; charset=utf-8`, stałe HELP/TYPE, 12 rodzin i
-19 szeregów. Wszystkie są gauge; brak etykiet pochodzących od użytkowników.
+LF, `text/plain; version=0.0.4; charset=utf-8`, stałe HELP/TYPE. Poniższy zakres
+obejmuje podstawowe 12 rodzin/19 gauge. Dev.22 dodaje liczniki i histogramy
+[runtime](RUNTIME-METRICS.md): łącznie 17 rodzin/112 szeregów, poniżej 16 KiB.
+Brak etykiet pochodzących od użytkowników.
 
 | Rodzina | Znaczenie |
 |---|---|
@@ -61,8 +63,9 @@ Listener ma niezależne limity: 8 gniazd globalnie, 4/IP, 5 s bezczynności,
 5 s zablokowanego zapisu i 60 s całkowitego życia połączenia. Jego awaria
 uruchamia wspólne zamknięcie usług; shutdown wyłącza Ready i kończy listener.
 
-Na tym etapie nie ma histogramów opóźnień, liczników błędów protokołu ani
-metryk buforów transferów/RSS/CPU w endpointcie. Zewnętrzny lokalny pomiar
+Dev.22 obejmuje histogramy logowania/przyjmowania/dostarczania i skończony
+zestaw wyników runtime. Nadal brak metryk buforów transferów/RSS/CPU w endpointcie.
+Zewnętrzny lokalny pomiar
 procesu pozostaje w `tests/local_endurance.py` i `tests/container_load.py`.
 Krótka próba R0 na obrazie dev.19 jest opisana w
 [osobnym raporcie](VERIFICATION-2026-11-01-r0.md). Długi soak pozostaje otwarty.

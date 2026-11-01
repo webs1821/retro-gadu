@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "version": "0.1.0-dev.22",
+  "test_hooks": true,
+  "checks": [
+    {
+      "test": "gg6_sessions",
+      "exit_code": 0,
+      "seconds": 8.08,
+      "output": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: crash before_accept_commit\nPASS: crash after_accept_commit\nPASS: crash before_delivery_write\nPASS: crash after_delivery_write\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n"
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "exit_code": 0,
+      "seconds": 11.169,
+      "output": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: crash before_archive_commit\nPASS: crash after_archive_commit\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n"
+    },
+    {
+      "test": "gg6_conferences",
+      "exit_code": 0,
+      "seconds": 3.589,
+      "output": "PASS: four participants: one copy each, ordered context/styles, offline restart\nPASS: per-target privacy, malformed contexts and no-ACK\nPASS: participant bound and context bytes charged to quota\nPASS: conference crash before_accept_commit\nPASS: conference crash after_accept_commit\n"
+    },
+    {
+      "test": "gg6_images",
+      "exit_code": 0,
+      "seconds": 6.878,
+      "output": "PASS: online verified chunks, recipient authorization and no-ACK\nPASS: offline references, missing sender, restart and post-delivery retrieval\nPASS: ordering CRC blocks malformed packets and session replacement\nPASS: LOGIN60 capacity limits and hidden presence\nPASS: 255 KiB image and conference context grants no additional access\nPASS: atomic image offer crash before_accept_commit\nPASS: atomic image offer crash after_accept_commit\n"
+    },
+    {
+      "test": "http_password",
+      "exit_code": 0,
+      "seconds": 2.793,
+      "output": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\nPASS: before_web_password_commit\nPASS: after_web_password_commit\n"
+    }
+  ]
+}

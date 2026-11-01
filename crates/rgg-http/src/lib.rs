@@ -3,6 +3,7 @@
 pub mod downloads;
 mod legacy;
 pub mod metrics;
+mod metrics_runtime;
 mod password_change;
 pub mod patcher;
 mod statistics;

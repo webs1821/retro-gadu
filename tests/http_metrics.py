@@ -20,19 +20,28 @@ def metrics(lab):
     assert headers["content-type"]=="text/plain; version=0.0.4; charset=utf-8"
     assert headers["cache-control"]=="no-store" and headers["x-content-type-options"]=="nosniff"
     assert "access-control-allow-origin" not in headers
-    assert body.endswith(b"\n") and b"\r" not in body and len(body)<4096
-    for secret in [CANARY.encode(),b"synthetic@example.invalid",b"LocalTest9!",b"PrivateStatusCanary",b"uin=",b"sender=",b"recipient="]:
+    assert body.endswith(b"\n") and b"\r" not in body and len(body)<16384
+    for secret in [CANARY.encode(),b"RuntimePrivateCanary",b"synthetic@example.invalid",b"LocalTest9!",b"PrivateStatusCanary",b"uin=",b"sender=",b"recipient="]:
         assert secret not in body,secret
     types={};values={}
     for line in body.decode().splitlines():
         if line.startswith("# TYPE "):
-            _,_,name,kind=line.split();assert name not in types and kind=="gauge";types[name]=kind
+            _,_,name,kind=line.split();assert name not in types and kind in ('gauge','counter','histogram');types[name]=kind
         elif not line.startswith("#"):
-            match=re.fullmatch(r'(rgg_[a-z_]+(?:\{[a-z_]+="[A-Za-z0-9_.-]+"\})?) ([0-9]+(?:\.[0-9]+)?)',line)
+            match=re.fullmatch(r'(rgg_[a-z_]+(?:\{[a-z_]+="[A-Za-z0-9_.+-]+"(?:,[a-z_]+="[A-Za-z0-9_.+-]+")*\})?) ([0-9]+(?:\.[0-9]+)?)',line)
             assert match,line
-            key,value=match.groups();assert key not in values and key.split("{")[0] in types
+            key,value=match.groups();name=key.split('{')[0];family=name
+            if name.endswith(('_bucket','_sum','_count')):family=name.rsplit('_',1)[0]
+            assert key not in values and family in types
+            if family!=name:assert types[family]=='histogram'
             values[key]=float(value)
-    assert len(types)==12 and len(values)==19,(types,values)
+    assert len(types)==17 and len(values)==112,(types,values)
+    for operation in ['login','accept','delivery']:
+        base='rgg_operation_duration_seconds'
+        buckets=[values[base+'_bucket{operation="'+operation+'",le="'+bound+'"}'] for bound in ['0.001','0.005','0.01','0.05','0.1','0.5','1','5','15','+Inf']]
+        count=values[base+'_count{operation="'+operation+'"}']
+        assert buckets==sorted(buckets) and buckets[-1]==count
+        assert sum(value for key,value in values.items() if key.startswith('rgg_operations_total{operation="'+operation+'",'))==count
     assert values['rgg_database_schema_version']==12
     assert abs(values['rgg_snapshot_timestamp_seconds']-time.time())<3
     return values

@@ -80,6 +80,7 @@ async fn run() -> Result<(), Error> {
         .transpose()?
         .map(Arc::new);
     let store = Arc::new(SqliteStore::open(&config.data_dir).await?);
+    let telemetry = Arc::new(rgg_application::telemetry::RuntimeTelemetry::default());
     let prepared = async {
         let mut registration = None;
         let mut passwords = None;
@@ -117,6 +118,7 @@ async fn run() -> Result<(), Error> {
                 )?));
             }
             let context = Arc::new(rgg_transport::server::Context {
+                telemetry: telemetry.clone(),
                 hub,
                 authentication: Authenticator::new(store.clone(), ring)?,
                 limits: config.network.clone(),
@@ -175,7 +177,8 @@ async fn run() -> Result<(), Error> {
     let metrics = metrics
         .map(|listener| -> Result<_, Error> {
             let address = listener.local_addr()?;
-            let router = rgg_http::metrics::router(store.clone(), &state, address)?;
+            let router =
+                rgg_http::metrics::router(store.clone(), telemetry.clone(), &state, address)?;
             Ok((listener, router, address))
         })
         .transpose()?;
