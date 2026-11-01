@@ -7,6 +7,7 @@ use crate::{
 };
 use bytes::{BufMut, Bytes, BytesMut};
 use encoding_rs::WINDOWS_1250;
+use rgg_application::conferences::{ConferenceContext, MAX_OTHER_PARTICIPANTS};
 use rgg_application::messaging::{ContactRule, DeliveryLease, MessageBundle, TextStyle};
 use rgg_domain::{MessageText, UserId};
 
@@ -108,42 +109,72 @@ pub fn decode_message(body: &[u8]) -> Result<MessageBundle, DecodeError> {
     }
     let mut options = &body[13 + end..];
     let mut styles = Vec::new();
-    if !options.is_empty() {
-        if options.len() < 3 || options[0] != 2 {
-            return Err(DecodeError::Length);
-        }
-        let len = usize::from(u16::from_le_bytes([options[1], options[2]]));
-        if options.len() != len + 3 {
-            return Err(DecodeError::Length);
-        }
-        options = &options[3..];
-        while !options.is_empty() {
-            if options.len() < 3 || styles.len() >= 256 {
-                return Err(DecodeError::Length);
+    let mut conference = ConferenceContext::default();
+    let mut seen_conference = false;
+    let mut seen_styles = false;
+    while !options.is_empty() {
+        match options[0] {
+            1 if !seen_conference => {
+                seen_conference = true;
+                if options.len() < 5 {
+                    return Err(DecodeError::Length);
+                }
+                let count = word(options, 1) as usize;
+                if count > MAX_OTHER_PARTICIPANTS || options.len() < 5 + 4 * count {
+                    return Err(DecodeError::Length);
+                }
+                let mut others = Vec::with_capacity(count);
+                for i in 0..count {
+                    let value = word(options, 5 + 4 * i);
+                    if value > 0xffffff || value == target {
+                        return Err(DecodeError::UserNumber);
+                    }
+                    others.push(UserId::new(value).map_err(|_| DecodeError::UserNumber)?);
+                }
+                conference = ConferenceContext::new(others).map_err(|_| DecodeError::Length)?;
+                options = &options[5 + 4 * count..];
             }
-            let position = u16::from_le_bytes([options[0], options[1]]);
-            let flags = options[2];
-            options = &options[3..];
-            if flags & !15 != 0 || usize::from(position) > end {
-                return Err(DecodeError::Length);
-            }
-            let color = if flags & 8 != 0 {
+            2 if !seen_styles => {
+                seen_styles = true;
                 if options.len() < 3 {
                     return Err(DecodeError::Length);
                 }
-                let rgb = [options[0], options[1], options[2]];
-                options = &options[3..];
-                Some(rgb)
-            } else {
-                None
-            };
-            styles.push(TextStyle {
-                position,
-                bold: flags & 1 != 0,
-                italic: flags & 2 != 0,
-                underline: flags & 4 != 0,
-                color,
-            });
+                let len = usize::from(u16::from_le_bytes([options[1], options[2]]));
+                if options.len() < 3 + len {
+                    return Err(DecodeError::Length);
+                }
+                let mut rich = &options[3..3 + len];
+                options = &options[3 + len..];
+                while !rich.is_empty() {
+                    if rich.len() < 3 || styles.len() >= 256 {
+                        return Err(DecodeError::Length);
+                    }
+                    let position = u16::from_le_bytes([rich[0], rich[1]]);
+                    let flags = rich[2];
+                    rich = &rich[3..];
+                    if flags & !15 != 0 || usize::from(position) > end {
+                        return Err(DecodeError::Length);
+                    }
+                    let color = if flags & 8 != 0 {
+                        if rich.len() < 3 {
+                            return Err(DecodeError::Length);
+                        }
+                        let rgb = [rich[0], rich[1], rich[2]];
+                        rich = &rich[3..];
+                        Some(rgb)
+                    } else {
+                        None
+                    };
+                    styles.push(TextStyle {
+                        position,
+                        bold: flags & 1 != 0,
+                        italic: flags & 2 != 0,
+                        underline: flags & 4 != 0,
+                        color,
+                    });
+                }
+            }
+            _ => return Err(DecodeError::Length),
         }
     }
     Ok(MessageBundle {
@@ -152,6 +183,7 @@ pub fn decode_message(body: &[u8]) -> Result<MessageBundle, DecodeError> {
         presentation: (class & 12) as u8,
         text: MessageText::new(text.into_owned()).map_err(|_| DecodeError::Length)?,
         styles,
+        conference,
     })
 }
 pub fn acknowledgement(status: u32, recipient: u32, sequence: u32) -> Frame {
@@ -165,6 +197,13 @@ pub fn acknowledgement(status: u32, recipient: u32, sequence: u32) -> Frame {
     }
 }
 pub fn received(lease: &DeliveryLease) -> Result<Frame, DecodeError> {
+    if lease.sender.get() > 0xffffff || lease.recipient.get() > 0xffffff {
+        return Err(DecodeError::UserNumber);
+    }
+    lease
+        .conference
+        .validate_for(lease.sender, lease.recipient)
+        .map_err(|_| DecodeError::Length)?;
     let text = encode_text(lease.text.as_str())?;
     if text.len() > 2000 || lease.styles.len() > 256 {
         return Err(DecodeError::Length);
@@ -180,6 +219,16 @@ pub fn received(lease: &DeliveryLease) -> Result<Frame, DecodeError> {
     }
     b.extend_from_slice(&text);
     b.put_u8(0);
+    if !lease.conference.others().is_empty() {
+        b.put_u8(1);
+        b.put_u32_le(lease.conference.others().len() as u32);
+        for user in lease.conference.others() {
+            if user.get() > 0xffffff {
+                return Err(DecodeError::UserNumber);
+            }
+            b.put_u32_le(user.get());
+        }
+    }
     if !lease.styles.is_empty() {
         let mut styles = BytesMut::new();
         for s in &lease.styles {
@@ -210,6 +259,75 @@ pub fn received(lease: &DeliveryLease) -> Result<Frame, DecodeError> {
 mod tests {
     use super::*;
     #[test]
+    fn conference_options_preserve_order_accept_styles_in_either_order_and_bound_counts() {
+        let header = [2u32, 9, 8]
+            .into_iter()
+            .flat_map(u32::to_le_bytes)
+            .chain(b"text\0".iter().copied())
+            .collect::<Vec<_>>();
+        let group = [
+            vec![1],
+            2u32.to_le_bytes().to_vec(),
+            4u32.to_le_bytes().to_vec(),
+            3u32.to_le_bytes().to_vec(),
+        ]
+        .concat();
+        let rich = vec![2, 3, 0, 0, 0, 1];
+        for options in [
+            [group.clone(), rich.clone()].concat(),
+            [rich.clone(), group.clone()].concat(),
+        ] {
+            let m = decode_message(&[header.clone(), options].concat()).unwrap();
+            assert_eq!(
+                m.conference
+                    .others()
+                    .iter()
+                    .map(|u| u.get())
+                    .collect::<Vec<_>>(),
+                [4, 3]
+            );
+            let lease = DeliveryLease {
+                id: 1,
+                token: [0; 16],
+                sender: UserId::new(1).unwrap(),
+                recipient: m.recipient,
+                client_sequence: 9,
+                accepted_at: 100,
+                presentation: m.presentation,
+                queued: true,
+                text: m.text,
+                styles: m.styles,
+                conference: m.conference,
+            };
+            assert_eq!(
+                &received(&lease).unwrap().payload[16..],
+                &[b"text\0".to_vec(), group.clone(), rich.clone()].concat()
+            );
+        }
+        let invalid = [
+            vec![1],
+            vec![1, 255, 255, 255, 255],
+            vec![1, 31, 0, 0, 0],
+            vec![1, 1, 0, 0, 0],
+            vec![1, 1, 0, 0, 0, 0, 0, 0, 0],
+            vec![1, 1, 0, 0, 0, 2, 0, 0, 0],
+            vec![1, 1, 0, 0, 0, 0, 0, 0, 1],
+            vec![1, 2, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0],
+            [group.clone(), group].concat(),
+            [rich.clone(), rich].concat(),
+        ];
+        for options in invalid {
+            assert!(decode_message(&[header.clone(), options].concat()).is_err());
+        }
+        assert!(
+            decode_message(&[header, vec![1, 0, 0, 0, 0]].concat())
+                .unwrap()
+                .conference
+                .others()
+                .is_empty()
+        );
+    }
+    #[test]
     fn message_roundtrip_strips_untrusted_flags_and_preserves_polish_styles() {
         let mut b = BytesMut::new();
         for v in [42u32, 7, 1 | 8 | 32] {
@@ -224,12 +342,14 @@ mod tests {
             id: 1,
             token: [0; 16],
             sender: UserId::new(1).unwrap(),
+            recipient: UserId::new(42).unwrap(),
             client_sequence: 7,
             accepted_at: 42,
             presentation: m.presentation,
             queued: false,
             text: m.text,
             styles: m.styles,
+            conference: m.conference,
         };
         let f = received(&l).unwrap();
         assert_eq!(word(&f.payload, 12), 8);

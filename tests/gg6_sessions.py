@@ -134,7 +134,7 @@ def normal(lab):
         assert a.message(2, seq, text, flags=9, options=options) == 3
         assert lab.sql("SELECT count(*) FROM deliveries")[0][0] >= 1  # observable commit BEFORE ACK
     a.message(2, 9, "bez ACK", flags=40, ack=False); a.ping()
-    assert a.message(2, 10, options=bytes([1])) == 6  # unsupported conference
+    assert a.message(2, 10, options=bytes([1])) == 6  # truncated conference option
     assert a.message(2, 10, options=bytes([2, 3, 0, 0, 0, 128])) == 6  # unsupported image
     assert a.message(999, 11) == 6
     assert lab.sql("SELECT count(*) FROM messages")[0][0] == 4

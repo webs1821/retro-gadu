@@ -117,3 +117,11 @@ Zwykły build nie zawiera mechanizmów wymuszania awarii. Opcja `test-hooks`
 uruchamia je wyłącznie dla syntetycznego seq `0xfeed`; skrypt testowy tworzy
 własny proces, katalog i porty. Testowane granice: przed commit przyjęcia,
 po commit przed ACK, po claim przed zapisem oraz po zapisie przed utrwaleniem wyniku.
+
+## Rozszerzenie dev.9
+
+Schemat 7 dodaje uporządkowany kontekst konferencji, zapisany w tej samej
+transakcji co treść i dostarczenie. JSON uczestników wchodzi do limitów bajtów.
+Usunięcie treści terminalnej czyści także kontekst. Migracja starych wiadomości
+dodaje pustą listę i koryguje liczbę bajtów o jej dwa znaki.
+[Pełny kontrakt konferencji](CONFERENCES.md).

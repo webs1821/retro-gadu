@@ -3,6 +3,7 @@
 use crate::{SqliteStore, database as sqlx};
 use async_trait::async_trait;
 use rand::TryRngCore;
+use rgg_application::conferences::ConferenceContext;
 use rgg_application::messaging::*;
 use rgg_domain::{MessageText, UserId};
 use sqlx::{Row, Sqlite, Transaction};
@@ -28,7 +29,7 @@ pub(crate) async fn fence(
 }
 
 async fn purge_bodies(tx: &mut Tx<'_>) -> Result<(), MessagingError> {
-    sqlx::query("UPDATE messages SET body=NULL,styles=NULL WHERE body IS NOT NULL AND id IN (SELECT message_id FROM deliveries WHERE state NOT IN ('Pending','Leased'))")
+    sqlx::query("UPDATE messages SET body=NULL,styles=NULL,conference=NULL WHERE (body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL) AND id IN (SELECT message_id FROM deliveries WHERE state NOT IN ('Pending','Leased'))")
         .execute(&mut **tx).await.map_err(db)?;
     Ok(())
 }
@@ -262,8 +263,20 @@ impl MessagingRepository for SqliteStore {
         {
             return Err(MessagingError::Invalid);
         }
+        message
+            .conference
+            .validate_for(session.user, message.recipient)?;
+        let conference = serde_json::to_string(
+            &message
+                .conference
+                .others()
+                .iter()
+                .map(|u| u.get())
+                .collect::<Vec<_>>(),
+        )
+        .map_err(|_| MessagingError::Invalid)?;
         let styles = serde_json::to_string(&message.styles).map_err(|_| MessagingError::Invalid)?;
-        let size = message.text.as_str().len() + styles.len();
+        let size = message.text.as_str().len() + styles.len() + conference.len();
         if size > 48 * 1024 {
             return Err(MessagingError::Invalid);
         }
@@ -294,9 +307,9 @@ impl MessagingRepository for SqliteStore {
         .fetch_optional(&mut *tx)
         .await
         .map_err(db)?;
-        let id=sqlx::query("INSERT INTO messages(sender,recipient,client_sequence,payload_version,presentation,body,styles,payload_bytes,accepted_at,expires_at,target_session) VALUES(?,?,?,1,?,?,?,?,?,?,?)")
+        let id=sqlx::query("INSERT INTO messages(sender,recipient,client_sequence,payload_version,presentation,body,styles,conference,payload_bytes,accepted_at,expires_at,target_session) VALUES(?,?,?,1,?,?,?,?,?,?,?,?)")
             .bind(i64::from(session.user.get())).bind(i64::from(message.recipient.get())).bind(i64::from(message.client_sequence)).bind(i64::from(message.presentation))
-            .bind(message.text.as_str()).bind(styles).bind(size as i64).bind(now).bind(now+i64::from(limits.ttl_seconds)).bind(target).execute(&mut *tx).await.map_err(db)?.last_insert_rowid();
+            .bind(message.text.as_str()).bind(styles).bind(conference).bind(size as i64).bind(now).bind(now+i64::from(limits.ttl_seconds)).bind(target).execute(&mut *tx).await.map_err(db)?.last_insert_rowid();
         sqlx::query("INSERT INTO deliveries(message_id,recipient,enqueue_order,state) VALUES(?,?,?,'Pending')").bind(id).bind(i64::from(message.recipient.get())).bind(id).execute(&mut *tx).await.map_err(db)?;
         #[cfg(feature = "test-hooks")]
         if message.client_sequence == 0xfeed
@@ -335,10 +348,30 @@ impl MessagingRepository for SqliteStore {
         let id: i64 = row.get("id");
         let text: Option<String> = row.get("body");
         let encoded: Option<String> = row.get("styles");
+        let sender = u32::try_from(row.get::<i64, _>("sender"))
+            .ok()
+            .and_then(|value| UserId::new(value).ok());
+        let conference: Option<String> = row.get("conference");
+        let context = conference
+            .and_then(|value| serde_json::from_str::<Vec<u32>>(&value).ok())
+            .and_then(|numbers| {
+                numbers
+                    .into_iter()
+                    .map(UserId::new)
+                    .collect::<Result<Vec<_>, _>>()
+                    .ok()
+            })
+            .and_then(|others| ConferenceContext::new(others).ok());
         let parsed = text
             .and_then(|v| MessageText::new(v).ok())
-            .zip(encoded.and_then(|v| serde_json::from_str::<Vec<TextStyle>>(&v).ok()));
-        let Some((text, styles)) = parsed else {
+            .zip(encoded.and_then(|v| serde_json::from_str::<Vec<TextStyle>>(&v).ok()))
+            .zip(context.zip(sender))
+            .filter(|(_, (context, sender))| {
+                row.get::<i64, _>("payload_version") == 1
+                    && row.get::<i64, _>("recipient") == i64::from(session.user.get())
+                    && context.validate_for(*sender, session.user).is_ok()
+            });
+        let Some(((text, styles), (conference, sender))) = parsed else {
             sqlx::query("UPDATE deliveries SET state='Rejected',terminal_at=?,reason='payload_integrity' WHERE message_id=? AND state='Pending'").bind(now).bind(id).execute(&mut *tx).await.map_err(db)?;
             purge_bodies(&mut tx).await?;
             tx.commit().await.map_err(db)?;
@@ -357,14 +390,15 @@ impl MessagingRepository for SqliteStore {
         let lease = DeliveryLease {
             id,
             token,
-            sender: UserId::new(row.get::<i64, _>("sender") as u32)
-                .map_err(|_| MessagingError::Integrity)?,
+            sender,
+            recipient: session.user,
             client_sequence: row.get::<i64, _>("client_sequence") as u32,
             accepted_at: row.get("accepted_at"),
             presentation: row.get::<i64, _>("presentation") as u8,
             queued: target.as_deref() != Some(session.id.as_slice()),
             text,
             styles,
+            conference,
         };
         tx.commit().await.map_err(db)?;
         Ok(Some(lease))

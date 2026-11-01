@@ -241,7 +241,8 @@ async fn archive_versions_are_independent_atomic_private_and_discard_staging_on_
                 client_sequence: 1,
                 presentation: 8,
                 text: rgg_domain::MessageText::new("test".into()).unwrap(),
-                styles: vec![]
+                styles: vec![],
+                conference: Default::default(),
             },
             100,
             &QueueLimits::default()
@@ -324,6 +325,7 @@ async fn friends_only_status_hides_presence_without_blocking_pending_messages() 
             presentation: 8,
             text: rgg_domain::MessageText::new("private".into()).unwrap(),
             styles: vec![],
+            conference: Default::default(),
         },
         100,
         &QueueLimits::default(),

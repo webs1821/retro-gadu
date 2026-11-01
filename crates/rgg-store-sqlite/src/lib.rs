@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 
 mod accounts;
+#[cfg(test)]
+mod conference_tests;
 mod contacts;
 mod database;
 mod messaging;
@@ -30,7 +32,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 6;
+pub const SCHEMA_VERSION: i64 = 7;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {

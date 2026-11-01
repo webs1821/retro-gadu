@@ -158,3 +158,16 @@ rejestracji, discovery i cyklu życia. Wygląd strony głównej sprawdzono w lok
 przeglądarce desktop; chwilowy proces i tab zamknięto. Reszta regresji ma pełny
 wynik z dev.7. E05 nadal wymaga samoobsługi i publicznej kwalifikacji.
 [Kontrakt](PUBLIC-STATISTICS.md), [wyniki](VERIFICATION-2026-11-01-dev8.md).
+
+## 2026-11-01 — E06a: konferencje i trwały kontekst rozmowy
+
+Wersja `0.1.0-dev.9`, schemat 7. Klient wykonuje fan-out; serwer zapisuje jedną
+kopię na głównego adresata. Uczestnicy zachowują kolejność i formatowanie przez
+kolejkę/restart, limit wynosi 32 osoby. Kontekst nie nadaje praw do innych kont.
+Ochrona odbiorcy, kwoty i ACK pozostają takie jak w zwykłej wiadomości.
+
+58 testów Rust, 3 grupy konferencji, rzeczywista migracja kolejki dev.8 oraz
+6 kontrolowanych awarii przeszły. Pełna regresja wcześniejszych funkcji także
+przeszła na końcowym zwykłym buildzie. Brak nowych zależności zewnętrznych.
+[Kontrakt](CONFERENCES.md), [wyniki](VERIFICATION-2026-11-01-dev9.md).
+E06 nadal wymaga obrazków i kwalifikacji klienta natywnego. Wszystko lokalnie.

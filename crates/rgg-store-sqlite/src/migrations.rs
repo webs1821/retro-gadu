@@ -58,6 +58,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0006_public_profiles.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    7,
+                    "conferences".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0007_conferences.sql").into(),
+                    false,
+                ),
             ])
         })
     }

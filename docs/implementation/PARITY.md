@@ -23,7 +23,7 @@ wyniku testów działającego gg-retro.
 | Obecność, opis, czas powrotu, niewidoczność, tylko znajomi | gotowe lokalnie; wspólna bramka polityki i publikacji | `presence_tests`, `gg6_presence_contacts.py`: opis, Ready, niewidoczność, blokady, restart | nie sprawdzono |
 | Blokowanie i egzekwowanie prywatności przed pierwszą wiadomością | gotowe lokalnie dla NOTIFY FIRST/LAST/EMPTY i ADD/REMOVE | bramka Ready, blokady offline po restarcie, bez wskrzeszania po odblokowaniu | nie sprawdzono |
 | Lista kontaktów, import/eksport, subskrypcje | częściowe: subskrypcje i archiwum gotowe lokalnie; upload wymaga końcowego fragmentu krótszego niż 2047 B, ACK odroczone | 4000 kontaktów, granice fragmentów, staging, EOF/timeout, 2 awarie przy commit | nie sprawdzono |
-| Formatowanie wiadomości i konferencje | podstawowe style tekstu gotowe lokalnie; konferencje odrzucane | CP1250, bold/italic/underline/RGB, nieobsługiwane opcje bez ACK sukcesu | nie sprawdzono |
+| Formatowanie wiadomości i konferencje | gotowe lokalnie: style i konferencje do 32 osób; jedna kopia na pakiet klienta | CP1250, bold/italic/underline/RGB, cztery osoby online/offline, brak dodatkowego fan-out, prywatność i awarie | nie sprawdzono |
 | Obrazki: oferty, autoryzacja, fragmenty, CRC, dostępny nadawca | brak | — | — |
 | Katalog: własny profil READ/WRITE | gotowe lokalnie: dobrowolność, zastępowanie, usuwanie i własność | `profile_tests`, `gg6_directory.py` | nie sprawdzono |
 | Katalog: filtry, wiek, stronicowanie, brak pustego dodatkowego wiersza | gotowe lokalnie dla GG6; zakres lat zamiast dokładnej daty | polskie filtry, strony 20/20/1, rzadkie pola, prywatność, trwały limit | nie sprawdzono |

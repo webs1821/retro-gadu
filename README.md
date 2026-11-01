@@ -20,7 +20,7 @@ Wersja **0.1.0-dev.3** dodaje lokalny nasłuch GG6, logowanie LOGIN60/GG32,
 sesje kont, ping/pong oraz trwałe wiadomości tekstowe online i offline.
 Wiadomości czekają na zakończenie synchronizacji blokad klienta. Potwierdzenie
 dla nadawcy następuje po zatwierdzeniu zapisu w SQLite, a kolejka przeżywa restart.
-Podstawowe style tekstu i Windows-1250 są obsługiwane. Obrazy, konferencje i pozostałe braki opisuje macierz zgodności.
+Podstawowe style tekstu i Windows-1250 są obsługiwane. Obrazy i pozostałe braki opisuje macierz zgodności.
 Testy TCP i awarii są automatyczne; oryginalnego klienta GG6 jeszcze nie kwalifikowano.
 
 Wersja **0.1.0-dev.4** dodaje obecność zależną od obserwatora, opisy i czas
@@ -42,6 +42,12 @@ numeru, jednorazowym CSRF oraz limitami. Nowe konto od razu loguje się w GG6.
 Wersja **0.1.0-dev.8** dodaje opcjonalną stronę główną i publiczne liczniki
 istniejących kont oraz jawnej obecności. Ukryte sesje nie zwiększają liczby online.
 
+Wersja **0.1.0-dev.9** dodaje konferencje GG6: zachowanie uczestników i stylów
+również offline, limit 32 osób i brak ponownego rozsyłania kopii wykonanych przez
+klienta. Migracja schematu 6 → 7 zachowuje wcześniejszą kolejkę.
+
+- [Konferencje](docs/implementation/CONFERENCES.md)
+- [Weryfikacja dev.9](docs/implementation/VERIFICATION-2026-11-01-dev9.md)
 - [Liczniki i strona główna](docs/implementation/PUBLIC-STATISTICS.md)
 - [Weryfikacja dev.8](docs/implementation/VERIFICATION-2026-11-01-dev8.md)
 - [Rejestracja WWW](docs/implementation/WEB-REGISTRATION.md)

@@ -42,6 +42,7 @@ pub struct MessageBundle {
     pub presentation: u8,
     pub text: MessageText,
     pub styles: Vec<TextStyle>,
+    pub conference: crate::conferences::ConferenceContext,
 }
 
 #[derive(Clone, Debug)]
@@ -49,12 +50,14 @@ pub struct DeliveryLease {
     pub id: i64,
     pub token: [u8; 16],
     pub sender: UserId,
+    pub recipient: UserId,
     pub client_sequence: u32,
     pub accepted_at: i64,
     pub presentation: u8,
     pub queued: bool,
     pub text: MessageText,
     pub styles: Vec<TextStyle>,
+    pub conference: crate::conferences::ConferenceContext,
 }
 
 #[derive(Clone, Debug, Deserialize)]

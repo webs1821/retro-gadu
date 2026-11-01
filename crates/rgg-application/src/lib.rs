@@ -4,6 +4,7 @@
 //! Use cases and infrastructure ports. No wire layouts, SQL types or HTTP framework.
 
 pub mod accounts;
+pub mod conferences;
 pub mod contacts;
 pub mod directory;
 pub mod messaging;

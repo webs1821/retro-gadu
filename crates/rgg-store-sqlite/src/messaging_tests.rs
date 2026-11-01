@@ -49,6 +49,7 @@ fn message(seq: u32) -> MessageBundle {
         presentation: 8,
         text: MessageText::new("Żółć".into()).unwrap(),
         styles: vec![],
+        conference: Default::default(),
     }
 }
 async fn count(store: &SqliteStore, sql: &str) -> i64 {
