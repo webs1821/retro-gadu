@@ -290,3 +290,22 @@ trzyminutowa próba zweryfikowała 4175 wiadomości w 167 cyklach online/offline
 poprawna i proces zamknięty czysto. Wynik nie zastępuje długiego soak ani pomiarów
 profilu produkcyjnego. Nadal wyłącznie lokalnie, bez push i podmiany usług.
 [Kontrakt](HTTP-LIMITS.md), [raport i surowe pomiary](VERIFICATION-2026-11-01-dev18.md).
+
+## 2026-11-01 — obraz lokalny i kwalifikacja kontenera
+
+Runtime nadal dev.18. Z przypiętych baz i commitu `7bc2d66` powstał obraz zawierający
+release binarki oraz archiwum kompletnych źródeł z vendorami. Narzędzie buduje
+kontekst wyłącznie z Git, pomijając nieśledzone dane. Sprawdzono to na Windows
+oraz WSL, także po poprawce dla starego Git i różnicy właściciela katalogu.
+
+20 zestawów regresji przeszło na binarkach obrazu. Osobna próba potwierdziła
+nieuprzywilejowany PID1, rzeczywisty limit RAM/CPU, trwały wolumen, wiadomość
+po restarcie kontenera oraz backup/verify/restore do nowego wolumenu. Wynik
+zawiera ważne ograniczenie: WSL nie zastosował żądanego limitu swapu. R0,
+klient natywny, publiczny profil, długi soak i skan OS nadal są otwarte.
+
+Archiwum obrazu zapisano lokalnie (61,1 MB), a testowe dane/usługi zakończono.
+Tymczasowy Docker 29.9.2 nie zastąpił systemowych narzędzi ani Docker Desktop.
+Nie było push, publikacji ani połączenia z produkcyjnym Containers.
+[Kontrakt](CONTAINERS.md), [raport](VERIFICATION-2026-11-01-container.md),
+[manifest artefaktu](container-artifact-2026-11-01-dev18.json).

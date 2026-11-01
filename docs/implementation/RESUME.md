@@ -4,6 +4,8 @@ Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłąc
 lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
 origin webs1821/retro-gadu nieużywany. Plan i recenzje pozostają niezmienione.
 Nie uruchamiać nowych agentów bez zlecenia delegacji. Brak aktywnego celu/narzędzia goal.
+Zlecony odczyt hasła konta 742858 wykonano na początku tury i wynik przekazano
+użytkownikowi w czacie. Nie ponawiać odczytu; hasła nie zapisano w repozytorium.
 
 Gotowe lokalnie: konta/zaproszenia (także stare kody), LOGIN60/GG32, sesje,
 trwały tekst online/offline, obecność/prywatność, archiwa kontaktów, katalog,
@@ -59,15 +61,39 @@ Próba 180s: 4175 wiadomości online/offline, 167 cykli, szczyt RSS 24,1 MiB,
 180 pobrań/540 oczekiwanych 429, integralność DB i czysty SIGTERM.
 To nie długi soak ani dowód plateau RAM. [Raport](VERIFICATION-2026-11-01-dev18.md).
 
+Kontener runtime dev.18 z SHA 7bc2d669a6039b0c770186d781edbc537dce2f9e jest
+zbudowany i sprawdzony lokalnie. 20 zestawów kontroli na release binarkach oraz
+osobny PID1/UID10001/cgroup/volume/restart/backup-restore przeszły. Tymczasowe
+kontenery/wolumeny usunięto, a prywatny daemon zakończył się kodem 0.
+Runtime image sha256:b0f5d9eae97ba7d4c12e2e068730e48ebf3e7a75ed7a0ad3fa84fca0102673ab;
+test image sha256:cf3a7b38b9bb927ad7a83dfef102f8c4cb498e3bdbf7cb54ad1bc54a7d995ffe.
+Binarka release ecc6b15263b9363014bd69fa46cae839907cf30c9d97ee031bcb1c4ed5b529c0.
+Raport VERIFICATION-2026-11-01-container.md i container-artifact-2026-11-01-dev18.json
+wiążą źródła, fixture, lockfile, image ID, binarkę i hashe sterowników.
+Archiwum 61115802 B: D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-container-2026-11-01\rgg-dev18-runtime.tar.gz,
+SHA256 d4cc60eba8bff1445c4ade5ed7bae43810daf5a0897194e5a04eff3c79b770fa.
+Źródła wraz z vendorami/licencjami są także wewnątrz obrazu. Compose sprawdzony
+przez config, bez uruchamiania nim instancji. R0 100 sesji, natywny GG6, skan OS
+i długi soak NIE są zakwalifikowane. Memory.max 256 MiB i 1 CPU były skuteczne,
+ale memory.swap.max = max pomimo żądanego --memory-swap; swap WSL aktywny.
+
 Kolejne luki: upload kontaktów (odroczone ACK, pełny końcowy fragment 2047 B),
-domena/profil wdrożeniowy, lokalny kontener i długi soak. Patcher jest przez CLI,
+domena/profil wdrożeniowy, metryki/R0 i długi soak. Patcher jest przez CLI,
 brak odpowiednika w przeglądarce. Limity HTTP są lokalnie sprawdzone, ale publiczny
 TLS/reverse proxy i jego pochodzenie żądań wymagają osobnego profilu/kwalifikacji.
-Docker.exe i /usr/bin/docker są dostępne. Konteksty default i desktop-linux
-wskazują lokalne named pipes. Odczyt docker --context desktop-linux info odmówił
-połączenia: named pipe nie istnieje, Docker Desktop nie ma uruchomionego silnika.
-Nie uruchamiano Dockera ani żadnego kontenera. Nie używać domyślnego kontekstu bez
-sprawdzenia endpointu; kolejny etap ma pozostać wyłącznie lokalny.
+Docker Desktop pozostawiono nieuruchomiony. Konteksty default i desktop-linux
+wskazują lokalne named pipes, ale silnik Desktop nie działa. Do prób użyto
+odizolowanego WSL /tmp/rgg-docker-local-20261101 (root, 0700): narzędzia Docker
+29.9.2/runc 1.5.2 w bin/, dane data29/, config daemon29.json, prywatny docker29.sock.
+Daemon jest teraz ZATRZYMANY; pliki/cache zostały do późniejszego użycia. Pierwotny
+tymczasowy daemon systemowego Docker26 również zatrzymany; nie uruchomił kontenerów.
+Nie zmieniano programów systemowych ani firewalla/forwardingu/mostków.
+Docker CLI zawsze z jawnym --host unix://... i pustą własną konfiguracją; nie
+używać domyślnego kontekstu. Statyczne narzędzia są tylko do lokalnych prób.
+W WSL Git2.25.1 nie honoruje nowszego GIT_CONFIG_GLOBAL tak jak bieżący Git:
+build_container.py używa jawnego git-dir/work-tree, bez zmian globalnej konfiguracji.
+Obraz buduje wyłącznie z commitów, nie ze zmienionego worktree. Raporty są
+kwalifikacją artefaktu z 7bc2d66, nie każdej późniejszej rewizji narzędzi/dokumentacji.
 Natywny GG6/Windows nadal niekwalifikowane. Do czasu parytetu nie rozważać podmiany.
 [PARITY](PARITY.md) zawiera aktualne rozróżnienie kodu i kwalifikacji.
 

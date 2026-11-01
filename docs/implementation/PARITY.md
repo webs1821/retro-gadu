@@ -35,7 +35,7 @@ wyniku testów działającego gg-retro.
 | Pobieranie klienta/instalatora, manifest hashy, patcher | katalog WWW/JSON i pakiet/patcher CLI gotowe lokalnie dla przypiętego GG6.1; brak patchera w przeglądarce i kwalifikacji wykonania | http_downloads.py, client_package.py: 3 hosty i 464 zasoby Windows; client_downloads.py: rzeczywiste artefakty przez loopback | zasoby odczytane jako dane; aplikacji nie uruchamiano |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane, także gniazda i czas HTTP; powtarzalna lokalna próba RSS/CPU, bez kwalifikacji produkcyjnej/długiego soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca; http_limits.py, local_endurance.py | nie dotyczy |
 | Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, backup/verify/restore, rotacja oraz pełny import przypiętego gg-retro gotowe lokalnie; brak próby na rzeczywistej kopii | accounts_cli.py, backups_cli.py, keys_cli.py, legacy_import.py: roundtrip, błędne dane, 8 przerwań procesu; migracja 9 → 10 | nie dotyczy |
-| Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | częściowe: lokalny pomiar krótkotrwały; obraz, długi soak i pełna kwalifikacja nadal do wykonania | local_endurance.py, raport dev.18 | — |
+| Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | częściowe: obraz, krótkie pomiary, restart i restore gotowe lokalnie; R0, długi soak i pełna kwalifikacja nadal do wykonania | local_endurance.py, container_suite.py (20 zestawów), container_runtime.py; nieegzekwowany limit swapu w WSL jawnie opisany | — |
 
 ## Warunek rozważenia podmiany
 

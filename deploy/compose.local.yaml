@@ -1,0 +1,29 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
+# SPDX-FileCopyrightText: 2026 webs1821
+# Local isolation only: initialize the named volume with rgg-admin before starting.
+services:
+  rgg:
+    image: ${RGG_IMAGE:?Set the verified local image tag or ID}
+    user: "10001:10001"
+    network_mode: none
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges=true"]
+    cpus: 1.0
+    mem_limit: 256m
+    memswap_limit: 256m
+    pids_limit: 128
+    restart: "no"
+    stop_grace_period: 10s
+    tmpfs:
+      - "/tmp:rw,nosuid,nodev,noexec,size=32m"
+    volumes:
+      - rgg-data:/data
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"
+volumes:
+  rgg-data:
+    driver: local

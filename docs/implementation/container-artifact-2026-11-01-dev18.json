@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.18",
+  "source_commit": "7bc2d669a6039b0c770186d781edbc537dce2f9e",
+  "schema": 11,
+  "cargo_lock_sha256": "70db6a1796b458fdbb4a7586531dc99f49ccd41245155567464cc0ed218a6d1a",
+  "image_id": "sha256:b0f5d9eae97ba7d4c12e2e068730e48ebf3e7a75ed7a0ad3fa84fca0102673ab",
+  "server_sha256": "ecc6b15263b9363014bd69fa46cae839907cf30c9d97ee031bcb1c4ed5b529c0",
+  "source_archive_sha256": "d276e1f994acbdfb33aa8af193353d81748165a2ef5ce3563a19a4025d851a99",
+  "artifact_file": "rgg-dev18-runtime.tar.gz",
+  "artifact_size": 61115802,
+  "artifact_sha256": "d4cc60eba8bff1445c4ade5ed7bae43810daf5a0897194e5a04eff3c79b770fa",
+  "fixture_sha256": {
+    "tests/fixtures/gg-retro-vault-vectors.json": "e657bbc0e7b72650907a47c119b5d6ab3f9555efea396ffbd75e80b98334e5ff",
+    "tests/fixtures/gg32.json": "8921bc2d87d16adada04680c09c76f86b7da738bc7b0949fefd196abc2d3216f"
+  },
+  "reports": [
+    "container-build-2026-11-01-dev18.json",
+    "container-suite-2026-11-01-dev18.json",
+    "container-runtime-2026-11-01-dev18.json"
+  ],
+  "driver_sha256": {
+    "container-suite-2026-11-01-dev18.json": "7936d772d7bdf11fd2d5ca9a135bc04d60e0b19a0f3fce9265533c26d51856b1",
+    "container-runtime-2026-11-01-dev18.json": "2fa6c7aa21deffdb2b68a605bc73d729113cb694022066da860f6d999052559e"
+  },
+  "local_container_checks_passed": true,
+  "production_qualified": false,
+  "capacity_r0_qualified": false,
+  "native_gg_qualified": false,
+  "swap_disabled": false
+}

@@ -41,3 +41,22 @@ Kwalifikacja wykonania, restartu, wolumenu i skutecznych cgroup wymaga osobnego
 raportu. Sam Dockerfile i budowa nie są dowodem tych właściwości. Publiczna
 domena/reverse proxy, natywny GG6, długi soak i ocena podatności pakietów systemowych
 pozostają oddzielnymi bramkami. Runtime Rust pozostaje dev.18.
+
+## Wynik lokalny
+
+[Raport kwalifikacji](VERIFICATION-2026-11-01-container.md) dokumentuje 20 zestawów
+kontroli oraz osobny test PID1, wolumenu, restartu i backup/restore. Limity RAM/CPU
+zadziałały, limit swapu w tym WSL nie został zastosowany. Nie ogłasza się profilu R0.
+
+`deploy/compose.local.yaml` odzwierciedla ograniczenia runtime, z `RGG_IMAGE`
+wskazującym sprawdzony tag/ID. Sprawdzono jego rozwiniętą konfigurację; nie jest
+to profil publicznego dostępu. Przykładowe kontrole artefaktu na lokalnym silniku:
+
+```sh
+python3 tests/container_runtime.py --docker /path/to/docker --socket /path/to/local-docker.sock --runtime sha256:RUNTIME_ID --verification sha256:VERIFICATION_ID --report /path/to/new-runtime-report.json
+```
+
+Skrypt wymaga dwóch obrazów z tym samym SHA źródła i etykietą lokalnej budowy,
+tworzy oznaczone zasoby testowe, a po próbie usuwa wyłącznie swoje kontenery
+i wolumeny. `tests/container_suite.py` uruchamia się przez stdin w obrazie
+verification, z ograniczeniami wskazanymi w raporcie i tmpfs 128 MiB.
