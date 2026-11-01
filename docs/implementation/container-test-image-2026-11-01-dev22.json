@@ -1,0 +1,16 @@
+{
+  "format": 1,
+  "built": true,
+  "source_commit": "a5d55d37ba29d00b7772629b9d6ce99452a0f1a9",
+  "version": "0.1.0-dev.22",
+  "target": "verification",
+  "image": "rgg-local:a5d55d37ba29-verification",
+  "image_id": "sha256:243c59130e1538d6c8b2aa50b47835f9fa1392cf49c76593a98254cfea8696ea",
+  "architecture": "amd64",
+  "engine_version": "29.9.2",
+  "image_size": 164643281,
+  "source_archive": "git archive of the recorded commit; vendored Cargo sources included in runtime",
+  "pushed": false,
+  "deployed": false,
+  "runtime_qualified": false
+}

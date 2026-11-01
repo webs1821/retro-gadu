@@ -321,10 +321,10 @@ async fn corrupt_payload_is_terminal_and_attempt_history_is_bounded() {
     s.accept_message_bundle(&a, message(1), 100, &QueueLimits::default())
         .await
         .unwrap();
-    assert!(sqlx::query("UPDATE deliveries SET state='Leased',session_id=zeroblob(16),epoch='x',generation=1,lease_until=120").execute(&s.pool).await.is_err());
+    assert!(sqlx::query("UPDATE deliveries SET state='Leased',session_id=zeroblob(16),epoch='x',generation=1,lease_until=120").execute(&s.writer).await.is_err());
     assert!(
         sqlx::query("UPDATE deliveries SET state='Expired'")
-            .execute(&s.pool)
+            .execute(&s.writer)
             .await
             .is_err()
     );
@@ -337,7 +337,7 @@ async fn corrupt_payload_is_terminal_and_attempt_history_is_bounded() {
         32
     );
     sqlx::query("UPDATE messages SET styles='invalid-json'")
-        .execute(&s.pool)
+        .execute(&s.writer)
         .await
         .unwrap();
     assert_eq!(

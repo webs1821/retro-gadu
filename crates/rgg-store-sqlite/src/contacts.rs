@@ -23,7 +23,7 @@ impl ContactArchiveRepository for SqliteStore {
         {
             return Err(MessagingError::Invalid);
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, key, true).await?;
         let current: Option<i64> =
             sqlx::query_scalar("SELECT version FROM contact_archives WHERE owner=?")
@@ -88,7 +88,7 @@ impl ContactArchiveRepository for SqliteStore {
         Ok(result)
     }
     async fn export_archive(&self, key: &SessionKey) -> Result<ContactArchive, MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, key, true).await?;
         let row = sqlx::query("SELECT version,document FROM contact_archives WHERE owner=?")
             .bind(i64::from(key.user.get()))
@@ -109,7 +109,7 @@ impl ContactArchiveRepository for SqliteStore {
         Ok(out)
     }
     async fn abort_archive(&self, key: &SessionKey) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, key, false).await?;
         sqlx::query("DELETE FROM contact_staging WHERE owner=? AND session_id=?")
             .bind(i64::from(key.user.get()))

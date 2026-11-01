@@ -1,0 +1,33 @@
+{
+  "limits": {
+    "memory_max": 268435456,
+    "cpu_max": "100000 100000",
+    "pids_max": 128,
+    "swap_max": 0,
+    "swap_initial": "max",
+    "swap_set_directly": true,
+    "uid": 10001,
+    "read_only_root": true,
+    "cap_eff": 0,
+    "no_new_privileges": true,
+    "seccomp_filter": true
+  },
+  "returncode": 0,
+  "stdout": "DIAG_EVENT={\"seeded\": 3000, \"seconds\": 30.605}\nDIAG_REPORT={\"passed\": true, \"replay_seconds\": 15.519, \"seconds\": 46.849, \"errors\": [], \"received\": 3000, \"per_recipient\": {\"101\": 150, \"102\": 150, \"103\": 150, \"104\": 150, \"105\": 150, \"106\": 150, \"107\": 150, \"108\": 150, \"109\": 150, \"110\": 150, \"111\": 150, \"112\": 150, \"113\": 150, \"114\": 150, \"115\": 150, \"116\": 150, \"117\": 150, \"118\": 150, \"119\": 150, \"120\": 150}, \"metrics\": {\"rgg_build_info{version=\\\"0.1.0-dev.22\\\"}\": 1.0, \"rgg_uptime_seconds\": 48.91, \"rgg_database_schema_version\": 12.0, \"rgg_snapshot_timestamp_seconds\": 1793564277.0, \"rgg_accounts{state=\\\"active\\\"}\": 120.0, \"rgg_sessions{phase=\\\"ready\\\"}\": 20.0, \"rgg_delivery_records{state=\\\"written_unconfirmed\\\"}\": 3000.0, \"rgg_gg_connections\": 20.0, \"rgg_gg_admissions_total{result=\\\"accepted\\\"}\": 24.0, \"rgg_gg_connection_ends_total{reason=\\\"peer_closed\\\"}\": 4.0, \"rgg_operations_total{operation=\\\"login\\\",result=\\\"success\\\"}\": 24.0, \"rgg_operations_total{operation=\\\"accept\\\",result=\\\"success\\\"}\": 3000.0, \"rgg_operations_total{operation=\\\"delivery\\\",result=\\\"success\\\"}\": 3000.0}}\n",
+  "stderr": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nWARNING: IPv4 forwarding is disabled. Networking will not work.\n",
+  "server_logs": "",
+  "server_state": {
+    "Status": "running",
+    "Running": true,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 9588,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-11-01T20:17:08.724496458Z",
+    "FinishedAt": "0001-01-01T00:00:00Z"
+  },
+  "cleanup": true
+}

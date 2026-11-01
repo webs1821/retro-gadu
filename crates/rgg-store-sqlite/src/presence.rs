@@ -43,7 +43,7 @@ impl PresenceRepository for SqliteStore {
         now: i64,
     ) -> Result<(), MessagingError> {
         presence.validate()?;
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         replace_privacy_tx(&mut tx, key, rules, presence.friends_only, now).await?;
         write_presence(&mut tx, key, presence).await?;
         tx.commit().await.map_err(db)
@@ -54,7 +54,7 @@ impl PresenceRepository for SqliteStore {
         presence: &Presence,
     ) -> Result<(), MessagingError> {
         presence.validate()?;
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, key, true).await?;
         write_presence(&mut tx, key, presence).await?;
         tx.commit().await.map_err(db)
@@ -63,7 +63,7 @@ impl PresenceRepository for SqliteStore {
         &self,
         key: &SessionKey,
     ) -> Result<Vec<VisiblePresence>, MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         let ready:Option<i64>=sqlx::query_scalar("SELECT s.ready FROM account_sessions s JOIN accounts a ON a.uin=s.uin JOIN runtime_state r ON r.id=1 WHERE s.uin=? AND s.session_id=? AND s.generation=? AND s.credential_version=? AND s.epoch=? AND a.active=1 AND a.session_generation=s.generation AND a.credential_version=s.credential_version AND r.process_epoch=s.epoch")
             .bind(i64::from(key.user.get())).bind(key.id.as_slice()).bind(key.generation).bind(key.credential_version).bind(&key.epoch).fetch_optional(&mut *tx).await.map_err(db)?;
         match ready {

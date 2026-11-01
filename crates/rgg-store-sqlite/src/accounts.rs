@@ -106,7 +106,7 @@ impl AccountRepository for SqliteStore {
         sqlx::query("INSERT INTO invitations(digest,max_uses,created_at) VALUES(?,?,unixepoch())")
             .bind(digest.as_slice())
             .bind(i64::from(uses))
-            .execute(&self.pool)
+            .execute(&self.writer)
             .await
             .map_err(database_error)?;
         Ok(())
@@ -118,7 +118,7 @@ impl AccountRepository for SqliteStore {
         protector: &dyn SecretProtector,
     ) -> Result<UserId, AccountError> {
         input.validate()?;
-        let mut tx = self.pool.begin().await.map_err(database_error)?;
+        let mut tx = self.writer.begin().await.map_err(database_error)?;
         match register(&mut tx, input, protector).await {
             Ok(user) => {
                 tx.commit().await.map_err(database_error)?;
@@ -152,7 +152,7 @@ impl AccountRepository for SqliteStore {
     }
 
     async fn retire_account(&self, user: UserId) -> Result<(), AccountError> {
-        let mut tx = self.pool.begin().await.map_err(database_error)?;
+        let mut tx = self.writer.begin().await.map_err(database_error)?;
         let deleted = sqlx::query("DELETE FROM accounts WHERE uin=? AND NOT EXISTS(SELECT 1 FROM account_sessions WHERE uin=accounts.uin)")
             .bind(i64::from(user.get()))
             .execute(&mut *tx)

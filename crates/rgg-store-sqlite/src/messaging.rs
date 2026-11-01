@@ -116,7 +116,7 @@ impl MessagingRepository for SqliteStore {
         id: [u8; 16],
         now: i64,
     ) -> Result<SessionKey, MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         let generation: Option<i64> = sqlx::query_scalar("UPDATE accounts SET session_generation=session_generation+1 WHERE uin=? AND active=1 AND credential_version=? AND session_generation<9223372036854775807 RETURNING session_generation")
             .bind(i64::from(user.get())).bind(credential_version).fetch_optional(&mut *tx).await.map_err(db)?;
         let generation = generation.ok_or(MessagingError::Stale)?;
@@ -154,7 +154,7 @@ impl MessagingRepository for SqliteStore {
         Ok(found == 1)
     }
     async fn detach_session(&self, session: &SessionKey, now: i64) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, session, false).await?;
         release_user(&mut tx, session.user, now).await?;
         sqlx::query("DELETE FROM account_presence WHERE uin=? AND availability!='offline'")
@@ -177,7 +177,7 @@ impl MessagingRepository for SqliteStore {
         tx.commit().await.map_err(db)
     }
     async fn begin_initial_state(&self, session: &SessionKey) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, session, false).await?;
         sqlx::query("UPDATE account_sessions SET ready=0 WHERE uin=?")
             .bind(i64::from(session.user.get()))
@@ -193,7 +193,7 @@ impl MessagingRepository for SqliteStore {
         friends_only: bool,
         now: i64,
     ) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         replace_privacy_tx(&mut tx, session, rules, friends_only, now).await?;
         tx.commit().await.map_err(db)
     }
@@ -207,7 +207,7 @@ impl MessagingRepository for SqliteStore {
         if rule.flags & !7 != 0 {
             return Err(MessagingError::Invalid);
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, session, true).await?;
         if remove {
             sqlx::query("UPDATE contact_rules SET flags=(flags & ?) WHERE owner=? AND peer=?")
@@ -249,7 +249,7 @@ impl MessagingRepository for SqliteStore {
         session: &SessionKey,
         value: bool,
     ) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, session, false).await?;
         // Friends-only governs presence visibility, not inbound message blocking.
         sqlx::query("UPDATE account_privacy SET friends_only=?,revision=revision+1 WHERE uin=?")
@@ -298,7 +298,7 @@ impl MessagingRepository for SqliteStore {
         if size > 48 * 1024 {
             return Err(MessagingError::Invalid);
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, session, true).await?;
         let permitted:i64=sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM accounts WHERE uin=? AND active=1) AND NOT EXISTS(SELECT 1 FROM contact_rules WHERE owner=? AND peer=? AND (flags&4)!=0)")
             .bind(i64::from(message.recipient.get())).bind(i64::from(message.recipient.get())).bind(i64::from(session.user.get())).fetch_one(&mut *tx).await.map_err(db)?;
@@ -369,7 +369,7 @@ impl MessagingRepository for SqliteStore {
         if waiting == 0 {
             return Ok(None);
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, session, true).await?;
         expire(&mut tx, now).await?;
         privacy_rejections(&mut tx, session.user, now).await?;
@@ -463,7 +463,7 @@ impl MessagingRepository for SqliteStore {
         transition(self, session, lease, now, false).await
     }
     async fn prune(&self, now: i64) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         expire(&mut tx, now).await?;
         tx.commit().await.map_err(db)
     }
@@ -473,7 +473,7 @@ impl MessagingRepository for SqliteStore {
         version: i64,
         now: i64,
     ) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         let count=sqlx::query("UPDATE accounts SET credential_version=credential_version+1,session_generation=session_generation+1 WHERE uin=? AND credential_version=? AND credential_version<9223372036854775807 AND session_generation<9223372036854775807")
             .bind(i64::from(user.get())).bind(version).execute(&mut *tx).await.map_err(db)?.rows_affected();
         if count != 1 {
@@ -506,7 +506,7 @@ async fn transition(
     now: i64,
     written: bool,
 ) -> Result<(), MessagingError> {
-    let mut tx = store.pool.begin().await.map_err(db)?;
+    let mut tx = store.writer.begin().await.map_err(db)?;
     fence(&mut tx, session, true).await?;
     let state = if written {
         "TransportWrittenUnconfirmed"

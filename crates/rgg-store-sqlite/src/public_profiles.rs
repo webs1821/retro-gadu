@@ -52,7 +52,7 @@ impl DirectoryRepository for SqliteStore {
         {
             return Err(MessagingError::Invalid);
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         admit(&mut tx, key, now).await?;
         if p.is_empty() {
             sqlx::query("DELETE FROM public_profiles WHERE uin=?")
@@ -83,7 +83,7 @@ impl DirectoryRepository for SqliteStore {
         if let Read::Search(ref query) = request {
             query.validate(calendar_year(now)?)?;
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         admit(&mut tx, key, now).await?;
         let result = match request {
             Read::Own => {

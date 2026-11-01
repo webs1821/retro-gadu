@@ -64,18 +64,21 @@ async fn operator_sessions_include_private_users_but_never_stale_sessions() {
             "UPDATE account_presence SET session_id=(SELECT session_id FROM account_sessions WHERE uin=1) WHERE uin=1",
         ),
     ] {
-        sqlx::query(break_fence).execute(&store.pool).await.unwrap();
+        sqlx::query(break_fence)
+            .execute(&store.writer)
+            .await
+            .unwrap();
         let sample = store.operational_snapshot().await.unwrap();
         assert_eq!(
             (sample.ready_sessions, sample.synchronizing_sessions),
             (0, 0)
         );
-        sqlx::query(restore).execute(&store.pool).await.unwrap();
+        sqlx::query(restore).execute(&store.writer).await.unwrap();
     }
     store.detach_session(&key, 101).await.unwrap();
     store.retire_account(user).await.unwrap();
     sqlx::query("UPDATE accounts SET active=0 WHERE uin=2")
-        .execute(&store.pool)
+        .execute(&store.writer)
         .await
         .unwrap();
     let sample = store.operational_snapshot().await.unwrap();
@@ -129,7 +132,7 @@ async fn queue_gauges_follow_leases_transport_write_and_retention_without_fake_a
     assert!(pending.queued_payload_bytes > 0 && pending.oldest_queue_age_seconds >= 5);
     sqlx::query("UPDATE messages SET accepted_at=?")
         .bind(now + 60)
-        .execute(&store.pool)
+        .execute(&store.writer)
         .await
         .unwrap();
     assert_eq!(
@@ -142,15 +145,15 @@ async fn queue_gauges_follow_leases_transport_write_and_retention_without_fake_a
     );
     sqlx::query("UPDATE messages SET accepted_at=?")
         .bind(now - 5)
-        .execute(&store.pool)
+        .execute(&store.writer)
         .await
         .unwrap();
     sqlx::query("INSERT INTO contact_archives(owner,version,format,document) VALUES(1,1,1,'Żółć')")
-        .execute(&store.pool)
+        .execute(&store.writer)
         .await
         .unwrap();
     for (id, expiry) in [(1, now - 60), (2, now + 60)] {
-        sqlx::query("INSERT INTO image_offers(message_id,sender,recipient,size,crc32,expires_at) VALUES(?,1,2,17,1,?)").bind(id).bind(expiry).execute(&store.pool).await.unwrap();
+        sqlx::query("INSERT INTO image_offers(message_id,sender,recipient,size,crc32,expires_at) VALUES(?,1,2,17,1,?)").bind(id).bind(expiry).execute(&store.writer).await.unwrap();
     }
     let storage = store.operational_snapshot().await.unwrap();
     assert_eq!(

@@ -1,0 +1,45 @@
+{
+  "base_image": "sha256:8bb71c2bfada6511553d0989514de515530884f4c351645fbb49b9cc68214632",
+  "artifact_qualification": false,
+  "candidate_sha256": "cd3dafadcfbd373f1c2e8e98339287793661db592b8ac224819f345d39f047ce",
+  "limits": {
+    "memory_max": 268435456,
+    "cpu_max": "100000 100000",
+    "pids_max": 128,
+    "swap_max": 0,
+    "swap_initial": "max",
+    "swap_set_directly": true,
+    "uid": 10001,
+    "read_only_root": true,
+    "cap_eff": 0,
+    "no_new_privileges": true,
+    "seccomp_filter": true
+  },
+  "driver_sha256": "9020cac628c1a5af542d1cae398e578e1a1f09c36a8bf40b265a8d654af60c3e",
+  "returncode": 0,
+  "stdout": "DIAG_EVENT={\"seeded\": 6000, \"seconds\": 60.604}\nDIAG_REPORT={\"passed\": true, \"seed_drain_seconds\": 0.0, \"replay_seconds\": 22.516, \"seconds\": 83.853, \"errors\": [], \"received\": 6000, \"per_recipient\": {\"101\": 150, \"102\": 150, \"103\": 150, \"104\": 150, \"105\": 150, \"106\": 150, \"107\": 150, \"108\": 150, \"109\": 150, \"110\": 150, \"111\": 150, \"112\": 150, \"113\": 150, \"114\": 150, \"115\": 150, \"116\": 150, \"117\": 150, \"118\": 150, \"119\": 150, \"120\": 150}, \"metrics\": {\"rgg_build_info{version=\\\"0.1.0-dev.22\\\"}\": 1.0, \"rgg_uptime_seconds\": 85.947, \"rgg_database_schema_version\": 12.0, \"rgg_snapshot_timestamp_seconds\": 1793565484.0, \"rgg_accounts{state=\\\"active\\\"}\": 120.0, \"rgg_sessions{phase=\\\"ready\\\"}\": 20.0, \"rgg_delivery_records{state=\\\"written_unconfirmed\\\"}\": 6000.0, \"rgg_gg_connections\": 20.0, \"rgg_gg_admissions_total{result=\\\"accepted\\\"}\": 24.0, \"rgg_gg_connection_ends_total{reason=\\\"peer_closed\\\"}\": 4.0, \"rgg_operations_total{operation=\\\"login\\\",result=\\\"success\\\"}\": 24.0, \"rgg_operations_total{operation=\\\"accept\\\",result=\\\"success\\\"}\": 6000.0, \"rgg_operations_total{operation=\\\"delivery\\\",result=\\\"success\\\"}\": 6000.0}}\n",
+  "stderr": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nWARNING: IPv4 forwarding is disabled. Networking will not work.\n",
+  "server_logs": {
+    "stdout": "",
+    "stderr": "2026-11-01T20:36:38.427618Z  INFO rgg_server: Private metrics listening (loopback) metrics_endpoint=127.0.0.1:9090\n2026-11-01T20:36:38.427662Z  INFO rgg_server: GG6 listening (local development) gg_endpoint=127.0.0.1:8074\n2026-11-01T20:36:38.427689Z  INFO rgg_server: HTTP listening (local development) address=127.0.0.1:8088 version=\"0.1.0-dev.22\"\n"
+  },
+  "server_state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-11-01T20:36:38.334295946Z",
+    "FinishedAt": "2026-11-01T20:38:05.080020685Z"
+  },
+  "database_check": {
+    "stdout": "{\"integrity\": \"ok\", \"foreign_keys\": [], \"states\": {\"TransportWrittenUnconfirmed\": 6000}, \"sessions\": 0, \"payloads\": 0, \"sqlite_version\": \"3.40.1\"}\n",
+    "stderr": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\n",
+    "returncode": 0
+  },
+  "cleanup": true
+}

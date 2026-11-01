@@ -70,7 +70,7 @@ impl SqliteStore {
         replacement: &LegacyPassword,
         protector: &dyn SecretProtector,
     ) -> Result<i64, AccountError> {
-        let mut tx = self.pool.begin().await.map_err(storage)?;
+        let mut tx = self.writer.begin().await.map_err(storage)?;
         sqlx::query("UPDATE runtime_state SET process_epoch=process_epoch WHERE id=1")
             .execute(&mut *tx)
             .await
@@ -264,7 +264,7 @@ mod tests {
         );
         store.detach_session(&session, 1).await.unwrap();
         sqlx::query("UPDATE accounts SET active=0")
-            .execute(&store.pool)
+            .execute(&store.writer)
             .await
             .unwrap();
         assert_eq!(
@@ -275,7 +275,7 @@ mod tests {
             AccountError::Inactive
         );
         sqlx::query("UPDATE accounts SET active=1,credential_version=9223372036854775807")
-            .execute(&store.pool)
+            .execute(&store.writer)
             .await
             .unwrap();
         assert_eq!(
@@ -297,9 +297,9 @@ mod tests {
     #[tokio::test]
     async fn bounds_audit_count_and_age_without_exposing_expired_events() {
         let (_root, store, ring, u) = setup().await;
-        sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES('local_cli_with_current_password','password_changed',1,1,2,0)").execute(&store.pool).await.unwrap();
+        sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES('local_cli_with_current_password','password_changed',1,1,2,0)").execute(&store.writer).await.unwrap();
         assert!(store.password_audit().await.unwrap().is_empty());
-        sqlx::query("WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM n WHERE x<10001) INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) SELECT 'local_cli_with_current_password','password_changed',1,1,2,unixepoch() FROM n").execute(&store.pool).await.unwrap();
+        sqlx::query("WITH RECURSIVE n(x) AS (SELECT 1 UNION ALL SELECT x+1 FROM n WHERE x<10001) INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) SELECT 'local_cli_with_current_password','password_changed',1,1,2,unixepoch() FROM n").execute(&store.writer).await.unwrap();
         store
             .change_password_offline(
                 u,

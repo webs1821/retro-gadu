@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "planned_at_utc": "2026-11-01T20:02:19.137244+00:00",
+  "source_commit": "a5d55d37ba29d00b7772629b9d6ce99452a0f1a9",
+  "runtime_image": "sha256:8bb71c2bfada6511553d0989514de515530884f4c351645fbb49b9cc68214632",
+  "verification_image": "sha256:243c59130e1538d6c8b2aa50b47835f9fa1392cf49c76593a98254cfea8696ea",
+  "duration_seconds": 600,
+  "ready_sessions": 100,
+  "offline_accounts": 20,
+  "messages_per_second": 10,
+  "expected_accepted": 6000,
+  "expected_online": 3000,
+  "expected_offline": 3000,
+  "cpu": 1,
+  "memory_max": 268435456,
+  "swap_max": 0,
+  "pids_max": 128,
+  "thresholds": "Unchanged R0-LOAD.md; longer measurement window selected before run",
+  "thresholds_sha256": "7ff1e89a6ee245e2c88dde92e799c93d38f875f62a46a705667ef8aef9ac8081",
+  "soak_qualified": false,
+  "production_qualified": false
+}

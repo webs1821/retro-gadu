@@ -387,3 +387,24 @@ czytnika R0 zwiększono z 8 do 16 KiB, zachowując progi wydajności i poprzedni
 wynik w raporcie. Końcowe testy runtime/HTTP/smoke powtórzone na zwykłym buildzie.
 Schema12 i 190 bibliotek bez zmian. Brak push, wdrożenia oraz nowego obrazu/R0.
 [Kontrakt](RUNTIME-METRICS.md), [raport](VERIFICATION-2026-11-01-dev22.md).
+
+
+## 2026-11-01 — dev.23: kolejność zapisów SQLite
+
+Dłuższy test obrazu dev22 (600s/6000 wiadomości) ujawnił rozłączenie odbiorcy
+przy równoczesnym opróżnianiu3000 offline. Sama kolejka bez wcześniejszej historii
+przeszła; po dodaniu3000 zakończonych dostarczeń odtworzono delivery timeout.
+Wprowadzono1 zapisujący i3 połączenia tylko do odczytu, bez zwiększania limitów.
+Kandydat release odebrał całą kolejkę w22.516s pod CPU1/RAM256MiB/swap0;
+po SIGTERM wszystkie6000 były zapisane, bez sesji/payloadów i błędów integralności.
+101 testów Rust,23 grupy TCP/HTTP/CLI i9 grup kontrolowanych awarii przeszły.
+Nowy test regresji w CI i suite kontenera. Schema12,190 zależności i plan bez zmian.
+Binarki przywrócono bez hooków. [Kontrakt](SQLITE-WRITER.md),
+[raport](VERIFICATION-2026-11-01-dev23.md). Brak push i wdrożenia.
+
+Podczas sprawdzania dokumentacji WAL potwierdzono potrzebę aktualizacji
+wbudowanego SQLite3.46.0 z poprawką WAL-reset. To osobne zadanie przed końcową
+kwalifikacją; nie jest dowodem uszkodzenia baz w opisanym teście.
+Analiza funkcji uploadu GG6.1 i13 przypadków emulatora CPU potwierdziły brak
+pustego terminatora dla wielokrotności2047 i limit klienta50000B. Poprawka pakietu
+klienta jest kolejną pracą; aplikacji Windows nie uruchomiono.

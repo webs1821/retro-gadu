@@ -33,7 +33,7 @@ impl SqliteStore {
         }
         sqlx::query("VACUUM INTO ?")
             .bind(path.to_str().ok_or("unsupported backup path")?)
-            .execute(&self.pool)
+            .execute(&self.writer)
             .await
             .map_err(|_| "snapshot creation failed")?;
         Ok(())

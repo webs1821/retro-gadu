@@ -1,0 +1,42 @@
+{
+  "limits": {
+    "memory_max": 268435456,
+    "cpu_max": "100000 100000",
+    "pids_max": 128,
+    "swap_max": 0,
+    "swap_initial": "max",
+    "swap_set_directly": true,
+    "uid": 10001,
+    "read_only_root": true,
+    "cap_eff": 0,
+    "no_new_privileges": true,
+    "seccomp_filter": true
+  },
+  "driver_sha256": "9133d72c690494204cd562fc67aa92fd1a056e186a8be8cb6e1d71759cf632c1",
+  "returncode": 0,
+  "stdout": "DIAG_EVENT={\"seeded\": 6000, \"seconds\": 60.696}\nDIAG_REPORT={\"passed\": false, \"error\": \"AssertionError: [{'uin': 118, 'error': 'IncompleteReadError: 0 bytes read on a total of 8 expected bytes', 'at': 1797.227721121}]\", \"seconds\": 66.652, \"errors\": [{\"uin\": 118, \"error\": \"IncompleteReadError: 0 bytes read on a total of 8 expected bytes\", \"at\": 1797.227721121}], \"received\": 3690, \"per_recipient\": {\"101\": 25, \"102\": 32, \"103\": 47, \"104\": 45, \"105\": 46, \"106\": 44, \"107\": 44, \"108\": 30, \"109\": 31, \"110\": 36, \"111\": 40, \"112\": 31, \"113\": 38, \"114\": 32, \"115\": 32, \"116\": 35, \"117\": 35, \"118\": 18, \"119\": 24, \"120\": 25}, \"metrics\": {\"rgg_build_info{version=\\\"0.1.0-dev.22\\\"}\": 1.0, \"rgg_uptime_seconds\": 68.758, \"rgg_database_schema_version\": 12.0, \"rgg_snapshot_timestamp_seconds\": 1793564500.0, \"rgg_accounts{state=\\\"active\\\"}\": 120.0, \"rgg_sessions{phase=\\\"ready\\\"}\": 20.0, \"rgg_delivery_records{state=\\\"pending\\\"}\": 2308.0, \"rgg_delivery_records{state=\\\"leased\\\"}\": 3.0, \"rgg_delivery_records{state=\\\"written_unconfirmed\\\"}\": 3689.0, \"rgg_queued_payload_bytes\": 305052.0, \"rgg_oldest_queue_age_seconds\": 59.0, \"rgg_gg_connections\": 19.0, \"rgg_gg_admissions_total{result=\\\"accepted\\\"}\": 24.0, \"rgg_gg_connection_ends_total{reason=\\\"peer_closed\\\"}\": 4.0, \"rgg_gg_connection_ends_total{reason=\\\"timeout\\\"}\": 1.0, \"rgg_operations_total{operation=\\\"login\\\",result=\\\"success\\\"}\": 24.0, \"rgg_operations_total{operation=\\\"accept\\\",result=\\\"success\\\"}\": 6000.0, \"rgg_operations_total{operation=\\\"delivery\\\",result=\\\"success\\\"}\": 3689.0, \"rgg_operations_total{operation=\\\"delivery\\\",result=\\\"timeout\\\"}\": 1.0}}\n",
+  "stderr": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nWARNING: IPv4 forwarding is disabled. Networking will not work.\n",
+  "server_logs": {
+    "stdout": "",
+    "stderr": "2026-11-01T20:20:31.448274Z  INFO rgg_server: Private metrics listening (loopback) metrics_endpoint=127.0.0.1:9090\n2026-11-01T20:20:31.448314Z  INFO rgg_server: GG6 listening (local development) gg_endpoint=127.0.0.1:8074\n2026-11-01T20:20:31.448339Z  INFO rgg_server: HTTP listening (local development) address=127.0.0.1:8088 version=\"0.1.0-dev.22\"\n"
+  },
+  "server_state": {
+    "Status": "exited",
+    "Running": false,
+    "Paused": false,
+    "Restarting": false,
+    "OOMKilled": false,
+    "Dead": false,
+    "Pid": 0,
+    "ExitCode": 0,
+    "Error": "",
+    "StartedAt": "2026-11-01T20:20:31.344379333Z",
+    "FinishedAt": "2026-11-01T20:21:40.958620745Z"
+  },
+  "database_check": {
+    "stdout": "",
+    "stderr": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    import sqlite3,json;db=sqlite3.connect('/data/runtime/rgg.sqlite3');print(json.dumps(dict(integrity=db.execute('PRAGMA integrity_check').fetchone()[0],foreign_keys=db.execute('PRAGMA foreign_key_check').fetchall(),states=dict(db.execute('SELECT state,count(*) FROM deliveries GROUP BY state').fetchall()))))\n                                                                                                                                                                                                                                      ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nsqlite3.OperationalError: no such table: deliveries\n",
+    "returncode": 1
+  },
+  "cleanup": true
+}

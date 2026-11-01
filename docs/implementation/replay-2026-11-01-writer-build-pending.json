@@ -1,0 +1,5 @@
+{
+  "base_image": "sha256:8bb71c2bfada6511553d0989514de515530884f4c351645fbb49b9cc68214632",
+  "artifact_qualification": false,
+  "cleanup": true
+}

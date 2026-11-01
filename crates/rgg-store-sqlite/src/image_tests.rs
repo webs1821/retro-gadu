@@ -87,7 +87,7 @@ async fn offers_are_atomic_recipient_scoped_and_outlive_payload_and_history() {
     );
     sqlx::query("DELETE FROM messages WHERE id=?")
         .bind(id)
-        .execute(&s.pool)
+        .execute(&s.writer)
         .await
         .unwrap();
     assert!(s.image_route_current(&route, 102).await.unwrap());
@@ -162,7 +162,7 @@ async fn blocks_revoke_permanently_sessions_are_fenced_and_retirement_cascades()
 async fn retained_offer_quota_cannot_be_bypassed_by_delivering_or_deleting_text() {
     let (_root, s, _) = setup().await;
     let a = session(&s, 1).await;
-    sqlx::query("WITH RECURSIVE n(v) AS (SELECT 1 UNION ALL SELECT v+1 FROM n WHERE v<8000) INSERT INTO image_offers(message_id,sender,recipient,size,crc32,expires_at) SELECT -v,1,2,1,v,1000 FROM n").execute(&s.pool).await.unwrap();
+    sqlx::query("WITH RECURSIVE n(v) AS (SELECT 1 UNION ALL SELECT v+1 FROM n WHERE v<8000) INSERT INTO image_offers(message_id,sender,recipient,size,crc32,expires_at) SELECT -v,1,2,1,v,1000 FROM n").execute(&s.writer).await.unwrap();
     assert_eq!(
         s.accept_message_bundle(&a, message(), 100, &QueueLimits::default())
             .await

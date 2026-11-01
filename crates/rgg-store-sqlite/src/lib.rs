@@ -32,6 +32,8 @@ mod public_profiles;
 mod statistics;
 #[cfg(test)]
 mod statistics_tests;
+#[cfg(test)]
+mod write_pool_tests;
 use crate::database as sqlx;
 pub mod directory;
 
@@ -69,7 +71,10 @@ pub enum OpenError {
 
 #[derive(Clone)]
 pub struct SqliteStore {
+    // Readers cannot become writers. A single pooled writer provides FIFO acquisition
+    // instead of making four SQLite workers compete in busy_timeout while holding slots.
     pool: SqlitePool,
+    writer: SqlitePool,
     directory: Arc<DataDirectory>,
     epoch: String,
 }
@@ -121,8 +126,41 @@ impl SqliteStore {
             .foreign_keys(true)
             .busy_timeout(Duration::from_secs(5))
             .disable_statement_logging();
-        let pool = SqlitePoolOptions::new()
-            .max_connections(4)
+        let writer = Self::pool_options(1).connect_with(options.clone()).await?;
+        let result = Self::initialize(&writer).await;
+        let epoch = match result {
+            Ok(epoch) => epoch,
+            Err(error) => {
+                writer.close().await;
+                return Err(error);
+            }
+        };
+        let readers = Self::pool_options(3)
+            .connect_with(
+                options
+                    .create_if_missing(false)
+                    .read_only(true)
+                    .pragma("query_only", "ON"),
+            )
+            .await;
+        let pool = match readers {
+            Ok(pool) => pool,
+            Err(error) => {
+                writer.close().await;
+                return Err(error.into());
+            }
+        };
+        Ok(Self {
+            pool,
+            writer,
+            directory,
+            epoch,
+        })
+    }
+
+    fn pool_options(max_connections: u32) -> SqlitePoolOptions {
+        SqlitePoolOptions::new()
+            .max_connections(max_connections)
             .min_connections(1)
             .acquire_timeout(Duration::from_secs(5))
             .after_connect(|connection, _| {
@@ -142,21 +180,6 @@ impl SqliteStore {
                     Ok(())
                 })
             })
-            .connect_with(options)
-            .await?;
-        let result = Self::initialize(&pool).await;
-        let epoch = match result {
-            Ok(epoch) => epoch,
-            Err(error) => {
-                pool.close().await;
-                return Err(error);
-            }
-        };
-        Ok(Self {
-            pool,
-            directory,
-            epoch,
-        })
     }
 
     async fn initialize(pool: &SqlitePool) -> Result<String, OpenError> {
@@ -213,6 +236,7 @@ impl SqliteStore {
     }
     pub async fn close(&self) {
         self.pool.close().await;
+        self.writer.close().await;
     }
 
     pub async fn integrity_check(&self) -> Result<(), OpenError> {
@@ -294,7 +318,7 @@ mod tests {
         let store = SqliteStore::open(root.path()).await.unwrap();
         let epoch = store.process_epoch().to_owned();
         sqlx::query("UPDATE _sqlx_migrations SET version=9999 WHERE version=(SELECT max(version) FROM _sqlx_migrations)")
-            .execute(&store.pool)
+            .execute(&store.writer)
             .await
             .unwrap();
         store.close().await;

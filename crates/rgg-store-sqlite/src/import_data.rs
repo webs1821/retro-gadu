@@ -82,7 +82,7 @@ impl SqliteStore {
         if summary.len() > 8192 {
             return Err("import summary too large");
         }
-        let mut tx = self.pool.begin().await.map_err(failed)?;
+        let mut tx = self.writer.begin().await.map_err(failed)?;
         sqlx::query("UPDATE runtime_state SET started_at=started_at WHERE id=1")
             .execute(&mut *tx)
             .await

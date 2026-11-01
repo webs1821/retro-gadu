@@ -15,7 +15,7 @@ fn storage(_: sqlx::Error) -> AccountError {
 #[async_trait]
 impl PasswordRepository for SqliteStore {
     async fn charge_password_attempt(&self, user: UserId, now: i64) -> Result<bool, AccountError> {
-        let mut tx = self.pool.begin().await.map_err(storage)?;
+        let mut tx = self.writer.begin().await.map_err(storage)?;
         let owned = sqlx::query(
             "UPDATE runtime_state SET process_epoch=process_epoch WHERE id=1 AND process_epoch=?",
         )
@@ -72,7 +72,7 @@ impl PasswordRepository for SqliteStore {
         change: &AuthorizedPasswordChange,
         now: i64,
     ) -> Result<i64, AccountError> {
-        let mut tx = self.pool.begin().await.map_err(storage)?;
+        let mut tx = self.writer.begin().await.map_err(storage)?;
         let changed = sqlx::query("UPDATE accounts SET session_generation=session_generation+1 WHERE uin=? AND active=1 AND credential_version=? AND credential_version<9223372036854775807 AND session_generation<9223372036854775807 AND EXISTS(SELECT 1 FROM runtime_state WHERE id=1 AND process_epoch=?)")
             .bind(i64::from(change.user().get())).bind(change.expected_version()).bind(&self.epoch).execute(&mut *tx).await.map_err(storage)?.rows_affected();
         if changed != 1 {

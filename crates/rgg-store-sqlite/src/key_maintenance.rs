@@ -73,7 +73,7 @@ impl SqliteStore {
             return Err("invalid rekey batch size");
         }
         let mut tx = self
-            .pool
+            .writer
             .begin()
             .await
             .map_err(|_| "rekey transaction failed")?;

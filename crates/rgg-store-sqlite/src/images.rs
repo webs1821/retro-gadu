@@ -22,7 +22,7 @@ pub(crate) async fn revoke(
 #[async_trait]
 impl ImageRepository for SqliteStore {
     async fn set_image_limit(&self, key: &SessionKey, kib: u8) -> Result<(), MessagingError> {
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         fence(&mut tx, key, false).await?;
         sqlx::query("UPDATE account_sessions SET image_limit_kib=? WHERE uin=?")
             .bind(i64::from(kib))
@@ -43,7 +43,7 @@ impl ImageRepository for SqliteStore {
         if requester.user == sender {
             return Err(MessagingError::Rejected);
         }
-        let mut tx = self.pool.begin().await.map_err(db)?;
+        let mut tx = self.writer.begin().await.map_err(db)?;
         let row=sqlx::query("SELECT s.uin,s.session_id,s.generation,s.credential_version,s.epoch,t.session_id recipient_id,t.generation recipient_generation,t.credential_version recipient_version,t.epoch recipient_epoch FROM account_sessions s JOIN accounts a ON a.uin=s.uin JOIN account_sessions t ON t.uin=? JOIN accounts b ON b.uin=t.uin JOIN runtime_state r ON r.id=1 WHERE s.uin=? AND s.ready=1 AND t.ready=1 AND a.active=1 AND b.active=1 AND s.epoch=r.process_epoch AND t.epoch=r.process_epoch AND a.session_generation=s.generation AND a.credential_version=s.credential_version AND b.session_generation=t.generation AND b.credential_version=t.credential_version AND t.image_limit_kib*1024>=? AND EXISTS(SELECT 1 FROM image_offers o WHERE o.sender=s.uin AND o.recipient=t.uin AND o.size=? AND o.crc32=? AND o.expires_at>?) AND NOT EXISTS(SELECT 1 FROM contact_rules c WHERE (c.flags&4)!=0 AND ((c.owner=s.uin AND c.peer=t.uin) OR (c.owner=t.uin AND c.peer=s.uin)))")
             .bind(i64::from(requester.user.get())).bind(i64::from(sender.get())).bind(i64::from(image.size)).bind(i64::from(image.size)).bind(i64::from(image.crc32)).bind(now).fetch_optional(&mut *tx).await.map_err(db)?.ok_or(MessagingError::Rejected)?;
         if row.get::<Vec<u8>, _>("recipient_id") != requester.id

@@ -40,7 +40,8 @@ produkcyjnego Dockera ani stosować host network dla uruchomionej usługi.
 Kwalifikacja wykonania, restartu, wolumenu i skutecznych cgroup wymaga osobnego
 raportu. Sam Dockerfile i budowa nie są dowodem tych właściwości. Publiczna
 domena/reverse proxy, natywny GG6, długi soak i ocena podatności pakietów systemowych
-pozostają oddzielnymi bramkami. Runtime Rust pozostaje dev.18.
+pozostają oddzielnymi bramkami. Każdy raport kwalifikuje wskazany commit i obraz,
+nie wszystkie późniejsze zmiany źródeł.
 
 ## Wynik lokalny
 
@@ -69,5 +70,16 @@ regresji i krótką próbkę R0. [Raport](VERIFICATION-2026-11-01-r0.md) i
 [manifest](container-artifact-2026-11-01-dev19.json) wiążą obraz, archiwum,
 źródła oraz sterowniki testowe. W R0 osobno sprawdzono i wymuszono swap=0
 w cgroup własnego kontenera. Nie zmieniano konfiguracji hosta ani Dockera
-systemowego; prywatny daemon po próbach jest zatrzymany. To nie kwalifikacja
+systemowego; prywatny daemon po tamtych próbach zatrzymano. To nie kwalifikacja
 produkcyjna, długi soak ani próba natywnego GG6.
+
+## Obraz dev.22 i wykryty problem dłuższego odtwarzania
+
+Źródło a5d55d37ba29d00b7772629b9d6ce99452a0f1a9 przeszło25 zestawów release
+oraz osobny test restartu/wolumenu/backup-restore. Pełny dłuższy R0 (600s)
+nie przeszedł: po przyjęciu6000 wiadomości nastąpił timeout przy równoczesnym
+odtwarzaniu3000 offline. Nie wydano nowego kwalifikowanego archiwum obrazu.
+Raporty container-*-2026-11-01-dev22.json i r0-2026-11-01-dev22-failed.json
+zachowują rozdział udanych kontroli funkcji od nieudanej próby obciążenia.
+[Poprawka w dev.23](SQLITE-WRITER.md) przeszła osobne odtworzenie, ale nadal
+wymaga aktualizacji biblioteki SQLite i nowej pełnej kwalifikacji artefaktu.

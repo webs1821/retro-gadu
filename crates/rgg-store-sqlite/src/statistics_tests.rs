@@ -71,10 +71,13 @@ async fn public_counters_require_current_ready_public_presence_and_exclude_tombs
             "UPDATE account_sessions SET epoch=(SELECT process_epoch FROM runtime_state WHERE id=1) WHERE uin=1",
         ),
     ] {
-        sqlx::query(break_fence).execute(&store.pool).await.unwrap();
+        sqlx::query(break_fence)
+            .execute(&store.writer)
+            .await
+            .unwrap();
         let sample = store.public_statistics().await.unwrap();
         assert_eq!((sample.registered, sample.publicly_online), (3, 0));
-        sqlx::query(restore).execute(&store.pool).await.unwrap();
+        sqlx::query(restore).execute(&store.writer).await.unwrap();
         assert_eq!(store.public_statistics().await.unwrap().publicly_online, 1);
     }
     store.detach_session(&key, 101).await.unwrap();

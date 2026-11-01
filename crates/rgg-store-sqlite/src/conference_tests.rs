@@ -59,7 +59,7 @@ async fn context_is_validated_in_the_core_and_corrupt_metadata_is_terminal_and_p
         sqlx::query("UPDATE messages SET conference=? WHERE id=?")
             .bind(invalid)
             .bind(id)
-            .execute(&s.pool)
+            .execute(&s.writer)
             .await
             .unwrap();
         assert_eq!(
@@ -79,7 +79,7 @@ async fn context_is_validated_in_the_core_and_corrupt_metadata_is_terminal_and_p
             .unwrap();
         sqlx::query(corruption)
             .bind(id)
-            .execute(&s.pool)
+            .execute(&s.writer)
             .await
             .unwrap();
         assert_eq!(

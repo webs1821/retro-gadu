@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.22**, schemat SQLite **12**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.23**, schemat SQLite **12**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -35,9 +35,13 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 - Prywatne metryki na osobnym, opcjonalnym porcie loopback: sesje, kolejka,
   przechowywane rekordy i bajty, liczniki wyników oraz histogramy czasu logowania,
   przyjęcia i dostarczania. Ograniczone zapytania i stały zestaw etykiet.
+- SQLite ma jedną kolejkę zapisów i trzy połączenia tylko do odczytu, aby
+  równocześni odbiorcy nie blokowali się wzajemnie podczas opróżniania kolejek.
 - Przypięty lokalny obraz dev.19 z kompletem źródeł; sprawdzone 22 zestawy
   kontroli i krótki profil R0 (100 sesji, 10 wiadomości/s, 1 CPU/256 MiB).
   Starsza próba dev.18 obejmuje też trwały wolumen, restart i backup/restore.
+  Obraz dev.22 przeszedł 25 zestawów oraz restart/restore, ale dłuższy R0
+  ujawnił timeout dostarczenia; pełna kwalifikacja poprawki pozostaje otwarta.
 
 [Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
 zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
@@ -49,6 +53,7 @@ pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożenio
 - [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.19 i pomiar R0](docs/implementation/VERIFICATION-2026-11-01-r0.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
 - [Liczniki i histogramy](docs/implementation/RUNTIME-METRICS.md), [weryfikacja dev.22](docs/implementation/VERIFICATION-2026-11-01-dev22.md)
+- [Kolejka zapisów SQLite i odtworzony błąd](docs/implementation/SQLITE-WRITER.md)
 - [Patcher przeglądarkowy](docs/implementation/BROWSER-PATCHER.md), [weryfikacja dev.20](docs/implementation/VERIFICATION-2026-11-01-dev20.md)
 - [Zmiana hasła przez WWW](docs/implementation/PASSWORD-WEB.md), [weryfikacja dev.21](docs/implementation/VERIFICATION-2026-11-01-dev21.md)
 - [Ograniczenia HTTP](docs/implementation/HTTP-LIMITS.md), [weryfikacja dev.18](docs/implementation/VERIFICATION-2026-11-01-dev18.md)

@@ -1,216 +1,130 @@
-# Punkt wznowienia — 2026-11-01, dev.22
+# Punkt wznowienia — 2026-11-01, dev.23
 
-## Najnowsza implementacja: runtime metryk
+## Zakres i najbliższa praca
 
-Dev.22, schema12, 100 testów Rust, Clippy all-targets/all-features bez ostrzeżeń.
-Jeden RuntimeTelemetry współdzielony przez transport i osobny metrics router.
-Stałe kategorie, mutex bez I/O/await i snapshot <2KiB; snapshot/format poza DB
-cache. +5 rodzin, łącznie17 rodzin/112szeregów, export<16KiB. Countery resetują
-się z procesem, nie są księgą zdarzeń ani potwierdzeniem odbioru GG6.
-Histogramy obejmują login, accept (bez ACK) i delivery (claim+TCP+record DB).
-Ukończone puste claim pomijane; timeout/cancel też przed otrzymaniem lease liczone.
-Guards liczą anulowanie i zwalniają gauge po drop rzeczywistego socketu.
+Użytkownik wznowił ciągły rozwój lokalny do przerwania przez niego. Nie pushować,
+nie wdrażać na Containers, nie zmieniać działającego gg-retro, DNS ani hosts.
+Doraźne odzyskanie własnego hasła użytkownika wykonano wcześniej; nie powtarzać
+odczytu i nie zapisywać hasła w repo. Nie ma aktywnego goal ani nowych subagentów.
 
-16 grup regresji przeszło po dostosowaniu czytnika R0 z8 do16KiB; progi
-wydajności bez zmian. Raport zachowuje poprzedni błąd czytnika. Slow reader
-ujawnił zbyt późny początek pierwszej wersji pomiaru — poprawiony; sprawdzono
-timeout, Interrupted i brak Leased. 5 zestawów --faults także przeszło.
-Odtworzono zwykłe binarki bez test-hooks; końcowe runtime_metrics/http_metrics/
-r0_smoke powtórzono po poprawce zakresu. Plan i schema bez zmian, nadal
-190 bibliotek, 9 rekordów pochodzenia. Bez push, wdrożenia i nowego obrazu.
-RUNTIME-METRICS.md, VERIFICATION-2026-11-01-dev22.md i dwa surowe JSON.
-Ostatni sprawdzony obraz i pełny krótki R0 nadal dev19 (niżej).
+Dev.23: naprawiono timeout przy odtwarzaniu dużej kolejki. SqliteStore ma teraz
+writer max1 i pool max3 otwierany read_only=true/query_only=ON. Wszystkie zapisy,
+transakcje modyfikujące i VACUUM INTO idą przez writer. Snapshoty metryk/statystyk
+pozostają transakcjami odczytowymi. Inicjalizacja przed czytnikami, close obu pul.
+Nadal WAL/FULL, schema12, te same terminy. 101 testów Rust, fmt, Clippy,
+23 grupy TCP/HTTP/CLI i9 grup --faults przeszły. Binarki debug przywrócone normalne.
+Nowy tests/gg6_concurrent_replay.py jest w CI/container_suite: syntetyczna historia
+3000 + kolejka3000,20 klientów, payload/FIFO/integrity. Czas debug około48s;
+nie jest testem pojemności. Surowe wyniki sqlite-writer-*.json.
 
-## Poprzednia implementacja: zmiana hasła WWW
+Kolejność dalszej pracy:
+1. Zakończyć lokalny commit dev.23, jeżeli jeszcze nie istnieje.
+2. Aktualizacja SQLx0.8.6 / libsqlite3-sys0.30.1 (wbudowane SQLite3.46.0).
+   Producent opisuje WAL-reset bug, poprawiony od3.51.3, także3.44.6/3.50.7.
+   https://www.sqlite.org/wal.html#the_wal_reset_bug
+   SQLx0.9.0 jest stabilny, dopuszcza libsqlite3-sys >=0.30.1,<0.38.0.
+   libsqlite3-sys0.37.0 opublikowany2026-03-15; sprawdzić faktyczny nagłówek
+   i SELECT sqlite_version() po pobraniu. Nie kopiować ręcznie amalgamacji do repo.
+   Przypiąć zgodne wersje, zaktualizować inwentarz, przejść testy i RustSec.
+   Zachować stare binarki do migracji/restore. To oddzielna zmiana od writer FIFO.
+3. Nowy obraz z zatwierdzonego commitu, suite26, runtime restart/restore i R0
+   600s/6000 z niezmienionymi progami. Dopiero po pełnym sukcesie eksport artefaktu.
+4. Wrócić do poprawki końca uploadu GG6 w generatorze klienta (opis niżej).
 
-Dev.21, schema12, 95 testów Rust, 21 grup regresji TCP/HTTP/CLI przeszło.
-Opt-in web_password_change=true, /password, wymaga GG/keyringu, samodzielnie
-bez rejestracji/statystyk. Pełne obecne hasło, 5 prób/konto/600s trwale,
-nieznany numer bez alokacji. Cel CSRF osobny od rejestracji, cookie HttpOnly,
-Path=/password, SameSite=Strict, wspólne limity HTTP; POST deadline15s.
-Komenda aktora zawiera tylko wersję i zaszyfrowany sekret. Bariera socketu
-i publikacji przed atomową zmianą nonce/secret/version/generation, lease→Pending,
-usunięciem sesji/presence/staging oraz audytem. Reszta danych zachowana.
-Stary dowód logowania nie może zamknąć nowej poprawnej sesji — sprawdzany także
-przed barierą attach, a nie dopiero w końcowej transakcji.
+## Wyniki obrazu dev.22 i odtworzenie błędu
 
-Testy przed/po commit (exit86), stare/nowe kopie, rzeczywista migracja dev20
-11→12 i zachowanie AUTOINCREMENT przy pustym audycie przeszły. CLI pokazuje
-prawdziwego aktora. 190 bibliotek i 9 rekordów pochodzenia; zależności bez zmian.
-Podgląd formularza obejrzany bez wpisywania haseł; serwer i karta zamknięte.
-Normalne binarki bez test-hooks. PASSWORD-WEB.md i VERIFICATION-2026-11-01-dev21.md.
-Obraz i krótki pomiar R0 nadal dev19, bez nowej kwalifikacji kontenera.
-Baseline dev20: /tmp/rgg-baseline-dev20, commit18e3a1a, schema11.
-Nadal brak resetu bez starego hasła, profilu TLS/proxy, natywnego klienta i długiego soak.
+Źródło a5d55d37ba29d00b7772629b9d6ce99452a0f1a9, wersja0.1.0-dev.22.
+Runtime sha256:8bb71c2bfada6511553d0989514de515530884f4c351645fbb49b9cc68214632.
+Verification sha256:243c59130e1538d6c8b2aa50b47835f9fa1392cf49c76593a98254cfea8696ea.
+Server release bfa935ea649efddad5e8459ec6c6b2eae09cb17971f91e0fd6b6c3521870c3ae.
+Source archive6704391cb029abdc801195c6d1614e2c675237eaf28ed7f9559f0bab7ba07e47.
+25 grup release przeszło69.51s, restart/wolumen/backup-restore także. Swap w tych
+kontrolach faktycznie max; nie udawać0. Dłuższy R0 osobno ustawił i potwierdził
+swap0. Nadano6000 przez600.000s/100Ready, ale końcowy replay3000 zakończył EOF.
+Ta próba NIE przeszła. Zasoby zachowane w surowym raporcie, cleanup=true.
+Średni CPU fazy12.299%, końcowe60s14.206%, RSS peak20824064B; bez OOM.
 
-## Poprzednia implementacja: patcher w przeglądarce
+Diagnostyka przy1CPU/256MiB/swap0:
+- samo3000 offline: sukces15.519s;
+- 3000 terminalnych+3000 offline: EOF, delivery timeout, odbiorca118;
+- writer FIFO, kandydat release: sukces22.516s,6000 TWU,0sesji/payloadów,FK/DB ok.
+SHA kandydata cd3dafadcfbd373f1c2e8e98339287793661db592b8ac224819f345d39f047ce.
+Kandydat miał jeszcze label dev22; diagnostyka nie kwalifikuje nowego obrazu.
+Python verifier SQLite3.40.1 NIE jest wersją SQLite wbudowaną w rGG.
+Próba debug nie zakończyła seedowania online przy100/s; driver3 ma jawne
+bariery Ready/ukończenia historii. Replay nadal30s. Zachowane także wcześniejsze
+nieukończone przygotowanie i start przed ukończeniem builda (brak uruchomienia).
 
-Dev.20, schema11, 10 modułów, 190 wersji zależności, 89 testów Rust.
-Opt-in [client_patcher] default_host: 1..16 ASCII alnum z pojedynczymi . / -.
-Strona /patcher i 3 osadzone assets. Własny ES module: pełny hash oryginału,
-24 zakresy (3 RT_STRING, 17 Cstrings, 4 updater/sounds), snapshot wejścia/mapy,
-Blob URL download, bez uploadu i zmian zainstalowanego klienta. Generator mapy
-tools/client_plan.py korzysta z przypiętego instalatora jako danych (limit2MiB).
-Node24.11.1/Python3.13: 6 porównań całego pliku, błędne dane i async mutation.
-Rust89, Clippy, HTTP patcher/downloads/stats/register/metrics/lifecycle przeszły.
-IAB: błędny plik odrzucony, właściwy przygotowany/pobrany, zmiana hosta usuwa
-stary link, brak błędów JS. Pobrano testowy E:\Downloads\gg.exe (127.0.0.1),
-hash ddbc24fc91ffbb5e4bd29ff628436e60a8eb1ca4a7cd617bad3e32910bdf541f;
-nie uruchomiono. Podgląd localhost zatrzymany, karta zamknięta.
-Debug server SHA1eccd3201968cc4244f8e72c104a7b3322f17d632a80aa3fca6778551e6704d1.
-Kontrakt BROWSER-PATCHER.md, raport VERIFICATION-2026-11-01-dev20.md.
-Nie budowano obrazu dev20: ostatni sprawdzony obraz/R0 pozostaje dev19 poniżej.
+Raporty w docs/implementation i kopia:
+D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-container-2026-11-01-dev22.
+Nie utworzono kwalifikowanego tar.gz dev22. Ostatnia udana krótka próbka R0
+oraz archiwum to nadal dev19, udokumentowane w VERIFICATION-2026-11-01-r0.md.
+Nie usuwać starych archiwów dev18/dev19 ani raportów niepowodzeń.
 
-## Zakończony obraz dev.19 i krótka próba R0
+## Silnik testowy i narzędzia
 
-Źródło obrazu 0b251ba42df7197b8fdc07a5855744a70c5c570f, runtime
-sha256:f593f3c113b1dece0fd60c05f3df47b621c2733cb29ab5624bd2e149d745e105,
-verification sha256:2c40b48b6fc2b8ca6840d0587af4e9d5762a6ad56bfaa4cd6dbaafdf63096618.
-22 zestawy regresji release przeszły (63.316 s). Pełny R0: 100 sesji,
-1800 wiadomości/180.001s (900 online + 900 offline z FIFO), ACK p95 3.992ms,
-online p95 7.621ms, RSS peak 16678912 B, CPU 9.7075% jednej vCPU. Wszystkie
-progi z R0-LOAD.md spełnione. Limity rzeczywiste: CPU1/RAM256MiB/swap0/PID128;
-swap ustawiony bezpośrednio w cgroup własnego zweryfikowanego kontenera.
-Po exit0 sprawdzono kopię DB+WAL: integrity/FK, zero sesji/payloadów, 1800
-TransportWrittenUnconfirmed. Cleanup potwierdzony, zero kontenerów/wolumenów.
-Prywatny daemon Docker29 ZATRZYMANY (session23702 zakończona exit0), brak zadań.
-Raporty wcześniejszych nieukończonych przygotowań i krótkiej kontroli zachowano.
-Sterowniki poprawiono bez zmiany runtime/progów: właściciel wolumenu z obrazu
-runtime; logowanie co100ms z limitem64 w serii i16 nowych połączeń/s/IP; read-only DB/WAL
-kopiowane po shutdown do tmpfs przed integrity_check (nie używać immutable=1).
-Pełny raport r0-2026-11-01-dev19.json, opis VERIFICATION-2026-11-01-r0.md.
-Runtime release SHA74f509e569400dade1da1fb365520cad115aea989b83fb55516c32c5523e750b.
-Źródła/vendor archive SHA8a91a28af7aa84ad2ce94cb612e7d03e493f0b3a83330c54a747bc236fc4b85b.
-Eksport rgg-dev19-runtime.tar.gz (61229424 B), SHA
-ed9c16e3a757d7597c6194e75bfc89215c01733ee555451c642953f775a5906b,
-w D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-container-2026-11-01-dev19.
-Są tam manifest i wszystkie raporty; starsze artefakty dev18 pozostają.
-Nadal brak długiego soak, natywnego GG6, publicznego profilu i skanu OS.
-Nie uruchamiano Windows Sandbox (WindowsSandbox.exe nie ma na tym komputerze).
+Prywatny Docker29.9.2/runc1.5.2 w WSL:
+/tmp/rgg-docker-local-20261101 (root0700), bin/, data29/, run29/,
+daemon29.json, docker29.sock, daemon29.pid, daemon-dev22.log.
+Daemon działa w sesji71330; po zakończeniu prób lub pauzie zatrzymać tylko ten
+sprawdzony PID (SIGTERM), wcześniej sprawdzić brak własnych kontenerów/wolumenów.
+Docker Desktop pozostaje wyłączony. Zawsze jawny --host unix://... i pusty
+osobny --config, bez DOCKER_*; nie używać domyślnego kontekstu.
+Daemon bez bridge/iptables/forwardingu. Testy --network none, klienci współdzielą
+wyłącznie netns serwera. R0 cgroup helper zmienia swap tylko po sprawdzeniu
+własnego kontenera/UID/limitów/etykiety. Nigdy globalna zmiana cgroup.
 
-## Stan implementacji
-
-Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłącznie
-lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
-origin webs1821/retro-gadu nieużywany. Plan i recenzje pozostają niezmienione.
-Nie uruchamiać nowych agentów bez zlecenia delegacji. Brak aktywnego celu/narzędzia goal.
-Zlecony odczyt hasła konta 742858 wykonano na początku tury i wynik przekazano
-użytkownikowi w czacie. Nie ponawiać odczytu; hasła nie zapisano w repozytorium.
-
-Gotowe lokalnie: konta/zaproszenia (także stare kody), LOGIN60/GG32, sesje,
-trwały tekst online/offline, obecność/prywatność, archiwa kontaktów, katalog,
-discovery, WWW/rejestracja/liczniki, konferencje, klasyczne obrazki bez trwałego
-cache oraz katalog pobierania kontrolowany manifestem. CLI ma pełne kopie,
-verify/restore, rotację kluczy ze wznowieniem i importer gg-retro.
-
-W dev.19: schema 11, 10 modułów, 190 wersji zależności, 88 testów Rust.
-Dodano opt-in metrics_bind na osobnym loopback (niedozwolony ten sam endpoint
-co HTTP/GG). Private /metrics: 12 rodzin/19 gauge, stałe etykiety, aktywne/
-wyłączone konta, retired, valid ready/synchronizing z niewidocznymi, stany
-retencji dostarczeń, logiczne bajty i wiek kolejki, bajty archiwów, niewygasłe
-grants. Jeden read snapshot, cache <=500ms, max 2 żądania i 1 odczyt, deadline1s;
-503 przy braku Ready/błędzie/timeout, 429 przy zajętości. Host/Origin/fetch-site
-sprawdzane, query/body/TE odrzucane, proxy headers ignorowane. Osobny listener
-8 gniazd/4 na IP, idle/write5s, lifetime60s; uczestniczy w shutdown/select.
-Testy Rust, Clippy, real HTTP/GG metrics oraz regresja lifecycle/sessions/stats/
-HTTP limits przeszły. Binarka WSL debug (bez test-hooks) SHA256
-93ce00f9303922c0030b3fb00d970cd78e7992f7148e811f3243d10e1a1368c5.
-Osiem wpisów pochodzenia (dodano Prometheus format jako reference-only).
-Brak pełnych histogramów/counterów protokołu i buforów; nie uruchamiano
-Prometheusa. Obraz dev.19 przeszedł 22 zestawy i krótki R0, opisane powyżej.
-Obraz dev.18 sprawdzano sterownikiem z commitu 7033971 (20 pozycji).
-Kontrakt METRICS.md i raport VERIFICATION-2026-11-01-dev19.md.
-Dev.15 dodał pełny importer (commit 6b5b219):
-Pełny import sztucznego przypiętego gg-retro 0.8.3: wszystkie hasła weryfikowane
-i przeszyfrowane świeżym keyringiem, dane w jednej transakcji, receipt z hashami,
-marker przed utworzeniem bazy, trzy awarie procesu i retry do nowego katalogu.
-Sprawdzono TCP po imporcie, zaproszenia, katalog, kontakty, FIFO/obrazek,
-backup/restore, błędne dane/klucze i pełną regresję wcześniejszych funkcji.
-Rzeczywista migracja dev.14 schema 9 → 10 i restore starej kopii przeszły.
-[Kontrakt importu](IMPORT-GG-RETRO.md), [raport](VERIFICATION-2026-11-01-dev15.md).
-
-Import wymaga jawnego potwierdzenia brakującej historii usuniętych UIN/prywatności
-i osobnej listy rezerwacji. Pending TTL jest odnawiany, delivered ma tylko nagłówki,
-stare tokeny odrzucane; wszystkie decyzje opisane i raportowane. Nie testowano
-importu prawdziwej bazy ani klucza. Pochodzenie: źródło MIS referencyjnie, niezależne
-wektory ggv1 z libsodium; żadnego skopiowanego kodu gg-retro/libgadu.
-
-Dev.16: password-change wymaga pełnego obecnego hasła, zapisuje świeży nonce,
-wersję uprawnień i audyt w jednej transakcji. Password-audit pokazuje do 100 wpisów;
-retencja widoku 30 dni, limit DB 10000. Brak resetu i endpointu online.
-Nowe/stare logowanie, kolejka/obrazek, stare/nowe kopie, dwa przerwania oraz
-migracja/restore dev.15 → dev.16 przeszły. [Kontrakt](PASSWORD-CHANGE.md),
-[raport](VERIFICATION-2026-11-01-dev16.md). Normalne binarki bez hooków.
-
-Przejrzano ponownie upload kontaktów: przypięte libgadu wysyła wszystkie fragmenty
-przed ACK; nie zmieniono protokołu bez dowodu oryginalnego GG6. Pełny końcowy blok
-pozostaje ograniczeniem.
-
-Dev.17: własne tools/client_format.py, client_patch.py i build_client.py tworzą
-osobny pakiet z przypiętego gg-retro/server/static/gg61.exe (SHA256
-bcc8157aa6bface009d8018c308bf3cef8725546b4f826bdbaf6bbeaa953b06f).
-Adres konfigurowalny do 16 znaków, poprawne tablice RT_STRING, wyłączony updater,
-dźwięki wiadomosc/dostepny, zachowany cały pozostały rozpakowany instalator.
-Nie skopiowano implementacji gg-retro. Pięć testów syntetycznych, trzy hosty,
-464 zasoby LoadStringW dla każdego oraz prawdziwy katalog HTTP przeszły.
-Windows mapuje EXE wyłącznie jako dane; klient i instalator nie były uruchamiane.
-Katalog wynikowy: D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-client-local-2026-11-01,
-adres 127.0.0.1; nic nie podmieniono. [Kontrakt](CLIENT-PACKAGES.md),
-[raport](VERIFICATION-2026-11-01-dev17.md). Python pakowania wymaga >=3.11.
-
-Dev.18: BoundedListener/BoundedIo w rgg-server ogranicza HTTP przed parserem:
-64 gniazda/16 na faktyczne IP, idle 15s, zablokowany zapis 10s, lifetime 600s.
-Osobne rejestracje timerów odczytu/zapisu; incoming/flush nie przedłuża write.
-Sześć nowych testów Rust, trzy realne testy gniazd i regresja HTTP/GG przeszły.
-Clippy all-features i RustSec poprawnie. Zwykłe binarki bez test-hooks.
-Próba 180s: 4175 wiadomości online/offline, 167 cykli, szczyt RSS 24,1 MiB,
-180 pobrań/540 oczekiwanych 429, integralność DB i czysty SIGTERM.
-To nie długi soak ani dowód plateau RAM. [Raport](VERIFICATION-2026-11-01-dev18.md).
-
-Kontener runtime dev.18 z SHA 7bc2d669a6039b0c770186d781edbc537dce2f9e jest
-zbudowany i sprawdzony lokalnie. 20 zestawów kontroli na release binarkach oraz
-osobny PID1/UID10001/cgroup/volume/restart/backup-restore przeszły. Tymczasowe
-kontenery/wolumeny usunięto, a prywatny daemon zakończył się kodem 0.
-Runtime image sha256:b0f5d9eae97ba7d4c12e2e068730e48ebf3e7a75ed7a0ad3fa84fca0102673ab;
-test image sha256:cf3a7b38b9bb927ad7a83dfef102f8c4cb498e3bdbf7cb54ad1bc54a7d995ffe.
-Binarka release ecc6b15263b9363014bd69fa46cae839907cf30c9d97ee031bcb1c4ed5b529c0.
-Raport VERIFICATION-2026-11-01-container.md i container-artifact-2026-11-01-dev18.json
-wiążą źródła, fixture, lockfile, image ID, binarkę i hashe sterowników.
-Archiwum 61115802 B: D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-container-2026-11-01\rgg-dev18-runtime.tar.gz,
-SHA256 d4cc60eba8bff1445c4ade5ed7bae43810daf5a0897194e5a04eff3c79b770fa.
-Źródła wraz z vendorami/licencjami są także wewnątrz obrazu. Compose sprawdzony
-przez config, bez uruchamiania nim instancji. R0 100 sesji, natywny GG6, skan OS
-i długi soak NIE są zakwalifikowane. Memory.max 256 MiB i 1 CPU były skuteczne,
-ale memory.swap.max = max pomimo żądanego --memory-swap; swap WSL aktywny.
-
-Kolejne luki: upload kontaktów (odroczone ACK, pełny końcowy fragment 2047 B),
-domena/profil wdrożeniowy, metryki/R0 i długi soak. Patcher jest przez CLI,
-brak odpowiednika w przeglądarce. Limity HTTP są lokalnie sprawdzone, ale publiczny
-TLS/reverse proxy i jego pochodzenie żądań wymagają osobnego profilu/kwalifikacji.
-Docker Desktop pozostawiono nieuruchomiony. Konteksty default i desktop-linux
-wskazują lokalne named pipes, ale silnik Desktop nie działa. Do prób użyto
-odizolowanego WSL /tmp/rgg-docker-local-20261101 (root, 0700): narzędzia Docker
-29.9.2/runc 1.5.2 w bin/, dane data29/, config daemon29.json, prywatny docker29.sock.
-Daemon jest teraz ZATRZYMANY; pliki/cache zostały do późniejszego użycia. Pierwotny
-tymczasowy daemon systemowego Docker26 również zatrzymany; nie uruchomił kontenerów.
-Nie zmieniano programów systemowych ani firewalla/forwardingu/mostków.
-Docker CLI zawsze z jawnym --host unix://... i pustą własną konfiguracją; nie
-używać domyślnego kontekstu. Statyczne narzędzia są tylko do lokalnych prób.
-W WSL Git2.25.1 nie honoruje nowszego GIT_CONFIG_GLOBAL tak jak bieżący Git:
-build_container.py używa jawnego git-dir/work-tree, bez zmian globalnej konfiguracji.
-Obraz buduje wyłącznie z commitów, nie ze zmienionego worktree. Raporty są
-kwalifikacją artefaktu z 7bc2d66, nie każdej późniejszej rewizji narzędzi/dokumentacji.
-Natywny GG6/Windows nadal niekwalifikowane. Do czasu parytetu nie rozważać podmiany.
-[PARITY](PARITY.md) zawiera aktualne rozróżnienie kodu i kwalifikacji.
-
-Repo: D:\Dokumenty\Documents\RetroGadu, poza writable roots — polecenia mutujące
-wymagają require_escalated z konkretnym uzasadnieniem. Git author webs1821.
-WSL: CARGO_HOME=/tmp/gg-retro-toolchain/cargo,
+Workspace repo D:\Dokumenty\Documents\RetroGadu, master. Zapis/build/git wymagają
+require_escalated (poza writable roots). Git author webs1821,
+11637724+webs1821@users.noreply.github.com. Nie było push.
+Python Windows C:\Program Files\Python313\python.exe, Node C:\Program Files\nodejs\node.exe.
+WSL python3 jest3.10; tools z tomllib uruchamiać Python3.13 Windows lub image3.13.
+WSL cargo: CARGO_HOME=/tmp/gg-retro-toolchain/cargo,
 RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup, CARGO_TARGET_DIR=/tmp/rgg-target,
-CC=/tmp/gg-retro-toolchain/gcc/cc; dodać CARGO_HOME/bin do PATH.
-Binarki: /tmp/rgg-target/debug/rgg-server i rgg-admin, zwykłe bez test-hooks.
-Baselines: /tmp/rgg-baseline-dev8, dev9, dev13, dev14 i dev15 (osobne katalogi).
-Python Windows 3.13 do tomllib/kontroli repo, WSL 3.8 do TCP/process. W WSL brak rg.
-Referencja libgadu: 9eb2aa0eb6ad020fda7c7264538e48c7b78ba602,
-D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-reference-libgadu.
-gg-retro reference: D:\Dokumenty\Documents\gg-retro, ed9640cc247764754b5e47891053eb07a53f76d5.
+CC=/tmp/gg-retro-toolchain/gcc/cc; PATH=$CARGO_HOME/bin:$PATH. Rust1.99.1.
+Normalne debug binarki /tmp/rgg-target/debug; release w /tmp/rgg-target/release
+zawiera kandydata writer jeszcze sprzed bumpa dev23. Baselines dev8/dev9/dev13/
+dev14/dev15/dev20 oraz /tmp/rgg-baseline-dev22 (normalne binarki sprzed poprawki).
+
+## Analiza końca listy kontaktów — jeszcze bez poprawki
+
+Workspace D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-client-analysis-2026-11-01:
+gg-original-analysis.bin (nie uruchomiono jako aplikacji), disassembly.txt,
+emulate_contacts.py, original-emulation.json, deps/Unicorn2.1.4. W tym samym
+katalogu tymczasowe replay_diagnostic1/2/3.py i diagnose_container_replay.py.
+Runner może podstawić --candidate binarkę do własnego wolumenu; taka diagnostyka
+z bazowym obrazem NIE kwalifikuje identyczności źródła/obrazu.
+
+Oryginał GG6.1 SHA74b78af318c52f86dff8a7ee27a7a0b5ea545167aebb594a8a559ec97f2e3a57,
+wydobyty z przypiętego gg61.exe przez własny parser. Funkcja uploadu VA4249ef–424a89:
+bloki max2047, limit całości50000, pierwszy typ0, dalsze1, packet0x16. Wszystkie
+wywołania send w pętli, licznik potwierdzeń this+0x9c zwiększany dla każdego.
+Dla dodatniej wielokrotności2047 NIE wysyła pustego MORE. Pusta lista wysyła PUT0.
+Null pointer nie wysyła nic. Potwierdzone13 przypadkami w emulatorze CPU, który
+przechwytuje strlen/memcpy/send; zero WindowsAPI/sieci i żadnego startu aplikacji.
+Stan zachowania całego GG/native pozostaje NIEkwalifikowany.
+
+Możliwa poprawka: własny stub w zerowym paddingu .text VA479400/raw79400,
+rozszerzyć VirtualSize sekcji (obecnie78398; raw79000). Hook predicate od424a39
+(do424a42,9B) do stuba. Powtórzyć decyzję normalnego send, a na końcu dodać
+pusty MORE tylko gdy ebx>0 i ebx%2047==0; zwiększyć licznik ACK i od razu wyjść.
+Nie dopisywać pustego MORE po krótkim fragmencie (serwer już opublikował listę).
+Nie zgadywać końca po timeout ani osłabiać atomowości serwera. Zweryfikować
+instrukcje/stos/registers w emulatorze, PE/Windows resource reader, Python/JS
+pełnym porównaniem, potem protokołem TCP. Aktualny generator/mapa jeszcze bez zmian.
+
+Unicorn wheel win64 hash d7107500c64ce5c168fbff6bef9485b5db1350050036f4cea568650cf8bdbdf5.
+To narzędzie testowe poza runtime. Emulator napisany niezależnie jako osobny
+program MIT, bez importowania kodu AGPL patchera; nie kopiować zamkniętego klienta
+ani pełnego disassembly do Git. Recepta patchera zachowuje pochodzenie w THIRD_PARTY.
+
+## Pozostałe odniesienia
+
+SQLITE-WRITER.md i VERIFICATION-2026-11-01-dev23.md — najnowsze dowody.
+PARITY.md rozróżnia implementację od kwalifikacji; warunek podmiany niespełniony.
+Plan niezmieniony SHA256 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
+Historyczne szczegóły dev1–22 w STATUS.md i osobnych kontraktach/raportach.
+Nadal otwarte: klient natywny, publiczny TLS/proxy, rzeczywisty import, długi soak,
+kwalifikacja OS/dependencies i komplet metryk RSS/CPU/buforów.
+Referencja gg-retro ed9640cc247764754b5e47891053eb07a53f76d5 w D:\Dokumenty\Documents\gg-retro.
+Libgadu9eb2aa0eb6ad020fda7c7264538e48c7b78ba602 w workspace/rgg-reference-libgadu.
