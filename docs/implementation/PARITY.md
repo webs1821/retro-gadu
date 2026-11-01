@@ -33,7 +33,7 @@ wyniku testów działającego gg-retro.
 | Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | częściowe: katalog WWW/JSON, niezmienne pliki, SHA-256 i instrukcje gotowe lokalnie; pakiet/patcher rGG nadal brak | http_downloads.py, podgląd desktop z syntetycznymi plikami | nie sprawdzono |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane; brak kwalifikacji wydajności/RSS/soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca | nie dotyczy |
-| Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI i walidacja kluczy; reszta brak | `accounts_cli.py` | nie dotyczy |
+| Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, kompletne backup/verify/restore; rotacja i importer brak | accounts_cli.py, backups_cli.py: pełny roundtrip, błędne dane, 2 przerwania procesu | nie dotyczy |
 | Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | brak | — | — |
 
 ## Warunek rozważenia podmiany

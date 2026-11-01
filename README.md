@@ -55,6 +55,12 @@ sterowaną osobnym manifestem z SHA-256, pochodzeniem i instrukcją. Pliki są
 sprawdzane przed startem i serwowane jako niezmienne kopie z ograniczeniem pobrań.
 Binarki klienta nie są dołączone do repozytorium.
 
+Wersja **0.1.0-dev.12** dodaje kompletne kopie offline z kluczami i manifestem,
+weryfikację bez zmiany kopii oraz odtwarzanie do nowego katalogu. Niepełne
+odtworzenie blokuje start bazy. Kontrola obejmuje sekret każdego konta.
+
+- [Kopie i odtwarzanie](docs/implementation/BACKUPS.md)
+- [Weryfikacja dev.12](docs/implementation/VERIFICATION-2026-11-01-dev12.md)
 - [Katalog pobierania](docs/implementation/DOWNLOADS.md)
 - [Weryfikacja dev.11](docs/implementation/VERIFICATION-2026-11-01-dev11.md)
 - [Obrazki](docs/implementation/IMAGES.md)
@@ -200,10 +206,11 @@ kopie i odzyskiwanie pozostają kolejnymi zadaniami.
 | `rgg-protocol` | Czyste dekodery/enkodery i reguły formatu GG |
 | `rgg-store-sqlite` | Implementacja portów, migracje, trwałość i wyłączne posiadanie danych |
 | `rgg-transport` | Nasłuch GG6, cykl połączenia, limity i pojedynczy writer sesji |
+| `rgg-transfers` | Ograniczone transfery obrazków w RAM, weryfikacja CRC i sesji |
 | `rgg-http` | Endpointy HTTP zależne od portów aplikacji |
 | `rgg-server` | Konfiguracja, składanie modułów, sygnały i cykl życia |
 | `rgg-credentials` | Koperty sekretów, keyring, losowe zaproszenia i ich skróty |
-| `rgg-admin` | Lokalne operacje na kontach i zaproszeniach pod blokadą danych |
+| `rgg-admin` | Lokalne konta, zaproszenia oraz backup/restore pod blokadą danych |
 
 ```mermaid
 flowchart TD
@@ -211,6 +218,9 @@ flowchart TD
     Server --> Store[rgg-store-sqlite]
     Server --> Transport[rgg-transport]
     Server --> Credentials[rgg-credentials]
+    Server --> Transfers[rgg-transfers]
+    Transfers --> App[rgg-application]
+    Transfers --> Domain[rgg-domain]
     HTTP --> App[rgg-application]
     Store --> App
     Transport --> Protocol[rgg-protocol]
@@ -244,7 +254,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.6](docs/implementation/cargo-audit-2026-11-01-dev6.json).
+[raporcie audytu dev.12](docs/implementation/cargo-audit-2026-11-01-dev12.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

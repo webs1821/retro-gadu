@@ -192,3 +192,12 @@ i cztery strumienie. Bez dołączenia prawdziwych EXE, bez push/wdrożenia.
 
 69 testów Rust, HTTP pobierania i regresje WWW/GG, desktop UI z dwoma sztucznymi
 plikami. [Kontrakt i ograniczenia](DOWNLOADS.md), [raport](VERIFICATION-2026-11-01-dev11.md).
+
+## 2026-11-01 — kompletne kopie i restore, dev.12
+
+Offline backup-create/backup-verify/restore, spójny obraz SQLite z keyringiem,
+manifest SHA-256 i pełna walidacja wszystkich sekretów. Brak nadpisywania celu,
+znacznik niepełnego restore blokuje start. Dwie kontrolowane awarie przeszły,
+podobnie jak odtworzenie pełnych danych i logowanie/odbiór obrazka po restore.
+69 testów Rust, Clippy i audyt bez błędów. Brak nowych wersji zależności.
+[Kontrakt](BACKUPS.md), [wyniki](VERIFICATION-2026-11-01-dev12.md). Nadal lokalnie.

@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.11
+# Punkt wznowienia — 2026-11-01, dev.12
 
 Użytkownik wznowił prace. Nadal wyłącznie lokalnie: testy i commity jako webs1821,
 bez push i wdrożenia rGG. Master, origin wskazuje webs1821/retro-gadu; nie był używany.
@@ -7,7 +7,7 @@ Plan implementacji i recenzje pozostają niezmienione.
 Gotowe: konta/zaproszenia, logowanie, sesje, kolejka offline, obecność/prywatność,
 archiwa kontaktów, katalog, discovery, WWW/rejestracja/liczniki, konferencje,
 obrazki klasyczne bez trwałego cache (commit 11cf7a1) i opcjonalny katalog pobierania
-z manifestem, hashami, pochodzeniem oraz instrukcjami. Schemat 8, wersja 0.1.0-dev.11.
+z manifestem, hashami, pochodzeniem oraz instrukcjami. Schemat 8, wersja 0.1.0-dev.12.
 
 [Kontrakt obrazków](IMAGES.md) i [weryfikacja](VERIFICATION-2026-11-01-dev10.md):
 68 testów Rust, TCP/process/CLI/HTTP, awarie i rzeczywiste migracje dev.8/dev.9.
@@ -19,7 +19,12 @@ Dev.11: 69 testów Rust, 4 grupy HTTP pobierania, regresje WWW/GG i podgląd des
 [raport](VERIFICATION-2026-11-01-dev11.md). Zwykłe binarki, podgląd zamknięty.
 Katalog pobierania gotowy; prawdziwe pakiety klienta nadal nie są dołączone.
 
-Następne luki do parytetu: patcher/pakiet klienta, konfiguracja docelowej domeny, admin/backup/restore,
+Dev.12: offline backup-create/backup-verify/restore gotowe. Kontrola wszystkich
+sekretów, manifest publikowany ostatni, marker niepełnego restore blokuje start.
+69 testów Rust, pełny roundtrip danych i dwa przerwania procesu; [raport](VERIFICATION-2026-11-01-dev12.md).
+Normalny build bez hooków. Kopie zawierają bazę i klucze, bez config/plików klientów.
+
+Następne luki do parytetu: patcher/pakiet klienta, konfiguracja docelowej domeny, rotacja kluczy,
 importer dotychczasowego gg-retro, lokalny kontener, pomiary i testy natywne.
 Nie kopiować binarek klienta do kodu AGPL ani kodu gg-retro (niestandardowa MIS).
 Szczegóły [PARITY](PARITY.md) oraz plan. Przy obsłudze pobierania użyć jawnego

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
+mod backup;
 use rgg_application::accounts::{AccountRepository, LegacyPassword, Registration, SecretProtector};
 use rgg_credentials::{Keyring, invitation_digest, new_invitation};
 use rgg_domain::UserId;
@@ -37,11 +38,14 @@ async fn run() -> Result<Value, Error> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats> --data-dir <path>")?;
+        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore> [options]")?;
     let allowed: &[&str] = match command.as_str() {
         "init" | "account-create" | "stats" => &["--data-dir"],
         "invite" => &["--data-dir", "--count", "--uses"],
         "retire" => &["--data-dir", "--uin"],
+        "backup-create" => &["--data-dir", "--output"],
+        "backup-verify" => &["--backup"],
+        "restore" => &["--backup", "--data-dir"],
         _ => return Err("unknown command".into()),
     };
     let mut options = BTreeMap::new();
@@ -54,7 +58,28 @@ async fn run() -> Result<Value, Error> {
             return Err("duplicate option".into());
         }
     }
+    if command == "backup-verify" {
+        return backup::verify(std::path::Path::new(
+            options.get("--backup").ok_or("--backup is required")?,
+        ))
+        .await;
+    }
     let path = PathBuf::from(options.get("--data-dir").ok_or("--data-dir is required")?);
+    if command == "backup-create" {
+        if !options.contains_key("--output") {
+            return Err("--output is required".into());
+        }
+        if !path.join("rgg.sqlite").is_file() || !path.join("keys.toml").is_file() {
+            return Err("backup source must be an initialized data directory".into());
+        }
+    }
+    if command == "restore" {
+        return backup::restore(
+            std::path::Path::new(options.get("--backup").ok_or("--backup is required")?),
+            &path,
+        )
+        .await;
+    }
     let store = SqliteStore::open(&path).await?;
     let result = execute(&command, &options, &store).await;
     store.close().await;
@@ -83,6 +108,13 @@ async fn execute(
         return Ok(json!({"initialized": true}));
     }
     match command {
+        "backup-create" => {
+            backup::create(
+                store,
+                std::path::Path::new(options.get("--output").ok_or("--output is required")?),
+            )
+            .await
+        }
         "invite" => {
             let count: u32 = options
                 .get("--count")

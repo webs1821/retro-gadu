@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 
 mod accounts;
+pub mod backup;
 #[cfg(test)]
 mod conference_tests;
 mod contacts;
@@ -51,6 +52,8 @@ pub enum OpenError {
     Durability,
     #[error("secure random source unavailable")]
     Random,
+    #[error("data directory contains an incomplete restore; use a fresh destination")]
+    IncompleteRestore,
 }
 
 #[derive(Clone)]
@@ -63,6 +66,14 @@ pub struct SqliteStore {
 impl SqliteStore {
     pub async fn open(path: &Path) -> Result<Self, OpenError> {
         let directory = Arc::new(DataDirectory::acquire(path)?);
+        if directory
+            .root()
+            .join("restore-incomplete")
+            .try_exists()
+            .map_err(DirectoryError::Io)?
+        {
+            return Err(OpenError::IncompleteRestore);
+        }
         let options = SqliteConnectOptions::new()
             .filename(directory.root().join("rgg.sqlite"))
             .create_if_missing(true)
