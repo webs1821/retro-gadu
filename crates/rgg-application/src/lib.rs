@@ -9,6 +9,7 @@ pub mod contacts;
 pub mod directory;
 pub mod images;
 pub mod messaging;
+pub mod operations;
 pub mod presence;
 pub mod registration;
 pub mod sessions;

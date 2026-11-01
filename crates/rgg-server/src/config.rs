@@ -12,6 +12,7 @@ pub struct Config {
     pub data_dir: PathBuf,
     pub http_bind: SocketAddr,
     pub gg_bind: Option<SocketAddr>,
+    pub metrics_bind: Option<SocketAddr>,
     #[serde(default)]
     pub legacy_discovery: bool,
     #[serde(default)]
@@ -50,6 +51,8 @@ pub enum ConfigError {
     LegacyDiscovery,
     #[error("web_registration requires a GG listener and initialized account keyring")]
     WebRegistration,
+    #[error("metrics must use a separate loopback endpoint")]
+    MetricsEndpoint,
 }
 impl Config {
     pub fn load(path: &Path) -> Result<Self, ConfigError> {
@@ -60,6 +63,7 @@ impl Config {
         let mut config: Self = toml::from_str(source).map_err(|_| ConfigError::Syntax)?;
         if !config.http_bind.ip().is_loopback()
             || config.gg_bind.is_some_and(|a| !a.ip().is_loopback())
+            || config.metrics_bind.is_some_and(|a| !a.ip().is_loopback())
         {
             return Err(ConfigError::PublicBind);
         }
@@ -71,6 +75,12 @@ impl Config {
         }
         if config.web_registration && config.gg_bind.is_none() {
             return Err(ConfigError::WebRegistration);
+        }
+        if config
+            .metrics_bind
+            .is_some_and(|a| a.port() != 0 && (a == config.http_bind || Some(a) == config.gg_bind))
+        {
+            return Err(ConfigError::MetricsEndpoint);
         }
         let q = &config.queue;
         if !config.network.valid()
@@ -104,6 +114,32 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn metrics_are_opt_in_loopback_and_separate_from_client_services() {
+        let base = "data_dir='data'\nhttp_bind='127.0.0.1:8088'\ngg_bind='127.0.0.1:8074'\n";
+        assert!(
+            Config::parse(base, Path::new("."))
+                .unwrap()
+                .metrics_bind
+                .is_none()
+        );
+        for address in [
+            "0.0.0.0:9090",
+            "[::]:9090",
+            "192.168.1.2:9090",
+            "127.0.0.1:8088",
+            "127.0.0.1:8074",
+        ] {
+            assert!(
+                Config::parse(&format!("{base}metrics_bind='{address}'"), Path::new(".")).is_err()
+            );
+        }
+        for address in ["127.0.0.1:9090", "[::1]:9090", "127.0.0.1:0"] {
+            assert!(
+                Config::parse(&format!("{base}metrics_bind='{address}'"), Path::new(".")).is_ok()
+            );
+        }
+    }
     #[test]
     fn http_limits_are_bounded_and_reject_unknown_fields() {
         let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n[http]\n";

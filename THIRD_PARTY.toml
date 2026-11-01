@@ -1,6 +1,18 @@
 schema_version = 1
 
 [[sources]]
+id = "prometheus-text-format-reference"
+project = "Prometheus exposition format and metric naming"
+upstream_url = "https://prometheus.io/docs/instrumenting/exposition_formats/"
+kind = "reference-only"
+upstream_authors = ["Autorzy Prometheus"]
+local_paths = ["crates/rgg-http/src/metrics.rs", "docs/implementation/METRICS.md", "tests/http_metrics.py"]
+symbols = ["0.0.4", "rgg_delivery_records"]
+changes = "Własny formatter dla tekstowego protokołu 0.0.4 na podstawie faktów specyfikacji: HELP/TYPE, LF, MIME i stałe etykiety. Konwencje gauge dla stanów zmniejszających się przez retencję. Nie skopiowano kodu eksportera ani tekstu dokumentacji."
+verification = "Testy rzeczywistego HTTP sprawdzają MIME, składnię, stałą liczbę szeregów, brak danych użytkowników i semantykę kolejki; nie uruchamiano Prometheusa."
+reviewed_on = "2026-11-01"
+
+[[sources]]
 id = "poggadaj-gg32"
 project = "poggadaj"
 upstream_url = "https://github.com/Oreeeee/poggadaj"

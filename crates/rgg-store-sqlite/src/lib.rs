@@ -16,6 +16,9 @@ mod messaging;
 #[cfg(test)]
 mod messaging_tests;
 mod migrations;
+mod operations;
+#[cfg(test)]
+mod operations_tests;
 pub mod password_maintenance;
 mod presence;
 #[cfg(test)]

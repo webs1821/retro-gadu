@@ -309,3 +309,17 @@ Tymczasowy Docker 29.9.2 nie zastąpił systemowych narzędzi ani Docker Desktop
 Nie było push, publikacji ani połączenia z produkcyjnym Containers.
 [Kontrakt](CONTAINERS.md), [raport](VERIFICATION-2026-11-01-container.md),
 [manifest artefaktu](container-artifact-2026-11-01-dev18.json).
+
+## 2026-11-01 — prywatne metryki operacyjne (dev.19)
+
+Osobny opcjonalny listener loopback eksportuje 12 rodzin/19 szeregów gauge:
+stan kont i bieżących sesji, kolejkę i terminalne rekordy dostarczeń, logiczne
+bajty/wiek kolejki, archiwa oraz niewygasłe granty. Agregaty powstają w jednym
+odczycie SQLite, z krótkim cache i deadline; brak etykiet/danych użytkowników.
+Publiczne liczniki zachowują dotychczasową politykę niewidoczności. Listener
+ma osobne limity i uczestniczy we wspólnym uruchamianiu/zamykaniu usług.
+
+88 testów Rust, Clippy, realne HTTP/GG metrics i regresja sesji/lifecycle/stats/
+limitów przeszły. Schema nadal 11, 190 zależności, 8 wpisów pochodzenia. Nie
+rozszerzano kwalifikacji wcześniejszego obrazu dev.18 na nową binarkę.
+[Kontrakt](METRICS.md), [raport](VERIFICATION-2026-11-01-dev19.md).

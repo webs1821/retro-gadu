@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.18
+# Punkt wznowienia — 2026-11-01, dev.19
 
 Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłącznie
 lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
@@ -13,7 +13,23 @@ discovery, WWW/rejestracja/liczniki, konferencje, klasyczne obrazki bez trwałeg
 cache oraz katalog pobierania kontrolowany manifestem. CLI ma pełne kopie,
 verify/restore, rotację kluczy ze wznowieniem i importer gg-retro.
 
-Aktualnie dev.18: schema 11, 10 modułów, 190 wersji zależności, 83 testy Rust.
+Aktualnie dev.19: schema 11, 10 modułów, 190 wersji zależności, 88 testów Rust.
+Dodano opt-in metrics_bind na osobnym loopback (niedozwolony ten sam endpoint
+co HTTP/GG). Private /metrics: 12 rodzin/19 gauge, stałe etykiety, aktywne/
+wyłączone konta, retired, valid ready/synchronizing z niewidocznymi, stany
+retencji dostarczeń, logiczne bajty i wiek kolejki, bajty archiwów, niewygasłe
+grants. Jeden read snapshot, cache <=500ms, max 2 żądania i 1 odczyt, deadline1s;
+503 przy braku Ready/błędzie/timeout, 429 przy zajętości. Host/Origin/fetch-site
+sprawdzane, query/body/TE odrzucane, proxy headers ignorowane. Osobny listener
+8 gniazd/4 na IP, idle/write5s, lifetime60s; uczestniczy w shutdown/select.
+Testy Rust, Clippy, real HTTP/GG metrics oraz regresja lifecycle/sessions/stats/
+HTTP limits przeszły. Binarka WSL debug (bez test-hooks) SHA256
+93ce00f9303922c0030b3fb00d970cd78e7992f7148e811f3243d10e1a1368c5.
+Osiem wpisów pochodzenia (dodano Prometheus format jako reference-only).
+Brak pełnych histogramów/counterów protokołu i buforów; nie uruchamiano
+Prometheusa. Obraz kontenera pozostał dev.18; suite w repo ma teraz 21 pozycji,
+ale obraz dev.18 sprawdzano sterownikiem z commitu 7033971 (20 pozycji).
+Kontrakt METRICS.md i raport VERIFICATION-2026-11-01-dev19.md.
 Dev.15 dodał pełny importer (commit 6b5b219):
 Pełny import sztucznego przypiętego gg-retro 0.8.3: wszystkie hasła weryfikowane
 i przeszyfrowane świeżym keyringiem, dane w jednej transakcji, receipt z hashami,

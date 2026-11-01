@@ -110,10 +110,14 @@ async fn run() -> Result<(), Error> {
             None
         };
         let listener = tokio::net::TcpListener::bind(config.http_bind).await?;
-        Ok::<_, Error>((listener, gg, registration))
+        let metrics = match config.metrics_bind {
+            Some(address) => Some(tokio::net::TcpListener::bind(address).await?),
+            None => None,
+        };
+        Ok::<_, Error>((listener, gg, registration, metrics))
     }
     .await;
-    let (listener, gg, registration) = match prepared {
+    let (listener, gg, registration, metrics) = match prepared {
         Ok(value) => value,
         Err(error) => {
             store.close().await;
@@ -139,6 +143,36 @@ async fn run() -> Result<(), Error> {
         state
     };
     let stop = CancellationToken::new();
+    let metrics = metrics
+        .map(|listener| -> Result<_, Error> {
+            let address = listener.local_addr()?;
+            let router = rgg_http::metrics::router(store.clone(), &state, address)?;
+            Ok((listener, router, address))
+        })
+        .transpose()?;
+    let metrics_stop = stop.clone();
+    let mut metrics_task = tokio::spawn(async move {
+        if let Some((listener, router, address)) = metrics {
+            info!(metrics_endpoint=%address,"Private metrics listening (loopback)");
+            let limits = http_listener::Limits {
+                max_connections: 8,
+                per_ip: 4,
+                idle_seconds: 5,
+                write_seconds: 5,
+                lifetime_seconds: 60,
+            };
+            axum::serve(
+                http_listener::BoundedListener::new(listener, limits)
+                    .tap_io(|stream| stream.tcp_nodelay()),
+                router.into_make_service_with_connect_info::<std::net::SocketAddr>(),
+            )
+            .with_graceful_shutdown(metrics_stop.cancelled_owned())
+            .await
+        } else {
+            metrics_stop.cancelled().await;
+            Ok::<_, std::io::Error>(())
+        }
+    });
     let hub = gg.as_ref().map(|(_, ctx)| ctx.hub.clone());
     let no_gg_stop = stop.clone();
     let mut gg_task = tokio::spawn(async move {
@@ -163,9 +197,11 @@ async fn run() -> Result<(), Error> {
     info!(%address, version = env!("CARGO_PKG_VERSION"), "HTTP listening (local development)");
     let mut http_done = false;
     let mut gg_done = false;
+    let mut metrics_done = false;
     let outcome = tokio::select! {
         result = &mut server => {http_done=true;result.map_err(Error::from)},
         result = &mut gg_task => {gg_done=true;result.map_err(Error::from).and_then(|r|r.map_err(Error::from))},
+        result = &mut metrics_task => {metrics_done=true;result.map_err(Error::from).and_then(|r|r.map_err(Error::from))},
         signal = shutdown_signal() => signal.map_err(Error::from),
     };
     state.set_ready(false);
@@ -188,6 +224,18 @@ async fn run() -> Result<(), Error> {
     {
         gg_task.abort();
         let _ = gg_task.await;
+    }
+    if !metrics_done
+        && tokio::time::timeout(
+            Duration::from_secs(config.shutdown_seconds),
+            &mut metrics_task,
+        )
+        .await
+        .is_err()
+    {
+        metrics_task.abort();
+        let _ = metrics_task.await;
+        warn!("Metrics drain deadline exceeded");
     }
     if let Some(hub) = hub {
         hub.finish_shutdown().await;

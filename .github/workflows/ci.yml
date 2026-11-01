@@ -40,6 +40,7 @@ jobs:
       - run: python tests/http_statistics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_downloads.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_limits.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/http_metrics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_conferences.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_images.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: cargo build --workspace --locked --features rgg-server/test-hooks

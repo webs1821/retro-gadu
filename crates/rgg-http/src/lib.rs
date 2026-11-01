@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 pub mod downloads;
 mod legacy;
+pub mod metrics;
 mod statistics;
 mod website;
 use axum::{

@@ -18,5 +18,8 @@ hex.workspace = true
 subtle.workspace = true
 zeroize.workspace = true
 rgg-domain.workspace = true
+[dev-dependencies]
+async-trait.workspace = true
+tokio = { workspace = true, features = ["test-util"] }
 [lints]
 workspace = true

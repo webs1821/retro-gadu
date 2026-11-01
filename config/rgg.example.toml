@@ -1,6 +1,7 @@
 # Local development only. Paths are resolved relative to this file.
 data_dir = "../data"
 http_bind = "127.0.0.1:8088"
+# metrics_bind = "127.0.0.1:9090" # Optional private operator endpoint; separate loopback port.
 shutdown_seconds = 5
 
 # Enable only after initializing this data directory and creating local accounts.
