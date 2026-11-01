@@ -23,7 +23,10 @@ def git_environment(directory):
 
 
 def source(git_env=None):
-    git = ['git', '-c', 'safe.directory=' + str(ROOT), '-C', str(ROOT)]
+    # Explicit paths also work with distribution backports predating GIT_CONFIG_GLOBAL.
+    # Resolve .git through Git so linked worktrees are supported too.
+    git_dir = subprocess.check_output(['git', 'rev-parse', '--resolve-git-dir', str(ROOT / '.git')], text=True, env=git_env).strip()
+    git = ['git', '--git-dir=' + git_dir, '--work-tree=' + str(ROOT), '-C', str(ROOT)]
     if subprocess.run(git + ['diff', '--quiet', 'HEAD'], env=git_env).returncode:
         raise ValueError('tracked source must be committed before building')
     commit = subprocess.check_output(git + ['rev-parse', 'HEAD'], text=True, env=git_env).strip()
