@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.16**, schemat SQLite **11**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.17**, schemat SQLite **11**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -23,13 +23,17 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 - Import przypiętej wersji gg-retro 0.8.3 do nowego katalogu: kontrola sekretów,
   ponowne szyfrowanie, zachowanie danych i liczników, transakcja oraz blokada
   startu po nieukończonym imporcie. Testowano wyłącznie sztuczną bazę.
+- Lokalny generator klienta/instalatora GG6: adres z konfiguracji, wyłączony
+  aktualizator, poprawione nazwy dźwięków i manifest pobierania z hashami.
+  Przebudowa i zasoby Windows sprawdzone; plików EXE nie uruchamiano.
 
 [Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
 zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
-pracy m.in. granice uploadu kontaktów, pakiet klienta i profil wdrożeniowy.
+pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożeniowy.
 
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
+- [Pakiet klienta](docs/implementation/CLIENT-PACKAGES.md), [weryfikacja dev.17](docs/implementation/VERIFICATION-2026-11-01-dev17.md)
 - [Zmiana hasła](docs/implementation/PASSWORD-CHANGE.md), [weryfikacja dev.16](docs/implementation/VERIFICATION-2026-11-01-dev16.md)
 - [Import gg-retro](docs/implementation/IMPORT-GG-RETRO.md), [weryfikacja dev.15](docs/implementation/VERIFICATION-2026-11-01-dev15.md)
 - [Kopie i odtwarzanie](docs/implementation/BACKUPS.md), [rotacja kluczy](docs/implementation/KEY-ROTATION.md)
@@ -63,6 +67,7 @@ W WSL zalecany jest katalog danych w linuksowym systemie plików, np.
 ```sh
 python tools/verify_repository.py
 python tools/gg32_vectors.py
+python tests/client_package.py
 cargo metadata --locked --format-version 1 | python tools/dependency_inventory.py
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings

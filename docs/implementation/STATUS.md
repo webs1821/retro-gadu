@@ -259,3 +259,19 @@ z trzema awariami nadal działa. [Kontrakt](PASSWORD-CHANGE.md),
 Przegląd referencji list kontaktów nie rozstrzygnął końca pełnego bloku dla
 zamkniętego GG6; libgadu wysyła fragmenty bez czekania na ACK. Nie zmieniano
 ograniczonego profilu uploadu na podstawie heurystyki.
+
+
+## 2026-11-01 — lokalny generator klienta i instalatora
+
+Wersja `0.1.0-dev.17`, schema 11 bez zmian. Niezależny patcher PE/NSIS dla
+przypiętego oryginalnego GG6.1: adres z konfiguracji, wyłączony aktualizator,
+poprawne nazwy dźwięków oraz przebudowa tablic tekstów bez ucinania kolejnych
+zasobów. Zachowany stub, skrypt/licencja i pozostały ładunek instalatora.
+Nowy katalog publikowany manifestem dopiero po sprawdzeniu zapisanych plików.
+
+Przeszło pięć testów syntetycznych, trzy hosty na rzeczywistym instalatorze,
+464 odczyty zasobów Windows dla każdego wariantu, test pobierania obu artefaktów
+przez lokalny HTTP oraz build/lifecycle dev.17. Kod Rust poza wersją nie zmieniony;
+77 testów Rust pozostaje wynikiem dev.16. Audyt 0 podatności/ostrzeżeń.
+Klienta i instalatora nie uruchamiano, niczego nie wdrożono ani nie pushowano.
+[Kontrakt](CLIENT-PACKAGES.md), [raport](VERIFICATION-2026-11-01-dev17.md).

@@ -1,0 +1,6 @@
+# Python 3.11+. The installer is supplied separately with --installer.
+# This loopback profile changes no DNS, hosts file, installed client or server.
+schema = 1
+hostname = "127.0.0.1"
+source_url = "https://github.com/webs1821/gg-retro/blob/ed9640cc247764754b5e47891053eb07a53f76d5/server/static/gg61.exe"
+license = "Warunki używania klienta pozostają w oryginalnym instalatorze. Licencja AGPL narzędzi rGG nie obejmuje klienta GG."

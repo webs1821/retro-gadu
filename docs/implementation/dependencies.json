@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "cargo_lock_sha256": "ca52c9a3e2dba4cd72b45db7df556775aa61a12fe7182e0405d6a1ca6556ea64",
+  "cargo_lock_sha256": "f6c46efda4a4a8aa6f40b3702dbdfcaa98f55ff3402f8fefff0209f9c5b11a86",
   "packages": [
     {
       "name": "aead",

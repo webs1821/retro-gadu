@@ -11,3 +11,6 @@
 __pycache__/
 **/keys.toml
 /.private/
+/dist/
+/artifacts/
+*.exe

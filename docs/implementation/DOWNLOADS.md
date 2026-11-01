@@ -34,8 +34,9 @@ instructions = "Zamknij GG. Zrób kopię gg.exe w folderze instalacji, następni
 
 Hashe są kontrolą spójności z decyzją administratora, a nie podpisem autora,
 oceną bezpieczeństwa programu lub automatyczną weryfikacją praw do dystrybucji.
-Odrębny patcher/instalator kierujący klienta do rGG nadal pozostaje do wykonania.
-Nie skopiowano klienta ani instalatora z działającego gg-retro.
+Dev.17 dodaje [generator pakietu klienta](CLIENT-PACKAGES.md), który przyjmuje
+osobno dostarczony oryginalny instalator o przypiętym hashu i tworzy taki manifest.
+Nie skopiowano plików z działającej instancji gg-retro ani nie uruchamiano GG.
 
 ## Ładowanie i granice
 

@@ -39,9 +39,9 @@ commit = "ed9640cc247764754b5e47891053eb07a53f76d5"
 kind = "reference-only"
 upstream_authors = ["macbury", "webs1821"]
 license_ref = "LicenseRef-MIS-macbury"
-local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md", "tools/migrate_gg_retro.py", "tests/legacy_import.py", "crates/rgg-credentials/src/gg_retro.rs", "crates/rgg-admin/src/import/validate.rs", "crates/rgg-store-sqlite/src/import_data.rs"]
+local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md", "tools/migrate_gg_retro.py", "tests/legacy_import.py", "crates/rgg-credentials/src/gg_retro.rs", "crates/rgg-admin/src/import/validate.rs", "crates/rgg-store-sqlite/src/import_data.rs", "tools/client_patch.py", "tools/build_client.py", "tests/client_package.py", "docs/implementation/CLIENT-PACKAGES.md"]
 symbols = ["0.8.3"]
-changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Importer dev.15 niezależnie odczytuje ggv1/AAD, konwertuje CP1250 i opcje GG6, zachowuje zaproszenia, numery i stan danych w transakcji rGG. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
+changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Importer dev.15 niezależnie odczytuje ggv1/AAD, konwertuje CP1250 i opcje GG6, zachowuje zaproszenia, numery i stan danych w transakcji rGG. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Dev.17 wykorzystuje sprawdzone fakty formatu konkretnego GG6.1: hash, offsety, ABI aktualizatora i nazwy dźwięków. Parser PE/NSIS, przebudowa RT_STRING i generator są niezależną implementacją; nie skopiowano tools/build_client.py, patch_client.cjs ani patcher.js. Klient binarny ma własne warunki i pozostaje poza repo. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
 verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności. Własne testy inspekcji schematu i zgodności hashy zaproszeń, w tym zachowanie zużycia i aktywności przez WWW/CLI/restore."
 reviewed_on = "2026-11-01"
 
@@ -68,4 +68,30 @@ local_paths = ["crates/rgg-credentials/src/gg_retro.rs", "tests/fixtures/gg-retr
 symbols = ["ggv1:", "LocalTest9!"]
 changes = "Niezależne wektory testowe otrzymano wywołując API systemowej libsodium 1.0.18 przez ctypes, z publicznym testowym kluczem i nonce. Nie skopiowano kodu biblioteki ani dokumentacji. Runtime testów używa zapisanych wektorów, bez zależności od libsodium."
 verification = "Rust odszyfrowuje poprawny wektor i odmawia złego UIN, klucza oraz ciphertext. Integracja importuje trzy syntetyczne konta i loguje je przez GG6."
+reviewed_on = "2026-11-01"
+
+[[sources]]
+id = "nsis-format-reference"
+project = "NSIS solid installer format"
+upstream_url = "https://github.com/kichik/nsis"
+commit = "f0bfe3e0062c57dc1ef90f1d235c7c0bd5a43be4"
+source_paths = ["Source/exehead/fileform.h"]
+kind = "reference-only"
+upstream_authors = ["Nullsoft", "Autorzy NSIS"]
+local_paths = ["tools/client_format.py", "docs/implementation/CLIENT-PACKAGES.md"]
+symbols = ["SolidInstaller"]
+changes = "Fakty układu firstheader oraz solid-LZMA; własny ograniczony parser i przebudowa dokładnie przypiętego instalatora. Nie skopiowano kodu ani tekstu dokumentacji. Rozmiary, CRC i pozostały rozpakowany strumień sprawdzane niezależnie na oryginalnym pliku."
+verification = "Syntetyczne błędne nagłówki, CRC, limit dekompresji i roundtrip; trzy warianty hosta na rzeczywistym instalatorze bez wykonania EXE."
+reviewed_on = "2026-11-01"
+
+[[sources]]
+id = "windows-resource-reference"
+project = "Microsoft Windows resource APIs"
+upstream_url = "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-loadstringw"
+kind = "reference-only"
+upstream_authors = ["Microsoft"]
+local_paths = ["tools/client_format.py", "tests/client_package.py", "docs/implementation/CLIENT-PACKAGES.md"]
+symbols = ["LoadStringW", "LoadLibraryExW", "PE32"]
+changes = "Fakty dotyczące tablic po 16 tekstów z prefiksem długości i mapowania DATAFILE_EXCLUSIVE/IMAGE_RESOURCE bez wykonania. Własny parser i test ctypes; żadnego skopiowanego kodu ani tekstu dokumentacji."
+verification = "Windows LoadStringW porównuje 464 teksty oryginału i każdego z trzech wariantów. Nie jest to test działania klienta GG."
 reviewed_on = "2026-11-01"

@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.16
+# Punkt wznowienia — 2026-11-01, dev.17
 
 Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłącznie
 lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
@@ -11,7 +11,8 @@ discovery, WWW/rejestracja/liczniki, konferencje, klasyczne obrazki bez trwałeg
 cache oraz katalog pobierania kontrolowany manifestem. CLI ma pełne kopie,
 verify/restore, rotację kluczy ze wznowieniem i importer gg-retro.
 
-Aktualnie dev.16: schema 11, 10 modułów, 190 wersji zależności i 77 testów Rust.
+Aktualnie dev.17: schema 11, 10 modułów, 190 wersji zależności. Ostatni pełny
+wynik Rust: 77 testów w dev.16; runtime Rust dev.17 poza wersją nie zmieniono.
 Dev.15 dodał pełny importer (commit 6b5b219):
 Pełny import sztucznego przypiętego gg-retro 0.8.3: wszystkie hasła weryfikowane
 i przeszyfrowane świeżym keyringiem, dane w jednej transakcji, receipt z hashami,
@@ -36,13 +37,24 @@ migracja/restore dev.15 → dev.16 przeszły. [Kontrakt](PASSWORD-CHANGE.md),
 
 Przejrzano ponownie upload kontaktów: przypięte libgadu wysyła wszystkie fragmenty
 przed ACK; nie zmieniono protokołu bez dowodu oryginalnego GG6. Pełny końcowy blok
-pozostaje ograniczeniem. Następny przyrost może dotyczyć patchera/pakietu klienta.
-Lokalny gg-retro posiada tools/build_client.py, server/static/patcher.js i oryginalny
-server/static/gg61.exe (SHA256 bcc8157aa6bface009d8018c308bf3cef8725546b4f826bdbaf6bbeaa953b06f).
-Czytano wyłącznie jako referencję; nie uruchamiano EXE ani nie kopiowano implementacji.
+pozostaje ograniczeniem.
+
+Dev.17: własne tools/client_format.py, client_patch.py i build_client.py tworzą
+osobny pakiet z przypiętego gg-retro/server/static/gg61.exe (SHA256
+bcc8157aa6bface009d8018c308bf3cef8725546b4f826bdbaf6bbeaa953b06f).
+Adres konfigurowalny do 16 znaków, poprawne tablice RT_STRING, wyłączony updater,
+dźwięki wiadomosc/dostepny, zachowany cały pozostały rozpakowany instalator.
+Nie skopiowano implementacji gg-retro. Pięć testów syntetycznych, trzy hosty,
+464 zasoby LoadStringW dla każdego oraz prawdziwy katalog HTTP przeszły.
+Windows mapuje EXE wyłącznie jako dane; klient i instalator nie były uruchamiane.
+Katalog wynikowy: D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-client-local-2026-11-01,
+adres 127.0.0.1; nic nie podmieniono. [Kontrakt](CLIENT-PACKAGES.md),
+[raport](VERIFICATION-2026-11-01-dev17.md). Python pakowania wymaga >=3.11.
 
 Kolejne luki: upload kontaktów (odroczone ACK, pełny końcowy fragment 2047 B),
-patcher/pakiet klienta, domena/profil wdrożeniowy, lokalny kontener i pomiary/soak.
+domena/profil wdrożeniowy, lokalny kontener i pomiary/soak. Patcher jest przez CLI,
+brak odpowiednika w przeglądarce. Publiczny HTTP wymaga ograniczenia powolnych
+połączeń/zapisów, obecnie slot pobrania trwa aż do rozłączenia.
 Natywny GG6/Windows nadal niekwalifikowane. Do czasu parytetu nie rozważać podmiany.
 [PARITY](PARITY.md) zawiera aktualne rozróżnienie kodu i kwalifikacji.
 
