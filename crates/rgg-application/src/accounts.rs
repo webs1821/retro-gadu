@@ -56,12 +56,16 @@ pub trait SecretProtector: Send + Sync {
 
 pub struct Registration {
     pub requested_uin: Option<UserId>,
-    pub invite_digest: [u8; 32],
+    pub invite_digest: Option<[u8; 32]>,
+    pub legacy_invite_digest: Option<[u8; 32]>,
     pub password: LegacyPassword,
     pub email: String,
 }
 impl Registration {
     pub fn validate(&self) -> Result<(), AccountError> {
+        if self.invite_digest.is_none() && self.legacy_invite_digest.is_none() {
+            return Err(AccountError::InvalidInvite);
+        }
         if self
             .requested_uin
             .is_some_and(|user| user.get() > 0x00ff_ffff)

@@ -22,13 +22,28 @@ async fn register(
     // upgrade races; invitation, number and account are still rolled back together on error.
     let consumed =
         sqlx::query("UPDATE invitations SET used=used+1 WHERE digest=? AND used<max_uses")
-            .bind(input.invite_digest.as_slice())
+            .bind(input.invite_digest.as_ref().map(|v| v.as_slice()))
             .execute(&mut **tx)
             .await
             .map_err(database_error)?
             .rows_affected();
     if consumed != 1 {
-        return Err(AccountError::InvalidInvite);
+        // An existing modern code remains authoritative even after exhaustion. Never fall
+        // through to a legacy hash and silently give the same textual code extra uses.
+        let modern_exists: bool =
+            sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM invitations WHERE digest=?)")
+                .bind(input.invite_digest.as_ref().map(|v| v.as_slice()))
+                .fetch_one(&mut **tx)
+                .await
+                .map_err(database_error)?;
+        if modern_exists {
+            return Err(AccountError::InvalidInvite);
+        }
+        let legacy=sqlx::query("UPDATE legacy_invitations SET used=used+1 WHERE digest=? AND active=1 AND used<max_uses")
+            .bind(input.legacy_invite_digest.as_ref().map(|v|v.as_slice())).execute(&mut **tx).await.map_err(database_error)?.rows_affected();
+        if legacy != 1 {
+            return Err(AccountError::InvalidInvite);
+        }
     }
     let user = if let Some(user) = input.requested_uin {
         let occupied: i64 = sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM accounts WHERE uin=?) OR EXISTS(SELECT 1 FROM retired_uins WHERE uin=?)")
@@ -213,7 +228,8 @@ mod tests {
     fn registration(uin: Option<u32>) -> Registration {
         Registration {
             requested_uin: uin.map(|n| UserId::new(n).unwrap()),
-            invite_digest: [5; 32],
+            invite_digest: Some([5; 32]),
+            legacy_invite_digest: None,
             password: LegacyPassword::new(Zeroizing::new(b"LocalTest9!".to_vec())).unwrap(),
             email: "test@example.invalid".into(),
         }

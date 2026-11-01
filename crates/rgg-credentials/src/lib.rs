@@ -289,6 +289,20 @@ impl rgg_application::registration::InvitationDigester for InvitationCodes {
     fn digest(&self, code: &str) -> Option<[u8; 32]> {
         invitation_digest(code)
     }
+    fn legacy_digest(&self, code: &str) -> Option<[u8; 32]> {
+        legacy_invitation_digest(code)
+    }
+}
+/// Data-format compatibility with the pinned gg-retro fork; old codes are case sensitive.
+pub fn legacy_invitation_digest(code: &str) -> Option<[u8; 32]> {
+    if !(24..=128).contains(&code.len())
+        || !code
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b == b'-' || b == b'_')
+    {
+        return None;
+    }
+    Some(Sha256::digest(code.as_bytes()).into())
 }
 pub fn invitation_digest(code: &str) -> Option<[u8; 32]> {
     if code.len() != 32 || !code.bytes().all(|byte| byte.is_ascii_hexdigit()) {
@@ -405,6 +419,29 @@ mod tests {
             invitation_digest(&first.to_uppercase())
         );
         assert!(invitation_digest("wrong").is_none());
+    }
+
+    #[test]
+    fn legacy_invites_have_a_separate_case_sensitive_digest_and_strict_ascii_bounds() {
+        let code = "Legacy-Invitation_Code_12345";
+        assert_ne!(
+            legacy_invitation_digest(code),
+            legacy_invitation_digest(&code.to_lowercase())
+        );
+        assert!(invitation_digest(code).is_none());
+        for length in [24, 128] {
+            assert!(legacy_invitation_digest(&"A".repeat(length)).is_some());
+        }
+        for bad in [
+            "A".repeat(23),
+            "A".repeat(129),
+            format!("{}!", "A".repeat(23)),
+            "Ż".repeat(24),
+        ] {
+            assert!(legacy_invitation_digest(&bad).is_none());
+        }
+        let hex = "1234567890abcdef1234567890abcdef";
+        assert_ne!(invitation_digest(hex), legacy_invitation_digest(hex));
     }
 
     #[test]

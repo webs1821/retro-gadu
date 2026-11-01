@@ -63,6 +63,13 @@ Wersja **0.1.0-dev.13** dodaje rotację kluczy z obowiązkową kopią i wznowien
 po awarii. Zachowuje starsze klucze, hasła użytkowników i ich wersje uprawnień.
 
 - [Rotacja kluczy](docs/implementation/KEY-ROTATION.md)
+Wersja **0.1.0-dev.14** zachowuje format starych zaproszeń gg-retro w osobnej
+tabeli, z dotychczasowym zużyciem i wyłączeniem kodu. Adapter działa przez WWW
+i CLI; narzędzie pełnego importu jest nadal w przygotowaniu.
+
+- [Stare zaproszenia](docs/implementation/LEGACY-INVITATIONS.md)
+- [Weryfikacja dev.14](docs/implementation/VERIFICATION-2026-11-01-dev14.md)
+- [Rotacja kluczy](docs/implementation/KEY-ROTATION.md)
 - [Kontrola danych gg-retro przed importem](docs/implementation/IMPORT-GG-RETRO.md)
 - [Weryfikacja dev.13](docs/implementation/VERIFICATION-2026-11-01-dev13.md)
 - [Kopie i odtwarzanie](docs/implementation/BACKUPS.md)
@@ -260,7 +267,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.13](docs/implementation/cargo-audit-2026-11-01-dev13.json).
+[raporcie audytu dev.14](docs/implementation/cargo-audit-2026-11-01-dev14.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

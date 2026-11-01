@@ -139,7 +139,8 @@ mod tests {
                 .register_with_invite(
                     Registration {
                         requested_uin: Some(UserId::new(n).unwrap()),
-                        invite_digest: [7; 32],
+                        invite_digest: Some([7; 32]),
+                        legacy_invite_digest: None,
                         password: password(),
                         email: "synthetic@example.invalid".into(),
                     },

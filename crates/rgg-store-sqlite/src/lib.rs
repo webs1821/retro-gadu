@@ -37,7 +37,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 8;
+pub const SCHEMA_VERSION: i64 = 9;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {

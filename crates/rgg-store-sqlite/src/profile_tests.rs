@@ -131,7 +131,8 @@ async fn keyset_paging_is_ordered_and_retirement_cascades_profiles() {
         s.register_with_invite(
             Registration {
                 requested_uin: Some(user(n)),
-                invite_digest: [9; 32],
+                invite_digest: Some([9; 32]),
+                legacy_invite_digest: None,
                 password: LegacyPassword::new(zeroize::Zeroizing::new(b"LocalTest9!".to_vec()))
                     .unwrap(),
                 email: "x@example.invalid".into(),

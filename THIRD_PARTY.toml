@@ -39,11 +39,11 @@ commit = "ed9640cc247764754b5e47891053eb07a53f76d5"
 kind = "reference-only"
 upstream_authors = ["macbury", "webs1821"]
 license_ref = "LicenseRef-MIS-macbury"
-local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md"]
+local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md"]
 symbols = ["0.8.3"]
 changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
-verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności."
-reviewed_on = "2026-10-31"
+verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności. Własne testy inspekcji schematu i zgodności hashy zaproszeń, w tym zachowanie zużycia i aktywności przez WWW/CLI/restore."
+reviewed_on = "2026-11-01"
 
 [[sources]]
 id = "libgadu-legacy-reference"

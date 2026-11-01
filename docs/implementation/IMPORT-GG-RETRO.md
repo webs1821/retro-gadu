@@ -44,7 +44,7 @@ jest niestandardowa MIS; użycie referencyjne jest odnotowane w THIRD_PARTY.
 |---|---|
 | users.uin, email, created_at | Zachować UIN i datę; sprawdzić zakres GG6 i e-mail. Nie publikować nazwy/e-maila w katalogu. |
 | users.password | `ggv1:` + base64(nonce 24 B + ciphertext/tag XChaCha20-Poly1305), AAD = UIN u32 little endian; oryginalny klucz to osobny plik 32 surowych bajtów. Zweryfikować wszystkie sekrety, następnie zaszyfrować keyringiem rGG. Bez plaintext fallback. |
-| registration_invites | SHA-256 dokładnych, case-sensitive kodów ASCII 24–128 znaków; rGG obecnie stosuje inny format i domain-separated digest. Potrzebny adapter, zachowanie used/max_uses/active bez refundowania. Z samych hashy nie można obliczyć nowego rodzaju hasha. |
+| registration_invites | SHA-256 dokładnych, case-sensitive kodów ASCII 24–128 znaków; rGG stosuje inny format i domain-separated digest. [Adapter dev.14](LEGACY-INVITATIONS.md) jest gotowy; importer musi jeszcze przenieść hashe oraz used/max_uses/active bez refundowania. Z samych hashy nie można obliczyć nowego rodzaju hasha. |
 | registration_state.next_uin | Zachować licznik niezależny od ręcznych numerów; nie wyliczać max(UIN)+1. |
 | contact_lists.data | Zweryfikować kodowanie i limity; importować osobno od reguł prywatności. |
 | offline_presence | Zachować jawny opis offline/czas powrotu i zakodowane reguły prywatności. Nie odtwarzać stanu online ani niewidoczności. Nie każda historyczna lista blokad jest w tej tabeli. |

@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.13
+# Punkt wznowienia — 2026-11-01, dev.14
 
 Użytkownik wznowił prace. Nadal wyłącznie lokalnie: testy i commity jako webs1821,
 bez push i wdrożenia rGG. Master, origin wskazuje webs1821/retro-gadu; nie był używany.
@@ -7,7 +7,7 @@ Plan implementacji i recenzje pozostają niezmienione.
 Gotowe: konta/zaproszenia, logowanie, sesje, kolejka offline, obecność/prywatność,
 archiwa kontaktów, katalog, discovery, WWW/rejestracja/liczniki, konferencje,
 obrazki klasyczne bez trwałego cache (commit 11cf7a1) i opcjonalny katalog pobierania
-z manifestem, hashami, pochodzeniem oraz instrukcjami. Schemat 8, wersja 0.1.0-dev.13.
+z manifestem, hashami, pochodzeniem oraz instrukcjami. Schemat 9, wersja 0.1.0-dev.14.
 
 [Kontrakt obrazków](IMAGES.md) i [weryfikacja](VERIFICATION-2026-11-01-dev10.md):
 68 testów Rust, TCP/process/CLI/HTTP, awarie i rzeczywiste migracje dev.8/dev.9.
@@ -31,8 +31,10 @@ Importer gg-retro: wykonana inwentaryzacja lokalnego czystego forka 0.8.3 i
 kontrola źródła tools/inspect_gg_retro.py (read-only, pinned schema/checksums,
 liczniki i luki). Testy Windows/Linux przeszły. [Mapowanie i dalsze prace](IMPORT-GG-RETRO.md).
 Nie ma jeszcze konwersji do rGG ani weryfikacji hasła ggv1. Stare zaproszenia to
-SHA256 case-sensitive 24–128 ASCII, inne niż rGG; wymagają adaptera zachowującego
-used/active. Brak historii usuniętych UIN oraz pełnej prywatności wymaga jawnego
+SHA256 case-sensitive 24–128 ASCII, inne niż rGG. Dev.14 dodał już pustą tabelę
+legacy_invitations i adapter WWW/CLI zachowujący used/active; importer jej jeszcze
+nie wypełnia. 72 testy Rust i migracja z rzeczywistych binarek dev.13 sprawdzone.
+Brak historii usuniętych UIN oraz pełnej prywatności wymaga jawnego
 raportu. Źródło prywatnego klucza ggv1: plik 32 raw bytes; AAD UIN little endian.
 Następny temat: właściwy importer na danych syntetycznych, bez produkcyjnej bazy.
 
@@ -47,7 +49,7 @@ WSL: CARGO_HOME=/tmp/gg-retro-toolchain/cargo,
 RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup, CARGO_TARGET_DIR=/tmp/rgg-target,
 CC=/tmp/gg-retro-toolchain/gcc/cc; dodać CARGO_HOME/bin do PATH.
 Binarki: /tmp/rgg-target/debug/rgg-server oraz rgg-admin.
-Zachowane stare binarki do testów: /tmp/rgg-baseline-dev8 i /tmp/rgg-baseline-dev9.
+Zachowane stare binarki do testów: /tmp/rgg-baseline-dev8, /tmp/rgg-baseline-dev9 i /tmp/rgg-baseline-dev13.
 Python Windows 3.13 do tomllib i kontroli repo; WSL Python 3.8 do TCP/process.
 W WSL brak rg. Oficjalne źródła libgadu: przypięte 9eb2aa0eb6ad020fda7c7264538e48c7b78ba602,
 lokalne referencje w D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-reference-libgadu.

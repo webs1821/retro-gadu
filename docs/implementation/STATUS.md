@@ -220,3 +220,12 @@ raport liczników i luk, bez zmiany źródła, celu lub ujawniania sekretów.
 Testy Windows i Linux przeszły, łącznie z odmową zmienianego źródła.
 To jeszcze nie importer/dry-run konwersji; migration_ready zawsze false.
 [Zakres, mapowanie i wyniki](IMPORT-GG-RETRO.md). Binarki pozostają dev.13.
+
+## 2026-11-01 — stare zaproszenia, dev.14
+
+Schemat 9: osobne legacy_invitations, SHA-256 dokładnego starego kodu, zachowanie
+used/active i atomowej rejestracji. WWW/CLI, odmowa przejścia wyczerpanego kodu
+rGG do starej tabeli. 72 testy Rust, trzy scenariusze adaptera, rzeczywista
+migracja z dev.13 oraz odtworzenie starej kopii przez dev.13 → migracja do dev.14.
+Pełny importer nadal nie powstał. [Kontrakt](LEGACY-INVITATIONS.md),
+[weryfikacja](VERIFICATION-2026-11-01-dev14.md). Lokalnie, bez push i wdrożenia.

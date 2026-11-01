@@ -3,7 +3,7 @@
 mod backup;
 mod keys;
 use rgg_application::accounts::{AccountRepository, LegacyPassword, Registration, SecretProtector};
-use rgg_credentials::{Keyring, invitation_digest, new_invitation};
+use rgg_credentials::{Keyring, invitation_digest, legacy_invitation_digest, new_invitation};
 use rgg_domain::UserId;
 use rgg_store_sqlite::SqliteStore;
 use serde::Deserialize;
@@ -173,8 +173,8 @@ async fn execute(
                 serde_json::from_slice(&source).map_err(|_| "invalid registration JSON")?;
             let registration = Registration {
                 requested_uin: input.requested_uin.map(UserId::new).transpose()?,
-                invite_digest: invitation_digest(&input.invite)
-                    .ok_or("invalid invitation format")?,
+                invite_digest: invitation_digest(&input.invite),
+                legacy_invite_digest: legacy_invitation_digest(&input.invite),
                 password: LegacyPassword::new(Zeroizing::new(input.password.as_bytes().to_vec()))?,
                 email: input.email,
             };

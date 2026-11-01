@@ -22,7 +22,8 @@ pub(super) async fn setup() -> (tempfile::TempDir, Arc<SqliteStore>, Arc<Keyring
             .register_with_invite(
                 Registration {
                     requested_uin: Some(uid(n)),
-                    invite_digest: [1; 32],
+                    invite_digest: Some([1; 32]),
+                    legacy_invite_digest: None,
                     password: LegacyPassword::new(zeroize::Zeroizing::new(b"LocalTest9!".to_vec()))
                         .unwrap(),
                     email: "x@example.invalid".into(),

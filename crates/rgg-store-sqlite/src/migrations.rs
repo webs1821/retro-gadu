@@ -72,6 +72,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0008_images.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    9,
+                    "legacy invitations".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0009_legacy_invitations.sql").into(),
+                    false,
+                ),
             ])
         })
     }

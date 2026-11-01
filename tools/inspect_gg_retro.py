@@ -104,7 +104,7 @@ def summarize(db, reference):
         'total': counts['registration_invites'],
         'used': scalar(db, 'SELECT sum(used) FROM registration_invites'),
         'active_remaining_uses': scalar(db, 'SELECT sum(max_uses-used) FROM registration_invites WHERE active=1'),
-        'compatibility': 'legacy_case_sensitive_sha256_adapter_required',
+        'compatibility': 'legacy_sha256_adapter_available_transfer_still_required',
     }
     return {
         'counts': counts, 'number_allocator_next_uin': allocator[0][1],

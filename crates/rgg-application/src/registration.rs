@@ -9,6 +9,9 @@ use zeroize::Zeroizing;
 
 pub trait InvitationDigester: Send + Sync {
     fn digest(&self, code: &str) -> Option<[u8; 32]>;
+    fn legacy_digest(&self, _code: &str) -> Option<[u8; 32]> {
+        None
+    }
 }
 pub struct NewAccount {
     pub requested_uin: Option<UserId>,
@@ -34,13 +37,11 @@ impl RegistrationService {
         }
     }
     pub async fn register(&self, input: NewAccount) -> Result<UserId, AccountError> {
-        let digest = self
-            .invitations
-            .digest(input.invitation.trim())
-            .ok_or(AccountError::InvalidInvite)?;
+        let digest = self.invitations.digest(input.invitation.trim());
         let registration = Registration {
             requested_uin: input.requested_uin,
             invite_digest: digest,
+            legacy_invite_digest: self.invitations.legacy_digest(input.invitation.trim()),
             password: input.password,
             email: input.email,
         };

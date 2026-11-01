@@ -69,7 +69,7 @@ def baseline_migration(lab,server,admin):
     assert lab.sql("SELECT max(version) FROM _sqlx_migrations")==[(6,)]
     before=lab.sql("SELECT payload_bytes FROM messages")[0][0]
     lab.stop(hard=True);lab.binary=server;lab.admin=admin;lab.start()
-    assert lab.sql("SELECT max(version) FROM _sqlx_migrations")==[(8,)]
+    assert lab.sql("SELECT max(version) FROM _sqlx_migrations")==[(9,)]
     assert lab.sql("SELECT conference,payload_bytes FROM messages")==[("[]",before+2)]
     b=lab.client(2);kind,body=b.receive();assert kind==10 and body[16:]==b"stara baza\0"+STYLE
     b.ping();a=lab.client(1);assert a.message(2,77,options=context([3])+STYLE)==3;received(b,[3])
