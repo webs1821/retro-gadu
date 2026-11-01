@@ -112,6 +112,7 @@ impl Gate {
 pub(crate) struct Website {
     pub(crate) service: Option<Arc<RegistrationService>>,
     pub(crate) statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
+    pub(crate) downloads: Option<Arc<crate::downloads::Catalog>>,
     authority: String,
     origin: String,
     gate: Mutex<Gate>,
@@ -121,17 +122,19 @@ impl Website {
     pub fn new(
         service: Option<Arc<RegistrationService>>,
         statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
+        downloads: Option<Arc<crate::downloads::Catalog>>,
         address: SocketAddr,
     ) -> Result<Self, &'static str> {
         if !address.ip().is_loopback()
             || address.port() == 0
-            || (service.is_none() && statistics.is_none())
+            || (service.is_none() && statistics.is_none() && downloads.is_none())
         {
             return Err("registration website requires a bound loopback listener");
         }
         Ok(Self {
             service,
             statistics,
+            downloads,
             authority: address.to_string(),
             origin: format!("http://{address}"),
             gate: Mutex::new(Gate::new(Instant::now())),
@@ -181,6 +184,9 @@ pub(crate) fn routes(state: HttpState) -> Router<HttpState> {
     Router::new()
         .route("/", get(crate::statistics::home))
         .route("/api/stats", get(crate::statistics::api))
+        .route("/downloads", get(crate::downloads::page))
+        .route("/downloads/{id}", get(crate::downloads::file))
+        .route("/api/downloads", get(crate::downloads::manifest))
         .route("/register", get(form).post(submit))
         .route("/assets/registration.css", get(styles))
         .layer(DefaultBodyLimit::max(4096))
@@ -199,6 +205,8 @@ async fn guard(
         "/register" => web.service.is_some(),
         "/" | "/api/stats" => web.statistics.is_some(),
         "/assets/registration.css" => true,
+        "/downloads" | "/api/downloads" => web.downloads.is_some(),
+        path if path.starts_with("/downloads/") => web.downloads.is_some(),
         _ => false,
     };
     if !enabled {

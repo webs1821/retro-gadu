@@ -18,6 +18,7 @@ pub struct Config {
     pub web_registration: bool,
     #[serde(default)]
     pub web_public_stats: bool,
+    pub downloads_manifest: Option<PathBuf>,
     #[serde(default)]
     pub network: rgg_transport::server::Limits,
     #[serde(default)]
@@ -85,6 +86,14 @@ impl Config {
         }
         if config.data_dir.is_relative() {
             config.data_dir = base.join(&config.data_dir);
+        }
+        if let Some(path) = &mut config.downloads_manifest {
+            if path.as_os_str().is_empty() {
+                return Err(ConfigError::Syntax);
+            }
+            if path.is_relative() {
+                *path = base.join(&*path);
+            }
         }
         Ok(config)
     }

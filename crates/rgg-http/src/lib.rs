@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
+pub mod downloads;
 mod legacy;
 mod statistics;
 mod website;
@@ -43,10 +44,11 @@ impl HttpState {
         mut self,
         service: Option<Arc<rgg_application::registration::RegistrationService>>,
         statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
+        downloads: Option<Arc<downloads::Catalog>>,
         address: std::net::SocketAddr,
     ) -> Result<Self, &'static str> {
         self.website = Some(Arc::new(website::Website::new(
-            service, statistics, address,
+            service, statistics, downloads, address,
         )?));
         Ok(self)
     }

@@ -62,6 +62,12 @@ async fn run() -> Result<(), Error> {
         return Err("unexpected extra argument".into());
     }
     let config = config::Config::load(&config_file)?;
+    let downloads = config
+        .downloads_manifest
+        .as_deref()
+        .map(rgg_http::downloads::Catalog::load)
+        .transpose()?
+        .map(Arc::new);
     let store = Arc::new(SqliteStore::open(&config.data_dir).await?);
     let prepared = async {
         let mut registration = None;
@@ -114,14 +120,14 @@ async fn run() -> Result<(), Error> {
     };
     let address = listener.local_addr()?;
     let state = HttpState::new(store.clone());
-    let state = if config.web_registration || config.web_public_stats {
+    let state = if config.web_registration || config.web_public_stats || downloads.is_some() {
         let statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>> =
             if config.web_public_stats {
                 Some(store.clone())
             } else {
                 None
             };
-        state.with_website(registration, statistics, address)?
+        state.with_website(registration, statistics, downloads, address)?
     } else {
         state
     };

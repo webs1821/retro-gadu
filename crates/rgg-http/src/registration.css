@@ -4,3 +4,4 @@
 .counters{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0}.counters div{background:#f7f7f2;padding:18px;border-radius:12px}.counters dt{font-size:.85rem;color:#62635c}.counters dd{margin:6px 0 0;font-size:2.4rem;font-weight:750}.button{display:block;margin-top:24px;background:#ffcf26;color:#24251f;text-align:center;font-weight:700;padding:14px;border-radius:9px;text-decoration:none}.button:hover{background:#efbb00}
 
 @media(max-width:440px){.counters{grid-template-columns:1fr}}
+.artifact{border-top:1px solid #e4e6eb;padding-top:24px;margin-top:24px}.artifact h2{font-size:22px;margin:0 0 12px}.artifact p{line-height:1.6;overflow-wrap:anywhere}.artifact details{margin-top:18px;font-size:13px;line-height:1.6}.artifact summary{cursor:pointer;font-weight:600}.artifact code{overflow-wrap:anywhere}.secondary{background:#f1edf9;color:#55438f}nav a{display:inline-block;margin-right:16px;margin-bottom:8px}

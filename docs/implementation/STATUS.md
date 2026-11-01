@@ -183,3 +183,12 @@ publikacji chronią każdy zapis TCP. Historia wiadomości nie usuwa ofert.
 [raporcie dev.10](VERIFICATION-2026-11-01-dev10.md) i [kontrakcie](IMAGES.md).
 CRC korzysta z już obecnego crc 3.4.0, bez nowej zewnętrznej wersji biblioteki.
 Plan i recenzje pozostają niezmienione. Brak push i wdrożenia rGG.
+
+## 2026-11-01 — lokalny katalog pobierania, dev.11
+
+Opcjonalny manifest z hashami, pochodzeniem i instrukcjami, strona /downloads,
+JSON i pobrania. Weryfikacja przed startem, niezmienne kopie RAM, limity rozmiarów
+i cztery strumienie. Bez dołączenia prawdziwych EXE, bez push/wdrożenia.
+
+69 testów Rust, HTTP pobierania i regresje WWW/GG, desktop UI z dwoma sztucznymi
+plikami. [Kontrakt i ograniczenia](DOWNLOADS.md), [raport](VERIFICATION-2026-11-01-dev11.md).

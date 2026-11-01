@@ -31,7 +31,7 @@ wyniku testów działającego gg-retro.
 | Rejestracja WWW | gotowe lokalnie, opt-in /register; publiczny profil TLS/proxy niekwalifikowany | http_registration.py: CSRF, limity, 12 konkurencyjnych żądań/3 użycia, GG6 i restart | przeglądarka desktop: wygląd; klient TCP syntetyczny |
 | Statystyki online/zarejestrowani z respektowaniem niewidoczności | gotowe lokalnie: strona główna i /api/stats, opt-in | statistics_tests, http_statistics.py; epoka/generacja/credential/Ready, niewidoczność/tylko znajomi, restart/retirement | przeglądarka desktop: wygląd |
 | Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
-| Pobieranie klienta/instalatora, manifest hashy, patcher | brak w nowym projekcie | — | — |
+| Pobieranie klienta/instalatora, manifest hashy, patcher | częściowe: katalog WWW/JSON, niezmienne pliki, SHA-256 i instrukcje gotowe lokalnie; pakiet/patcher rGG nadal brak | http_downloads.py, podgląd desktop z syntetycznymi plikami | nie sprawdzono |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane; brak kwalifikacji wydajności/RSS/soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca | nie dotyczy |
 | Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI i walidacja kluczy; reszta brak | `accounts_cli.py` | nie dotyczy |
 | Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | brak | — | — |

@@ -50,6 +50,13 @@ Wersja **0.1.0-dev.10** dodaje klasyczne obrazki: trwałe uprawnienia odbiorcy,
 ponowne pobranie od połączonego nadawcy, sprawdzanie fragmentów/CRC w RAM oraz
 limity i ochronę przy blokadzie lub zmianie sesji. Bez trwałego cache obrazków.
 
+Wersja **0.1.0-dev.11** dodaje lokalną stronę pobierania klienta i instalatora,
+sterowaną osobnym manifestem z SHA-256, pochodzeniem i instrukcją. Pliki są
+sprawdzane przed startem i serwowane jako niezmienne kopie z ograniczeniem pobrań.
+Binarki klienta nie są dołączone do repozytorium.
+
+- [Katalog pobierania](docs/implementation/DOWNLOADS.md)
+- [Weryfikacja dev.11](docs/implementation/VERIFICATION-2026-11-01-dev11.md)
 - [Obrazki](docs/implementation/IMAGES.md)
 - [Weryfikacja dev.10](docs/implementation/VERIFICATION-2026-11-01-dev10.md)
 - [Konferencje](docs/implementation/CONFERENCES.md)

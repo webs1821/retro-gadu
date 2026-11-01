@@ -81,7 +81,19 @@ pub(crate) async fn home(State(state): State<HttpState>) -> Response {
         include_str!("home.html")
             .replace("{{registered}}", &s.registered.to_string())
             .replace("{{online}}", &s.publicly_online.to_string())
-            .replace("{{registration_link}}", registration),
+            .replace("{{registration_link}}", registration)
+            .replace(
+                "{{downloads_link}}",
+                if state
+                    .website
+                    .as_ref()
+                    .is_some_and(|w| w.downloads.is_some())
+                {
+                    "<a class=\"button secondary\" href=\"/downloads\">Pobierz klienta</a>"
+                } else {
+                    ""
+                },
+            ),
     )
     .into_response()
 }
