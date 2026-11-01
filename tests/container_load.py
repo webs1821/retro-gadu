@@ -55,9 +55,10 @@ def sample(pid,group):
                 swap_current=int((group/'memory.swap.current').read_text()),pids_current=int((group/'pids.current').read_text()),
                 cpu=fields(group/'cpu.stat'),memory_events=fields(group/'memory.events'))
 
-def qualify(args,engine,tmp):
+def qualify(args,engine,tmp,evidence):
     runtime=engine.inspect('image',args.runtime);helper=engine.inspect('image',args.verification)
     revision=runtime['Config']['Labels']['org.opencontainers.image.revision']
+    evidence.update(source_commit=revision,runtime_image=args.runtime,verification_image=args.verification)
     assert helper['Config']['Labels']['org.opencontainers.image.revision']==revision
     assert all(image['Config']['User']=='10001:10001' and image['Config']['Labels'].get('org.retrogadu.local-test')=='true' for image in [runtime,helper])
     volume=engine.volume();mount=[(volume,'/data',False)]
@@ -69,6 +70,7 @@ def qualify(args,engine,tmp):
     assert host['NetworkMode']=='none' and not host['PortBindings'] and host['ReadonlyRootfs']
     assert host['Memory']==256*MIB and host['NanoCpus']==1000000000 and host['PidsLimit']==128
     pid,group,limits=cgroup(engine,server)
+    evidence['limits']=limits
     engine.run(args.verification,['python','-c',READY],network='container:'+server)
     baseline=sample(pid,group)
     print('R0_EVENT='+json.dumps({'phase':'start','source_commit':revision,'limits':limits}),flush=True)
@@ -76,6 +78,7 @@ def qualify(args,engine,tmp):
     command=engine.cli+['run','--rm','--name',client,'--label',engine.label+'='+engine.run_id,
                         '--network','container:'+server,*LIMITS,args.verification,'python','-u','/src/tests/r0_workload.py','run','--seconds',str(args.seconds)]
     log=tmp/'load.log';errors=tmp/'load.stderr';samples=[baseline]
+    evidence['resource_samples']=samples
     with log.open('w') as output,errors.open('w') as error_output:
         process=subprocess.Popen(command,stdout=output,stderr=error_output,env=engine.env)
         try:
@@ -94,10 +97,13 @@ def qualify(args,engine,tmp):
                 process.terminate()
                 try:process.wait(timeout=5)
                 except subprocess.TimeoutExpired:process.kill();process.wait(timeout=5)
+            evidence['load_log_tail']=log.read_text()[-5000:]
+            evidence['load_stderr_tail']=errors.read_text()[-5000:]
     samples.append(sample(pid,group))
     reports=[json.loads(line.split('=',1)[1]) for line in log.read_text().splitlines() if line.startswith('LOAD_REPORT=')]
     assert len(reports)==1
     workload=reports[0]
+    evidence['workload']=workload
     phase=[item for item in samples if workload['measure_start']<=item['at']<=workload['measure_end']]
     assert len(phase)>2 and phase[-1]['at']-phase[0]['at']>=args.seconds-3,'insufficient resource coverage or inconsistent clocks'
     cpu_seconds=(phase[-1]['cpu']['usage_usec']-phase[0]['cpu']['usage_usec'])/1000000
@@ -105,9 +111,9 @@ def qualify(args,engine,tmp):
     final=samples[-1]
     gates=dict(all_messages=workload['accepted']==workload['scheduled']==args.seconds*10,
                exact_payloads=workload['all_payloads_exact'] and workload['offline_fifo'],
-               session_samples=len(workload['metrics_samples'])>=args.seconds//2,
+               session_samples=len(workload['metrics_samples'])>=args.seconds//2 and all(item['ready_sessions']==100 for item in workload['metrics_samples']),
                rate=workload['achieved_rate']>=9.9,schedule=workload['schedule_lag_max_ms']<=250,
-               ack=workload['ack_p95_ms']<=250,online=workload['online_p95_ms']<=500,
+               ack=workload['ack_p95_ms']<=250 and workload['ack_max_ms']<1000,online=workload['online_p95_ms']<=500,
                rss=max(item['rss_peak'] for item in samples)<=192*MIB,cpu=cpu_fraction<=.90,
                swap=all(item['swap_current']==0 for item in samples),
                no_oom=all(final['memory_events'][key]==baseline['memory_events'][key] for key in ['oom','oom_kill']))
@@ -142,12 +148,13 @@ def main():
     assert os.name=='posix' and args.socket.is_absolute() and args.socket.is_socket() and not args.report.exists()
     assert 10<=args.seconds<=1200
     assert all(re.fullmatch(r'sha256:[a-f0-9]{64}',value) for value in [args.runtime,args.verification])
-    report=None;failure=None
+    report=None;failure=None;evidence={}
     with tempfile.TemporaryDirectory(prefix='rgg-container-load-') as temporary:
         tmp=Path(temporary);client=tmp/'client';client.mkdir();engine=Engine(args,client)
-        try:report=qualify(args,engine,tmp)
+        try:report=qualify(args,engine,tmp,evidence)
         except BaseException as error:
-            failure=error;report=dict(format=1,passed=False,r0_sample_qualified=False,error=type(error).__name__+': '+str(error))
+            failure=error;report=dict(format=1,passed=False,r0_sample_qualified=False,error=type(error).__name__+': '+str(error),evidence=evidence)
+            if isinstance(error,subprocess.CalledProcessError):report['command_stderr']=(error.stderr or '')[-5000:]
         finally:
             try:
                 engine.cleanup()

@@ -144,7 +144,7 @@ async def run(args):
         while True:
             sample = await snapshot()
             assert sample['rgg_sessions{phase="ready"}'] == args.sessions, 'session count changed during load'
-            samples.append({'at':time.monotonic(), 'pending':sample['rgg_delivery_records{state="pending"}'], 'queue_bytes':sample['rgg_queued_payload_bytes']})
+            samples.append({'at':time.monotonic(), 'ready_sessions':sample['rgg_sessions{phase="ready"}'], 'pending':sample['rgg_delivery_records{state="pending"}'], 'queue_bytes':sample['rgg_queued_payload_bytes']})
             await asyncio.sleep(1)
     def task_done(task):
         if task.cancelled(): errors.append('send cancelled')
