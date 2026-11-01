@@ -43,7 +43,7 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   Sprzątanie payloadów i aktywnej kolejki wykorzystuje indeksy, dzięki czemu
   pełna historia nie powoduje rozłączeń w nowej regresji 100000 wpisów/200 offline.
   [Retencja, migracja i zakres testu](docs/implementation/HISTORY-RETENTION.md).
-- Przypięty lokalny obraz dev.24 z kompletem źródeł:26 zestawów kontroli,
+- Przypięty lokalny obraz dev.26 z kompletem źródeł:27 zestawów kontroli,
   trwały wolumen, restart i backup/restore. Dłuższy R0 przeszedł:100 sesji,
   6000 wiadomości przez600s,1CPU/256MiB/swap0. Zachowano wcześniejszą nieudaną
   próbę dev.22, która ujawniła problem kolejki.
@@ -57,7 +57,7 @@ go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementati
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
 - [Kontener lokalny](docs/implementation/CONTAINERS.md), [raport obrazu dev.18](docs/implementation/VERIFICATION-2026-11-01-container.md)
-- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.24 i dłuższy pomiar](docs/implementation/VERIFICATION-2026-11-01-r0-dev24.md)
+- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.26 i dłuższy pomiar](docs/implementation/VERIFICATION-2026-11-01-r0-dev26.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
 - [Liczniki i histogramy](docs/implementation/RUNTIME-METRICS.md), [weryfikacja dev.22](docs/implementation/VERIFICATION-2026-11-01-dev22.md)
 - [Kolejka zapisów SQLite i odtworzony błąd](docs/implementation/SQLITE-WRITER.md)

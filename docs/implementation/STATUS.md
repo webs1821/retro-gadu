@@ -471,3 +471,19 @@ odtworzona starym adminem i zmigrowana do13, z zachowaniem danych i12 sum.
 Nie zmieniono zależności, planu ani limitów czasu/retencji. Ostatni obraz/R0 to
 nadal dev24. Brak push/deploy. [Kontrakt](HISTORY-RETENTION.md),
 [raport](VERIFICATION-2026-11-01-dev26.md).
+
+
+## 2026-11-01 — kwalifikacja obrazu dev.26
+
+Źródło 51c078cc8a5e2c2a329791fa4ef4ccf31b514ed5. 27 zestawów release,
+restart/wolumen/backup-restore oraz R0 600s/100 Ready/6000 wiadomości przeszły.
+ACK p95 5.431ms, online p95 10.389ms, CPU11.9971%, RSS peak18849792B;
+1CPU/256MiB/swap0/PID128. Po SIGTERM DB/FK ok,6000TWU,zero sesji/payloadów.
+Zachowano pierwszą nieudaną próbę (fixture pozostawiała WAL i wypełniała tmpfs).
+Poprawiono zamykanie połączenia testowego bez zmian kodu serwera/limitów.
+
+Archiwum61911804B: e07315106bd55e8c87c2aef72477bda9e923400d0a3fb55b9cebc90ec9c39381,
+workspace/rgg-container-2026-11-01-dev26. Sześć raportów i manifest hashy
+skopiowano do repo i workspace. Prywatny daemon zatrzymany; cache zachowany.
+Długi soak i klient natywny nadal niekwalifikowane. Brak push/deploy.
+[Raport](VERIFICATION-2026-11-01-r0-dev26.md).

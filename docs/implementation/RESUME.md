@@ -1,207 +1,125 @@
 # Punkt wznowienia — 2026-11-01, dev.26
 
-## Zakres i najbliższa praca
+## Zakres
 
 Użytkownik wznowił ciągły rozwój lokalny do przerwania przez niego. Nie pushować,
-nie wdrażać na Containers, nie zmieniać działającego gg-retro, DNS ani hosts.
-Doraźne odzyskanie własnego hasła użytkownika wykonano wcześniej; nie powtarzać
-odczytu i nie zapisywać hasła w repo. Nie ma aktywnego goal ani nowych subagentów.
+nie wdrażać na Containers, nie zmieniać działającego gg-retro, zainstalowanego GG,
+DNS ani hosts. Hasło własnego konta użytkownika odzyskano wcześniej: nie powtarzać
+odczytu i nie zapisywać go w repo. Bez aktywnego goal i bez nowych subagentów.
 
-Dev.23: naprawiono timeout przy odtwarzaniu dużej kolejki. SqliteStore ma teraz
-writer max1 i pool max3 otwierany read_only=true/query_only=ON. Wszystkie zapisy,
-transakcje modyfikujące i VACUUM INTO idą przez writer. Snapshoty metryk/statystyk
-pozostają transakcjami odczytowymi. Inicjalizacja przed czytnikami, close obu pul.
-Nadal WAL/FULL, schema12, te same terminy. 101 testów Rust, fmt, Clippy,
-23 grupy TCP/HTTP/CLI i9 grup --faults przeszły. Binarki debug przywrócone normalne.
-Nowy tests/gg6_concurrent_replay.py jest w CI/container_suite: syntetyczna historia
-3000 + kolejka3000,20 klientów, payload/FIFO/integrity. Czas debug około48s;
-nie jest testem pojemności. Surowe wyniki sqlite-writer-*.json.
+Repo D:\Dokumenty\Documents\RetroGadu, master, commity jako webs1821
+<11637724+webs1821@users.noreply.github.com>. Workspace:
+D:\Dokumenty\Documents\ChatGPT\Serwery. Repo wymaga eskalacji dla zapisów/build/git.
+Brak AGENTS.md w repo i przodkach. PLAN_IMPLEMENTACJI.md jest niezmienny:
+cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
-Dev.23 zapisany w lokalnym commicie24e0343. Dev.24 aktualizuje SQLx0.9.0,
-libsqlite3-sys0.37.0 i wbudowane SQLite3.51.3 (sprawdzony nagłówek oficjalnej paczki).
-Przy otwarciu każdej puli SELECT sqlite_version() wymaga co najmniej3.51.3.
-Statyczne migracje używają SqlSafeStr; bez zmiany12 skryptów SQL/sum ani schematu.
-102 testy Rust, Clippy,23 regresje,9 grup awarii przeszły; normalne binarki
-przywrócone. Nowy tests/sqlite_upgrade.py wymaga prawdziwych starych binarek:
-kopię dev23 odtworzono starym adminem, potem nowy serwer zalogował stare konta,
-odebrał offline i obrazek, odczytał kontakty/profil, przyjął nową wiadomość,
-zrobił nowy backup/restore. Oryginały niezmienione. Baseline /tmp/rgg-baseline-dev23.
-Inwentarz190, RustSec0/0 (1395 porad, commit2295466c4e9df26647fd67d8fa1c705ac2fc7f81).
-SQLITE-UPGRADE.md, sqlite-upgrade/regression/faults-2026-11-01-dev24.json są dowodami.
+## Najnowszy stan
 
-Dev.24 zapisany w bf94fbd78d813f1a64e9192ba59dafebde4968b9.
-Obraz dev24 przeszedł26 zestawów, restart/restore i R0:600s,100Ready,6000 wiadomości,
-3000online/3000offline,1CPU/256MiB/swap0/PID128. ACKp95=4.535ms,onlinep95=9.180ms,
-CPU0.115566,RSSpeak18522112B,cgrouppeak20459520B. Wszystkie bramki,6000TWU,
-zero sesji/payloadów,integrity/FK oraz cleanup przeszły. Raport R0 nie jest soak.
-Runtime sha256:054d8dd16f12e3a08cf11bc5aaf3a65064704f7c8c89cff8fea3b1a48eb7c016.
-Verification sha256:6ee934bb355ecd7ff47909b4b12e2d1d806a5373dd5c6623412e2ed11d6dfcb0.
-Server release68faf007173ab6667905e181d4617843714d85129a7a71309f0c887ac6f1609a.
-Sourcearchive60ca04f9e4c39145115e1db4b7ed76a9ef1d64cf7f4332a4b9960bfb87cc280f.
-Eksport workspace/rgg-container-2026-11-01-dev24/rgg-dev24-runtime.tar.gz,
-61680178B,SHA95088150316b620c0812c19350981bcc05d1050bb6d925bb451f6df005432d37.
-Manifest container-artifact-2026-11-01-dev24.json i6 surowych raportów skopiowano
-do repo. Prywatny daemon zatrzymany po eksporcie (dawna sesja71330 wyszła0).
+- 77d88ac: dev25, poprawka uploadu klienta GG6.1. Własny stub82B w128B paddingu,
+  27 zakresów, pusty MORE dla dodatniej wielokrotności2047 i licznik ACK.
+  Samodzielny walidator MIT/Unicorn2.1.4:79 przypadków CPU;8 sekwencji TCP/restart;
+  pakiet3 hosty/464 zasoby Windows;6 porównań JS/Python. Całego GG nie uruchamiano.
+  CLIENT-UPLOAD.md i raporty client-*-2026-11-01-dev25.json.
+- 0dfd1b6329f15c9e763202ac80697fc46ff7bb00: dev26/schema13. Pełna historia100000
+  powodowała EOF (109/200 odebranych,91 Pending,DB/FK ok). Nowy indeks częściowy
+  messages_with_payload i korelowane purge/expiry/privacy usuwają skan historii
+  z tych operacji. Retire czyści też conference. Limity i retencja bez zmian.
+  103 Rust,fmt/Clippy,25 grup regresji/migracji i9 grup awarii przeszły.
+  Prawdziwy backup dev25 (schema12) ->13: zachowane12 sum i wszystkie dane.
+- 51c078cc8a5e2c2a329791fa4ef4ccf31b514ed5: korekta samej fixture pełnej historii.
+  Kontekst sqlite3 nie zamykał połączenia, WAL14MB zostawał obok bazy14MB i źródeł,
+  wypełniając tmpfs32MiB; metryki503/SQLITE_FULL. Dodano contextlib.closing.
+  Ten sam runtime przeszedł poprawiony test przy tych samych limitach.
+  container-dev26-attempt1.json zachowuje nieudaną próbę i diagnostykę.
 
-Dev.25: zakończono poprawkę uploadu klienta: pusty MORE dla dodatniej
-wielokrotności 2047, licznik odpowiedzi, 27 zakresów, własny stub 82 B w 128 B.
-79 przypadków CPU, 8 rzeczywistych sekwencji TCP/restart, test pakietu (3 hosty,
-464 zasoby Windows), 6 JS/Python, 102 Rust/fmt/Clippy oraz 3 regresje HTTP/TCP
-przeszły. Rzeczywisty pakiet pobrany przez loopback, bez wykonywania EXE.
-Finalne raporty CPU/TCP odpowiadają bieżącym hashom sterowników.
-THIRD_PARTY ma 10 wpisów; walidator CPU jest osobnym programem MIT,
-Unicorn 2.1.4 tylko w zewnętrznym katalogu workspace. Plan i schema12 bez zmian.
-Pakiet workspace/rgg-client-local-2026-11-01-dev25:
-GG.exe SHA b5e5c51f61467a07a0dce1079c45bfd4596cb3659aeb8a5b37843ad53faaaaeb,
-installer 166f31d95505a090750a7f0da09fe93ed4067e694dda6e6c88a57a3b7aaeb833.
-Nowe dokumenty CLIENT-UPLOAD.md i VERIFICATION-2026-11-01-dev25.md.
-Obraz dev24 nie zawiera recepty dev25; nie przypisywać mu nowych testów.
-Natywny klient nadal niekwalifikowany, nie instalować na obecnym profilu GG.
-
-Dev.25 zapisany w lokalnym commicie 77d88ac (czysty punkt przed dev26).
-Dev.26: potwierdzono EOF przy pełnej historii 100000 + 200 offline/20 klientów:
-109 odebranych, 91 Pending, integrity/FK ok. Szczegółowego powodu EOF nie ma
-w logu. Oryginalny raport history-diagnostic-2026-11-01-dev25.json zachowany.
-Migracja 13 dodaje messages_with_payload; purge stosuje EXISTS po kluczu
-zamiast listy wszystkich terminalnych. Expire/privacy używają predykatu indeksu
-deliveries_fifo i korelacji po kluczu. Retire czyści też conference atomowo.
-Na kandydacie ten sam test odebrał 200/200 w 2.937s. Formalny nowy test
-w CI/container_suite sprawdza ponadto nowe przyjęcie/ACK, restart i dokładną
-retencję 100000. Regresja: 3.020s replay i ACK12.959ms. Nie jest to pomiar R0.
-
-103 testy Rust, fmt/Clippy i 25 grup regresji TCP/HTTP/CLI/migracji przeszły.
-Migracja prawdziwego backupu dev25 (schema12) do13 zachowała 12 starych sum,
-konta, offline/obrazki, kontakty/profil, nowy backup/restore. sqlite_upgrade.py
-wymaga teraz --expected-schema. Dwa pola reportu: schema_before/schema_after.
-Bieżący zwykły serwer SHA63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73,
+Normalne binarki debug dev26 przywrócone po awariach:
+server63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73,
 admin b00fb3f370eb2a24ac8be6e1dfbed116bef3b2a7e21b8b5567e1cdfeeca9845e.
-Baseline /tmp/rgg-baseline-dev25 ma zachowane stare binarki.
-Raporty history-diagnostic/regression/faults-2026-11-01-dev*.json.
+Historia-regresja dotyczy starej wersji fixture, co odnotowano; nowy sterownik
+ma osobne dowody z obrazu. 190 bibliotek,10 crate,10 wpisów THIRD_PARTY.
 
-9 grup awarii dev26 przeszło; sesja46813 zakończona0, restored_normal=true,
-hashe przywróconych normalnych binarek zgodne z powyższymi. Zakończyć lokalny
-commit dev26 po końcowym przeglądzie. Żadne testy nie pozostają aktywne.
-Prywatny Docker pozostaje zatrzymany; ostatni eksport/R0 to dev24. Następna
-praca: kwalifikacja nowego obrazu, ewentualnie większy wariant pełnej historii.
-Nie przypisywać wyników R0 dev24 nowej wersji. Dalej wyłącznie lokalnie.
+## Ostatni kwalifikowany obraz
 
-## Wyniki obrazu dev.22 i odtworzenie błędu
+Źródło51c078cc8a5e2c2a329791fa4ef4ccf31b514ed5, dev26/schema13.
+27 zestawów release84.912s, runtime restart/backup-restore oraz R0 przeszły.
+R0:600.001s,100 Ready,6000 wiadomości (3000online+3000offline),1CPU/256MiB/swap0.
+ACKp95=5.431ms,onlinep95=10.389ms,CPU0.119971,RSSpeak18849792B,cgrouppeak20975616B.
+Po SIGTERM DB/FK ok,6000 TransportWrittenUnconfirmed,zero sesji/payloadów,cleanup ok.
+GG6 nie ma ACK odbiorcy. To nadal próbka R0, nie długi soak/natywny klient/produkcja.
+Suite/runtime miały swap=max; R0 ustawił i zweryfikował0 we własnej grupie.
 
-Źródło a5d55d37ba29d00b7772629b9d6ce99452a0f1a9, wersja0.1.0-dev.22.
-Runtime sha256:8bb71c2bfada6511553d0989514de515530884f4c351645fbb49b9cc68214632.
-Verification sha256:243c59130e1538d6c8b2aa50b47835f9fa1392cf49c76593a98254cfea8696ea.
-Server release bfa935ea649efddad5e8459ec6c6b2eae09cb17971f91e0fd6b6c3521870c3ae.
-Source archive6704391cb029abdc801195c6d1614e2c675237eaf28ed7f9559f0bab7ba07e47.
-25 grup release przeszło69.51s, restart/wolumen/backup-restore także. Swap w tych
-kontrolach faktycznie max; nie udawać0. Dłuższy R0 osobno ustawił i potwierdził
-swap0. Nadano6000 przez600.000s/100Ready, ale końcowy replay3000 zakończył EOF.
-Ta próba NIE przeszła. Zasoby zachowane w surowym raporcie, cleanup=true.
-Średni CPU fazy12.299%, końcowe60s14.206%, RSS peak20824064B; bez OOM.
+Runtime sha256:1a6f76583208ce19a9aad4ba9f1d51cab803fbb21dc63658c860da6678fcbb59.
+Verification sha256:3f0806df9532b2c448ee7f547b3060cdd6079d230a590a150334a42f05bf7e59.
+Release-server9a83c9885ca7a0888d0e086a17d1c8ebbf4476a3c6ea444a7b045aee90d7c053.
+Source archive285a8a912537541a5c0134142c582c6538f1aed96f2f38cb4ac26852fa970484.
+Eksport workspace/rgg-container-2026-11-01-dev26/rgg-dev26-runtime.tar.gz,
+61911804B, SHAe07315106bd55e8c87c2aef72477bda9e923400d0a3fb55b9cebc90ec9c39381.
+GzipEOF/manifest/config identity sprawdzone. Sześć surowych raportów i manifest
+container-artifact-2026-11-01-dev26.json są w repo oraz obok archiwum.
+VERIFICATION-2026-11-01-r0-dev26.md zawiera opis i granice kwalifikacji.
 
-Diagnostyka przy1CPU/256MiB/swap0:
-- samo3000 offline: sukces15.519s;
-- 3000 terminalnych+3000 offline: EOF, delivery timeout, odbiorca118;
-- writer FIFO, kandydat release: sukces22.516s,6000 TWU,0sesji/payloadów,FK/DB ok.
-SHA kandydata cd3dafadcfbd373f1c2e8e98339287793661db592b8ac224819f345d39f047ce.
-Kandydat miał jeszcze label dev22; diagnostyka nie kwalifikuje nowego obrazu.
-Python verifier SQLite3.40.1 NIE jest wersją SQLite wbudowaną w rGG.
-Próba debug nie zakończyła seedowania online przy100/s; driver3 ma jawne
-bariery Ready/ukończenia historii. Replay nadal30s. Zachowane także wcześniejsze
-nieukończone przygotowanie i start przed ukończeniem builda (brak uruchomienia).
+Prywatny Docker ZATRZYMANY po eksporcie: zweryfikowany PID12, dawna sesja34969
+wyszła0. Build27957, suite45425, R038995 i eksport85223 zakończone0.
+Żaden test/daemon nie pozostaje aktywny. Cache, stare obrazy i archiwa zachowane.
+Raporty i dokumentacja kwalifikacji26 są utrwalane osobnym commitem po51c078c.
 
-Raporty w docs/implementation i kopia:
-D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-container-2026-11-01-dev22.
-Nie utworzono kwalifikowanego tar.gz dev22. Ostatnia udana krótka próbka R0
-oraz archiwum to nadal dev19, udokumentowane w VERIFICATION-2026-11-01-r0.md.
-Nie usuwać starych archiwów dev18/dev19 ani raportów niepowodzeń.
+## Następny krok
 
-## Silnik testowy i narzędzia
+Zapowiedziano przygotowanie prywatnych metryk CPU/RAM procesu. Jeszcze NIE są
+zaimplementowane w repo. W workspace są rgg-process-metrics-notes.txt oraz
+rgg-process-metrics-draft.rs: projekt samplera Linux, parser VmRSS, szkic testów.
+Przeczytać i przejrzeć, nie traktować szkicu jako przetestowanego kodu.
+Rustix1.1.6 już jest pośrednio w lockfile; lokalnie sprawdzono bezpieczne
+clock_gettime(ClockId::ProcessCPUTime)->Timespec. Potrzebny bezpośredni feature
+"time" tylko dla Linux, bez własnego unsafe i bez zmiany wersji bibliotek.
 
-Prywatny Docker29.9.2/runc1.5.2 w WSL:
-/tmp/rgg-docker-local-20261101 (root0700), bin/, data29/, run29/,
-daemon29.json, docker29.sock, daemon29.pid, daemon-dev22.log.
-Daemon zatrzymany po dev24 (sesja71330 wyszła0). Przy przyszłych próbach zatrzymać tylko ten
-sprawdzony PID (SIGTERM), wcześniej sprawdzić brak własnych kontenerów/wolumenów.
-Docker Desktop pozostaje wyłączony. Zawsze jawny --host unix://... i pusty
-osobny --config, bez DOCKER_*; nie używać domyślnego kontekstu.
-Daemon bez bridge/iptables/forwardingu. Testy --network none, klienci współdzielą
-wyłącznie netns serwera. R0 cgroup helper zmienia swap tylko po sprawdzeniu
-własnego kontenera/UID/limitów/etykiety. Nigdy globalna zmiana cgroup.
+Propozycja: app telemetry Copy ProcessSample z observed_at/CPU Duration/RSS Option;
+server jeden sampler1/s tylko przy włączonych metrykach, cancellation/shutdown;
+HTTP stałe rodziny CPU counter/RSS gauge/dostępność źródeł/wiek próbki.
+Stara/nieobecna próbka nie może udawać zużycia0. Utrzymać limit16KiB odpowiedzi.
+Parser ograniczony16KiB+1, nie wymaga UTF8 nazw procesu, kontroluje jednostki,
+duplikaty i overflow. Dopracować lifecycle oraz API przed integracją.
+Zależności/moduły i testy w istniejącym układzie; żadnych nowych subagentów.
 
-Workspace repo D:\Dokumenty\Documents\RetroGadu, master. Zapis/build/git wymagają
-require_escalated (poza writable roots). Git author webs1821,
-11637724+webs1821@users.noreply.github.com. Nie było push.
-Python Windows C:\Program Files\Python313\python.exe, Node C:\Program Files\nodejs\node.exe.
-WSL python3 jest3.10; tools z tomllib uruchamiać Python3.13 Windows lub image3.13.
-WSL cargo: CARGO_HOME=/tmp/gg-retro-toolchain/cargo,
-RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup, CARGO_TARGET_DIR=/tmp/rgg-target,
-CC=/tmp/gg-retro-toolchain/gcc/cc; PATH=$CARGO_HOME/bin:$PATH. Rust1.99.1.
-Normalne debug binarki /tmp/rgg-target/debug; release w /tmp/rgg-target/release
-zawiera kandydata writer jeszcze sprzed bumpa dev23. Baselines dev8/dev9/dev13/
-dev14/dev15/dev20 oraz /tmp/rgg-baseline-dev22 (normalne binarki sprzed poprawki).
+## Narzędzia
 
-## Analiza końca listy kontaktów — jeszcze bez poprawki
+Windows Python: C:\Program Files\Python313\python.exe; Node24.11.1:
+C:\Program Files\nodejs\node.exe. Pliki Python czytać/pisać UTF8 jawnie.
+WSL Python3.10. Rust1.99.1:
+CARGO_HOME=/tmp/gg-retro-toolchain/cargo
+RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup
+CARGO_TARGET_DIR=/tmp/rgg-target
+CC=/tmp/gg-retro-toolchain/gcc/cc
+PATH=$CARGO_HOME/bin:$PATH; cd /mnt/d/Dokumenty/Documents/RetroGadu.
+/tmp/rgg-target/debug to zwykły dev26; /tmp/rgg-target/release nadal stary kandydat
+writer oznaczony dev22. Nie utożsamiać go z nowym release z obrazu.
 
-Workspace D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-client-analysis-2026-11-01:
-gg-original-analysis.bin (nie uruchomiono jako aplikacji), disassembly.txt,
-emulate_contacts.py, original-emulation.json, deps/Unicorn2.1.4. W tym samym
-katalogu tymczasowe replay_diagnostic1/2/3.py i diagnose_container_replay.py.
-Runner może podstawić --candidate binarkę do własnego wolumenu; taka diagnostyka
-z bazowym obrazem NIE kwalifikuje identyczności źródła/obrazu.
+Prywatny silnik Docker29.9.2/runc1.5.2:
+/tmp/rgg-docker-local-20261101, właściciel root0700; używać wsl -u root.
+bin/,data29/,run29/,daemon29.json (containerd-snapshotter=false),docker29.sock,
+daemon29.pid, ostatni log daemon-dev26.log. Bez bridge/iptables/IP forwarding,
+tylko własny socketUnix; Docker Desktop i usługi systemowe nietknięte.
+Build z czystego HEAD przez tools/build_container.py, brak nadpisywania tagów.
+Root raporty końcowe26: runtime-dev26-final-build.json,verification-dev26-final-build.json,
+suite-dev26-final.json,runtime-dev26-final-qualification.json,r0-dev26-plan.json,
+r0-dev26-600s.json. Pierwszych buildów/logów26 nie usuwać.
+Nie drukować całego R0 JSON: tylko wybrane scalars, bo ma setki próbek.
 
-Oryginał GG6.1 SHA74b78af318c52f86dff8a7ee27a7a0b5ea545167aebb594a8a559ec97f2e3a57,
-wydobyty z przypiętego gg61.exe przez własny parser. Funkcja uploadu VA4249ef–424a89:
-bloki max2047, limit całości50000, pierwszy typ0, dalsze1, packet0x16. Wszystkie
-wywołania send w pętli, licznik potwierdzeń this+0x9c zwiększany dla każdego.
-Dla dodatniej wielokrotności2047 NIE wysyła pustego MORE. Pusta lista wysyła PUT0.
-Null pointer nie wysyła nic. Potwierdzone13 przypadkami w emulatorze CPU, który
-przechwytuje strlen/memcpy/send; zero WindowsAPI/sieci i żadnego startu aplikacji.
-Stan zachowania całego GG/native pozostaje NIEkwalifikowany.
+Baseline stare binarki: /tmp/rgg-baseline-dev8(schema6),dev9(7),dev13(8),dev14(9),
+dev15(10),dev20(11),dev23/dev24/dev25(12). Dev25 server1087e5ee538c519e1ae261bef6bee64f4fa5a624154745afdfa71cbd03b356fe,
+admin a7af13bd5f5fcbbcf66b7039659121e3fbd680ee32697e58295ef9d880f1fc9e.
+Backup starego schematu odtwarza stary admin, potem nowy runtime migruje kopię.
+sqlite_upgrade.py wymaga teraz --expected-schema13. Nigdy nie fabrykować historii
+migracji przez ręczne zmiany _sqlx_migrations.
 
-Możliwa poprawka: własny stub w zerowym paddingu .text VA479400/raw79400,
-rozszerzyć VirtualSize sekcji (obecnie78398; raw79000). Hook predicate od424a39
-(do424a42,9B) do stuba. Powtórzyć decyzję normalnego send, a na końcu dodać
-pusty MORE tylko gdy ebx>0 i ebx%2047==0; zwiększyć licznik ACK i od razu wyjść.
-Nie dopisywać pustego MORE po krótkim fragmencie (serwer już opublikował listę).
-Nie zgadywać końca po timeout ani osłabiać atomowości serwera. Zweryfikować
-instrukcje/stos/registers w emulatorze, PE/Windows resource reader, Python/JS
-pełnym porównaniem, potem protokołem TCP. Aktualny generator/mapa jeszcze bez zmian.
+Starsze ważne artefakty/problemy: dev22 R0 nie przeszedł, dev23 writerFIFO naprawił
+równoczesny replay, dev24 aktualizował SQLx0.9.0/libsqlite3-sys0.37.0/SQLite3.51.3
+(WAL-reset fix). SQLITE-WRITER.md i SQLITE-UPGRADE.md zawierają szczegóły.
+Archiwa dev18/dev19/dev24 oraz nieudane próby dev22 zachowane w workspace.
 
-Unicorn wheel win64 hash d7107500c64ce5c168fbff6bef9485b5db1350050036f4cea568650cf8bdbdf5.
-To narzędzie testowe poza runtime. Emulator napisany niezależnie jako osobny
-program MIT, bez importowania kodu AGPL patchera; nie kopiować zamkniętego klienta
-ani pełnego disassembly do Git. Recepta patchera zachowuje pochodzenie w THIRD_PARTY.
-
-## Pozostałe odniesienia
-
-SQLITE-UPGRADE.md oraz VERIFICATION-2026-11-01-dev24.md — najnowsze dowody.
-PARITY.md rozróżnia implementację od kwalifikacji; warunek podmiany niespełniony.
-Plan niezmieniony SHA256 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
-Historyczne szczegóły dev1–22 w STATUS.md i osobnych kontraktach/raportach.
-Nadal otwarte: klient natywny, publiczny TLS/proxy, rzeczywisty import, długi soak,
-kwalifikacja OS/dependencies i komplet metryk RSS/CPU/buforów.
-Referencja gg-retro ed9640cc247764754b5e47891053eb07a53f76d5 w D:\Dokumenty\Documents\gg-retro.
-Libgadu9eb2aa0eb6ad020fda7c7264538e48c7b78ba602 w workspace/rgg-reference-libgadu.
-
-
-## Obraz dev26 — pierwsza próba i poprawka fixture
-
-Commit funkcjonalny dev26: 0dfd1b6329f15c9e763202ac80697fc46ff7bb00.
-Zbudowane dwa obrazy, ale suite zatrzymała się na pełnej historii: metryki503.
-Potwierdzono SQLITE_FULL, wolne704512B przy32MiB tmpfs; fixture Python zostawiał
-połączenie i WAL14152232B. Z rozpakowanymi źródłami zajęte32849920B.
-Bez rozpakowanych źródeł ten sam obraz przeszedł, a po dodaniu contextlib.closing
-również z nimi: replay1.146s,ACK5.363ms. Runtime/limity bez zmian.
-Dowód container-dev26-attempt1.json. Nie nadpisywać wcześniejszych buildów/logów.
-Nowy lokalny commit zawiera tylko poprawkę zamykania połączeń testowych i dowody.
-Następnie budować z nowego commitu, raporty runtime-dev26-final-build.json
-oraz verification-dev26-final-build.json (dotychczasowe nazwy zajęte).
-Wersja nadal dev26/schema13; źródło obrazu będzie nowym commitem.
-
-Prywatny Docker WŁĄCZONY, własna sesja34969, log daemon-dev26.log.
-Build51900 i suite44430 zakończone; suite44430 nieudana, runtime/R0 nie ruszyły.
-Prywatny socket/data jak wcześniej. Stare obrazy26 niekwalifikowane; nie eksportować
-ich jako gotowej wersji. Po końcowym eksporcie zatrzymać wyłącznie własny daemon.
-Workspace ma sterowniki rgg-container-qualify26.py i rgg-container-r026.py;
-przed uruchomieniem podmienić w nich oczekiwany commit i nazwy buildów na finalne.
-Root r0-dev26-plan.json/r0-dev26-600s.json jeszcze NIE istnieją.
+Pakiet klienta dev25: workspace/rgg-client-local-2026-11-01-dev25.
+GG.exe b5e5c51f61467a07a0dce1079c45bfd4596cb3659aeb8a5b37843ad53faaaaeb,
+installer166f31d95505a090750a7f0da09fe93ed4067e694dda6e6c88a57a3b7aaeb833.
+Oryginał wejściowy: D:\Dokumenty\Documents\gg-retro\server\static\gg61.exe.
+Analiza/prototypy/Unicorn tylko workspace/rgg-client-analysis-2026-11-01.
+Nie włączać oryginalnego klienta, disassembly ani innych binariów do Git.
