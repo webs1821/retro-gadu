@@ -7,96 +7,34 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Pierwszy działający etap infrastruktury: osobne moduły, konfiguracja,
-blokada katalogu danych na poziomie systemu operacyjnego, SQLite WAL/FULL,
-migracje, identyfikator uruchomienia, HTTP live/ready i kontrolowane zamknięcie.
-Są również fundamenty kodeka GG6, parser logowania i port GG32.
+Wersja **0.1.0-dev.15**, schemat SQLite **10**, dziesięć modułów Rust.
+Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
+Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
-Drugi przyrost dodaje konta obsługiwane przez lokalne CLI: szyfrowane hasła,
-keyring, transakcyjne zaproszenia i przydział numerów, trwałą rezerwację numerów
-usuniętych kont oraz testy równoczesnych rejestracji.
+- Logowanie GG6, sesje, trwała kolejka online/offline, obecność, opisy,
+  niewidoczność, prywatność, archiwa kontaktów i dobrowolny katalog publiczny.
+- Formatowanie, konferencje oraz klasyczne obrazki pobierane od połączonego
+  nadawcy, z autoryzacją odbiorcy, limitami i weryfikacją CRC.
+- Opcjonalne lokalne discovery HTTP, rejestracja na zaproszenia, wybór numeru,
+  strona główna, liczniki i katalog pobierania plików wskazanych w manifeście.
+- Lokalne CLI: konta, rezerwacje usuniętych numerów, kompletne kopie i restore,
+  rotacja kluczy z kopią i wznowieniem, zgodność starych kodów zaproszeń.
+- Import przypiętej wersji gg-retro 0.8.3 do nowego katalogu: kontrola sekretów,
+  ponowne szyfrowanie, zachowanie danych i liczników, transakcja oraz blokada
+  startu po nieukończonym imporcie. Testowano wyłącznie sztuczną bazę.
 
-Wersja **0.1.0-dev.3** dodaje lokalny nasłuch GG6, logowanie LOGIN60/GG32,
-sesje kont, ping/pong oraz trwałe wiadomości tekstowe online i offline.
-Wiadomości czekają na zakończenie synchronizacji blokad klienta. Potwierdzenie
-dla nadawcy następuje po zatwierdzeniu zapisu w SQLite, a kolejka przeżywa restart.
-Podstawowe style tekstu i Windows-1250 są obsługiwane. Aktualny zakres opisuje macierz zgodności.
-Testy TCP i awarii są automatyczne; oryginalnego klienta GG6 jeszcze nie kwalifikowano.
+[Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
+zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
+pracy m.in. granice uploadu kontaktów, pakiet klienta i profil wdrożeniowy.
 
-Wersja **0.1.0-dev.4** dodaje obecność zależną od obserwatora, opisy i czas
-powrotu, niewidoczność, tryb tylko znajomi oraz 4000 subskrypcji. Listę kontaktów
-można przechowywać i pobierać jako osobne, wersjonowane archiwum. Niepełny upload
-nie nadpisuje poprzedniej listy. Upload zakończony pełnym blokiem 2047 B bez
-terminatora pozostaje świadomie ograniczony; szczegóły opisuje kontrakt poniżej.
-
-Wersja **0.1.0-dev.5** dodaje dobrowolny katalog publiczny GG6: odczyt i zapis
-własnego profilu, polskie filtry, zakres lat urodzenia, stronicowanie i limit
-zapytań odporny na reconnect. Widoczność statusu w wynikach respektuje prywatność.
-
-Wersja **0.1.0-dev.6** dodaje opcjonalne lokalne HTTP discovery dla GG6,
-ze wskazaniem rzeczywistego portu i odmową historycznych operacji konta.
-
-Wersja **0.1.0-dev.7** dodaje lokalną rejestrację WWW z zaproszeniami, wyborem
-numeru, jednorazowym CSRF oraz limitami. Nowe konto od razu loguje się w GG6.
-
-Wersja **0.1.0-dev.8** dodaje opcjonalną stronę główną i publiczne liczniki
-istniejących kont oraz jawnej obecności. Ukryte sesje nie zwiększają liczby online.
-
-Wersja **0.1.0-dev.9** dodaje konferencje GG6: zachowanie uczestników i stylów
-również offline, limit 32 osób i brak ponownego rozsyłania kopii wykonanych przez
-klienta. Migracja schematu 6 → 7 zachowuje wcześniejszą kolejkę.
-
-Wersja **0.1.0-dev.10** dodaje klasyczne obrazki: trwałe uprawnienia odbiorcy,
-ponowne pobranie od połączonego nadawcy, sprawdzanie fragmentów/CRC w RAM oraz
-limity i ochronę przy blokadzie lub zmianie sesji. Bez trwałego cache obrazków.
-
-Wersja **0.1.0-dev.11** dodaje lokalną stronę pobierania klienta i instalatora,
-sterowaną osobnym manifestem z SHA-256, pochodzeniem i instrukcją. Pliki są
-sprawdzane przed startem i serwowane jako niezmienne kopie z ograniczeniem pobrań.
-Binarki klienta nie są dołączone do repozytorium.
-
-Wersja **0.1.0-dev.12** dodaje kompletne kopie offline z kluczami i manifestem,
-weryfikację bez zmiany kopii oraz odtwarzanie do nowego katalogu. Niepełne
-odtworzenie blokuje start bazy. Kontrola obejmuje sekret każdego konta.
-
-Wersja **0.1.0-dev.13** dodaje rotację kluczy z obowiązkową kopią i wznowieniem
-po awarii. Zachowuje starsze klucze, hasła użytkowników i ich wersje uprawnień.
-
-- [Rotacja kluczy](docs/implementation/KEY-ROTATION.md)
-Wersja **0.1.0-dev.14** zachowuje format starych zaproszeń gg-retro w osobnej
-tabeli, z dotychczasowym zużyciem i wyłączeniem kodu. Adapter działa przez WWW
-i CLI; narzędzie pełnego importu jest nadal w przygotowaniu.
-
-- [Stare zaproszenia](docs/implementation/LEGACY-INVITATIONS.md)
-- [Weryfikacja dev.14](docs/implementation/VERIFICATION-2026-11-01-dev14.md)
-- [Rotacja kluczy](docs/implementation/KEY-ROTATION.md)
-- [Kontrola danych gg-retro przed importem](docs/implementation/IMPORT-GG-RETRO.md)
-- [Weryfikacja dev.13](docs/implementation/VERIFICATION-2026-11-01-dev13.md)
-- [Kopie i odtwarzanie](docs/implementation/BACKUPS.md)
-- [Weryfikacja dev.12](docs/implementation/VERIFICATION-2026-11-01-dev12.md)
-- [Katalog pobierania](docs/implementation/DOWNLOADS.md)
-- [Weryfikacja dev.11](docs/implementation/VERIFICATION-2026-11-01-dev11.md)
-- [Obrazki](docs/implementation/IMAGES.md)
-- [Weryfikacja dev.10](docs/implementation/VERIFICATION-2026-11-01-dev10.md)
-- [Konferencje](docs/implementation/CONFERENCES.md)
-- [Weryfikacja dev.9](docs/implementation/VERIFICATION-2026-11-01-dev9.md)
-- [Liczniki i strona główna](docs/implementation/PUBLIC-STATISTICS.md)
-- [Weryfikacja dev.8](docs/implementation/VERIFICATION-2026-11-01-dev8.md)
-- [Rejestracja WWW](docs/implementation/WEB-REGISTRATION.md)
-- [Weryfikacja dev.7](docs/implementation/VERIFICATION-2026-11-01-dev7.md)
-- [Kontrakt discovery](docs/implementation/HTTP-DISCOVERY.md)
-- [Weryfikacja dev.6](docs/implementation/VERIFICATION-2026-11-01-dev6.md)
-- [Kontrakt katalogu](docs/implementation/PUBLIC-DIRECTORY.md)
-- [Weryfikacja dev.5](docs/implementation/VERIFICATION-2026-11-01-dev5.md)
-- [Kontrakt obecności i kontaktów](docs/implementation/PRESENCE-AND-CONTACTS.md)
-- [Weryfikacja dev.4](docs/implementation/VERIFICATION-2026-11-01-dev4.md)
-- [Szczegółowy plan](PLAN_IMPLEMENTACJI.md)
-- [Macierz funkcjonalności i braków](docs/implementation/PARITY.md)
-- [Dziennik implementacji](docs/implementation/STATUS.md)
-- [Wyniki weryfikacji dev.3](docs/implementation/VERIFICATION-2026-10-31-dev3.md)
-- [Zasady sesji, kolejki i ograniczenia GG6](docs/implementation/SESSIONS-AND-DELIVERY.md)
-- [Pochodzenie użytych elementów](THIRD_PARTY.toml)
-- [Recenzje planu](docs/reviews/ROZLICZENIE_UWAG.md)
+- [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
+- [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
+- [Import gg-retro](docs/implementation/IMPORT-GG-RETRO.md), [weryfikacja dev.15](docs/implementation/VERIFICATION-2026-11-01-dev15.md)
+- [Kopie i odtwarzanie](docs/implementation/BACKUPS.md), [rotacja kluczy](docs/implementation/KEY-ROTATION.md)
+- [Sesje i kolejka](docs/implementation/SESSIONS-AND-DELIVERY.md), [obecność i kontakty](docs/implementation/PRESENCE-AND-CONTACTS.md)
+- [Katalog publiczny](docs/implementation/PUBLIC-DIRECTORY.md), [konferencje](docs/implementation/CONFERENCES.md), [obrazki](docs/implementation/IMAGES.md)
+- [Discovery](docs/implementation/HTTP-DISCOVERY.md), [rejestracja WWW](docs/implementation/WEB-REGISTRATION.md), [stare zaproszenia](docs/implementation/LEGACY-INVITATIONS.md)
+- [Liczniki](docs/implementation/PUBLIC-STATISTICS.md), [pobieranie](docs/implementation/DOWNLOADS.md), [pochodzenie kodu](THIRD_PARTY.toml)
 
 ## Uruchomienie lokalne
 
@@ -134,6 +72,7 @@ python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debu
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/gg6_directory.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 python tests/http_discovery.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server
 cargo build --workspace --locked --features rgg-server/test-hooks
 python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
 python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
@@ -152,7 +91,7 @@ w testach. Zwykły build nie odczytuje zmiennych `RGG_TEST_CRASH` ani
 `RGG_TEST_DROP_WAKEUPS`. Ostatni build powyżej przywraca zwykły plik wykonywalny.
 
 Workflow CI jest przygotowany jako plik lokalny. Nie został uruchomiony na GitHubie;
-repozytorium nie ma jeszcze zdalnego adresu.
+origin wskazuje webs1821/retro-gadu, ale w tych pracach nie wykonywano push.
 
 ## Lokalne konta i zaproszenia
 
@@ -195,7 +134,7 @@ Puste pole numeru oznacza pierwszy wolny numer od 112233. Numer ręczny może by
 niższy; nie przesuwa automatycznego licznika do wysokiej wartości. Zaproszenie
 jest zużywane dopiero wraz z zatwierdzeniem utworzenia konta. Kolizja numeru,
 błąd szyfrowania i nieudana rejestracja nie zużywają zaproszenia.
-Obecne CLI tworzy nowe kody rGG; importer kont i zaproszeń z gg-retro pozostaje do wykonania.
+CLI tworzy nowe kody rGG. Importer zachowuje stare hashe zaproszeń, ich użycia i aktywność.
 
 `retire --uin <numer> --data-dir <katalog>` usuwa rekord konta i trwale rezerwuje
 numer. Nie jest to obietnica usunięcia jego dawnych danych z kopii ani śladów
@@ -207,8 +146,8 @@ Baza utrzymuje historię użytych par klucz–nonce także po usunięciu konta i
 `keys.toml` musi być zachowany razem z informacją, do której bazy należy.
 Na Linuksie program wymaga dostępu do pliku kluczy wyłącznie dla właściciela;
 w WSL używaj linuksowego systemu plików. Brak lub niewłaściwy klucz dla istniejących
-kont jest błędem, a nie powodem do wygenerowania zamiennika. Automatyczna rotacja,
-kopie i odzyskiwanie pozostają kolejnymi zadaniami.
+kont jest błędem, a nie powodem do wygenerowania zamiennika. Kopie, odtwarzanie
+i rotacja kluczy są dostępnymi komendami offline; nie działają automatycznie.
 
 ## Podział kodu
 
@@ -223,7 +162,7 @@ kopie i odzyskiwanie pozostają kolejnymi zadaniami.
 | `rgg-http` | Endpointy HTTP zależne od portów aplikacji |
 | `rgg-server` | Konfiguracja, składanie modułów, sygnały i cykl życia |
 | `rgg-credentials` | Koperty sekretów, keyring, losowe zaproszenia i ich skróty |
-| `rgg-admin` | Lokalne konta, zaproszenia oraz backup/restore pod blokadą danych |
+| `rgg-admin` | Lokalne konta, zaproszenia, kopie, rotacja kluczy i import pod blokadą danych |
 
 ```mermaid
 flowchart TD
@@ -267,7 +206,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.14](docs/implementation/cargo-audit-2026-11-01-dev14.json).
+[raporcie audytu dev.15](docs/implementation/cargo-audit-2026-11-01-dev15.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

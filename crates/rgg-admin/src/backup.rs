@@ -34,7 +34,7 @@ struct Manifest {
     database: Fingerprint,
     keys: Fingerprint,
 }
-fn private_dir_new(path: &Path) -> Result<(), Error> {
+pub(super) fn private_dir_new(path: &Path) -> Result<(), Error> {
     let mut builder = fs::DirBuilder::new();
     #[cfg(unix)]
     {
@@ -46,7 +46,7 @@ fn private_dir_new(path: &Path) -> Result<(), Error> {
         .map_err(|_| "destination must not exist and its parent must exist")?;
     Ok(())
 }
-fn private_new(path: &Path) -> Result<File, Error> {
+pub(super) fn private_new(path: &Path) -> Result<File, Error> {
     let mut options = OpenOptions::new();
     options.write(true).create_new(true);
     #[cfg(unix)]
@@ -56,7 +56,7 @@ fn private_new(path: &Path) -> Result<File, Error> {
     }
     Ok(options
         .open(path)
-        .map_err(|_| "cannot create private backup file")?)
+        .map_err(|_| "cannot create private file")?)
 }
 fn regular(path: &Path, max: u64) -> Result<File, Error> {
     let meta = fs::symlink_metadata(path).map_err(|_| "backup file missing")?;
@@ -101,7 +101,7 @@ fn digest_copy(source: &Path, target: Option<&Path>, max: u64) -> Result<Fingerp
         sha256: hex::encode(hash.finalize()),
     })
 }
-fn sync_dir(path: &Path) -> Result<(), Error> {
+pub(super) fn sync_dir(path: &Path) -> Result<(), Error> {
     #[cfg(unix)]
     File::open(path)?.sync_all()?;
     #[cfg(not(unix))]

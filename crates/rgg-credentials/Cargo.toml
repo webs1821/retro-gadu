@@ -5,6 +5,7 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 [dependencies]
+base64.workspace = true
 rgg-domain.workspace = true
 rgg-application.workspace = true
 zeroize.workspace = true

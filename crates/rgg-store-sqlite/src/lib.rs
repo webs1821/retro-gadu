@@ -10,6 +10,7 @@ mod database;
 #[cfg(test)]
 mod image_tests;
 mod images;
+pub mod import_data;
 pub mod key_maintenance;
 mod messaging;
 #[cfg(test)]
@@ -37,7 +38,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 9;
+pub const SCHEMA_VERSION: i64 = 10;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {
@@ -55,6 +56,8 @@ pub enum OpenError {
     Random,
     #[error("data directory contains an incomplete restore; use a fresh destination")]
     IncompleteRestore,
+    #[error("data directory contains an incomplete import; use a fresh destination")]
+    IncompleteImport,
 }
 
 #[derive(Clone)]
@@ -66,7 +69,35 @@ pub struct SqliteStore {
 
 impl SqliteStore {
     pub async fn open(path: &Path) -> Result<Self, OpenError> {
+        Self::open_mode(path, false).await
+    }
+
+    /// Initialize an import only in a marked directory without any database or keyring.
+    /// This never resumes an interrupted import or opens an existing database.
+    pub async fn open_new_import(path: &Path) -> Result<Self, OpenError> {
+        Self::open_mode(path, true).await
+    }
+
+    async fn open_mode(path: &Path, new_import: bool) -> Result<Self, OpenError> {
         let directory = Arc::new(DataDirectory::acquire(path)?);
+        let marked_import = directory
+            .root()
+            .join("import-incomplete")
+            .try_exists()
+            .map_err(DirectoryError::Io)?;
+        if new_import {
+            if !marked_import {
+                return Err(OpenError::IncompleteImport);
+            }
+            for entry in std::fs::read_dir(directory.root()).map_err(DirectoryError::Io)? {
+                let name = entry.map_err(DirectoryError::Io)?.file_name();
+                if name != "rgg.lock" && name != "import-incomplete" {
+                    return Err(OpenError::IncompleteImport);
+                }
+            }
+        } else if marked_import {
+            return Err(OpenError::IncompleteImport);
+        }
         if directory
             .root()
             .join("restore-incomplete")
@@ -201,6 +232,28 @@ impl HealthRepository for SqliteStore {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[tokio::test]
+    async fn import_opener_requires_marker_and_cannot_reopen_existing_database() {
+        let root = tempfile::tempdir().unwrap();
+        assert!(matches!(
+            SqliteStore::open_new_import(root.path()).await,
+            Err(OpenError::IncompleteImport)
+        ));
+        assert!(!root.path().join("rgg.sqlite").exists());
+        std::fs::write(root.path().join("import-incomplete"), []).unwrap();
+        let store = SqliteStore::open_new_import(root.path()).await.unwrap();
+        store.close().await;
+        drop(store);
+        assert!(matches!(
+            SqliteStore::open(root.path()).await,
+            Err(OpenError::IncompleteImport)
+        ));
+        assert!(matches!(
+            SqliteStore::open_new_import(root.path()).await,
+            Err(OpenError::IncompleteImport)
+        ));
+    }
 
     #[tokio::test]
     async fn initialization_is_durable_and_each_restart_gets_a_new_epoch() {

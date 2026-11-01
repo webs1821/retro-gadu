@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 mod backup;
+mod import;
 mod keys;
 use rgg_application::accounts::{AccountRepository, LegacyPassword, Registration, SecretProtector};
 use rgg_credentials::{Keyring, invitation_digest, legacy_invitation_digest, new_invitation};
@@ -39,7 +40,7 @@ async fn run() -> Result<Value, Error> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume> [options]")?;
+        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume|import-check|import-apply> [options]")?;
     let allowed: &[&str] = match command.as_str() {
         "init" | "account-create" | "stats" => &["--data-dir"],
         "invite" => &["--data-dir", "--count", "--uses"],
@@ -49,6 +50,8 @@ async fn run() -> Result<Value, Error> {
         "restore" => &["--backup", "--data-dir"],
         "keys-rotate" => &["--data-dir", "--backup"],
         "keys-status" | "keys-resume" => &["--data-dir"],
+        "import-check" => &["--legacy-key"],
+        "import-apply" => &["--legacy-key", "--data-dir"],
         _ => return Err("unknown command".into()),
     };
     let mut options = BTreeMap::new();
@@ -60,6 +63,21 @@ async fn run() -> Result<Value, Error> {
         if options.insert(name, value).is_some() {
             return Err("duplicate option".into());
         }
+    }
+    if command == "import-check" || command == "import-apply" {
+        let key = std::path::Path::new(
+            options
+                .get("--legacy-key")
+                .ok_or("--legacy-key is required")?,
+        );
+        let target = if command == "import-apply" {
+            Some(std::path::Path::new(
+                options.get("--data-dir").ok_or("--data-dir is required")?,
+            ))
+        } else {
+            None
+        };
+        return import::run(key, target).await;
     }
     if command == "backup-verify" {
         return backup::verify(std::path::Path::new(

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 //! Versioned credential envelopes. Keyring files are managed only while holding the data-directory lock.
+pub mod gg_retro;
 use chacha20poly1305::{
     KeyInit, XChaCha20Poly1305,
     aead::{Aead, Payload},

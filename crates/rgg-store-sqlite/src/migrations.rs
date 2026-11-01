@@ -79,6 +79,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0009_legacy_invitations.sql").into(),
                     false,
                 ),
+                Migration::new(
+                    10,
+                    "import receipt".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0010_import_receipt.sql").into(),
+                    false,
+                ),
             ])
         })
     }

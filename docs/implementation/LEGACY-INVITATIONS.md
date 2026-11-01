@@ -28,6 +28,7 @@ odtworzyć narzędziem dev.13 do nowego katalogu, potem otworzyć ten katalog de
 co wykona migrację. Nowy weryfikator kopii wymaga schematu 9 i odrzuca starszą
 kopię bez modyfikacji. Ta ścieżka została sprawdzona na zachowanych binarkach.
 
-Nie ma tu jeszcze CLI importu całego forka, synchronizacji pliku starych kodów
-ani publicznej operacji administracyjnej. Adapter jest jednym z warunków
-przeniesienia danych bez utraty pozostałych użyć zaproszeń.
+Od dev.15 [importer całego forka](IMPORT-GG-RETRO.md) wypełnia tę tabelę w tej samej
+transakcji co konta i pozostałe dane. Bieżący schemat to 10; procedury kopii
+opisuje [BACKUPS](BACKUPS.md). Nie ma synchronizacji pliku jawnych kodów ani
+publicznej operacji administracyjnej.

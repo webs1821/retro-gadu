@@ -5,6 +5,9 @@ edition.workspace = true
 license.workspace = true
 authors.workspace = true
 [dependencies]
+base64.workspace = true
+encoding_rs.workspace = true
+rgg-protocol.workspace = true
 sha2.workspace = true
 hex.workspace = true
 rgg-domain.workspace = true
@@ -16,6 +19,6 @@ serde.workspace = true
 serde_json.workspace = true
 zeroize.workspace = true
 [features]
-test-hooks = []
+test-hooks = ["rgg-store-sqlite/test-hooks"]
 [lints]
 workspace = true

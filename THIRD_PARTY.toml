@@ -39,9 +39,9 @@ commit = "ed9640cc247764754b5e47891053eb07a53f76d5"
 kind = "reference-only"
 upstream_authors = ["macbury", "webs1821"]
 license_ref = "LicenseRef-MIS-macbury"
-local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md"]
+local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md", "tools/migrate_gg_retro.py", "tests/legacy_import.py", "crates/rgg-credentials/src/gg_retro.rs", "crates/rgg-admin/src/import/validate.rs", "crates/rgg-store-sqlite/src/import_data.rs"]
 symbols = ["0.8.3"]
-changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
+changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Importer dev.15 niezależnie odczytuje ggv1/AAD, konwertuje CP1250 i opcje GG6, zachowuje zaproszenia, numery i stan danych w transakcji rGG. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
 verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności. Własne testy inspekcji schematu i zgodności hashy zaproszeń, w tym zachowanie zużycia i aktywności przez WWW/CLI/restore."
 reviewed_on = "2026-11-01"
 
@@ -56,4 +56,16 @@ local_paths = ["crates/rgg-protocol/src/gg6_presence.rs", "crates/rgg-protocol/s
 symbols = ["decode_status", "snapshot", "decode", "2047"]
 changes = "Odczytano fakty formatu z include/libgadu.h.in, src/handlers.c i src/libgadu.c: typy GG_USERLIST, rozmiar fragmentu, brak znacznika końca pełnego bloku oraz różnicę GG_STATUS60/GG_NOTIFY_REPLY60. Dla obrazków sprawdzono image_size, obsługę pustej 9-bajtowej odpowiedzi, kolejność nazwy i fragmentów oraz CRC32. Własny adapter i transakcje nie są portem implementacji C."
 verification = "Własne testy TCP i granic długości; upload z ostatnim pełnym blokiem bez dodatkowego terminatora odmawia publikacji. Oryginalny klient GG6 wymaga osobnej kwalifikacji."
+reviewed_on = "2026-11-01"
+
+[[sources]]
+id = "libsodium-aead-vectors"
+project = "libsodium XChaCha20-Poly1305 API"
+upstream_url = "https://doc.libsodium.org/secret-key_cryptography/aead/chacha20-poly1305/xchacha20-poly1305_construction"
+kind = "reference-only"
+upstream_authors = ["Frank Denis", "Autorzy libsodium"]
+local_paths = ["crates/rgg-credentials/src/gg_retro.rs", "tests/fixtures/gg-retro-vault-vectors.json", "docs/implementation/IMPORT-GG-RETRO.md"]
+symbols = ["ggv1:", "LocalTest9!"]
+changes = "Niezależne wektory testowe otrzymano wywołując API systemowej libsodium 1.0.18 przez ctypes, z publicznym testowym kluczem i nonce. Nie skopiowano kodu biblioteki ani dokumentacji. Runtime testów używa zapisanych wektorów, bez zależności od libsodium."
+verification = "Rust odszyfrowuje poprawny wektor i odmawia złego UIN, klucza oraz ciphertext. Integracja importuje trzy syntetyczne konta i loguje je przez GG6."
 reviewed_on = "2026-11-01"

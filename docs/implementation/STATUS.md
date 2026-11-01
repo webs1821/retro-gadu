@@ -229,3 +229,18 @@ rGG do starej tabeli. 72 testy Rust, trzy scenariusze adaptera, rzeczywista
 migracja z dev.13 oraz odtworzenie starej kopii przez dev.13 → migracja do dev.14.
 Pełny importer nadal nie powstał. [Kontrakt](LEGACY-INVITATIONS.md),
 [weryfikacja](VERIFICATION-2026-11-01-dev14.md). Lokalnie, bez push i wdrożenia.
+
+
+## 2026-11-01 — pełny lokalny importer gg-retro, dev.15
+
+Schemat 10: receipt i prywatne metadane źródła. Read-only eksport z przypiętej
+kopii 0.8.3, pełna walidacja AEAD/relacji/limitów przed celem, świeże szyfrowanie
+i jedna transakcja. Zachowane numery, zaproszenia, kolejka i oferty, profile,
+kontakty i zapisane opisy/prywatność; jawne decyzje o brakach i retencji.
+Znacznik niepełnego importu powstaje przed bazą i blokuje start do końca kontroli.
+
+74 testy Rust, integracja CLI/SQLite/TCP, trzy awarie procesu i powtórzenie do
+nowego katalogu. Migracja rzeczywistych binarek dev.14 oraz restore schematu 9
+przeszły, podobnie jak pełna regresja funkcji. Brak nowych zewnętrznych wersji
+bibliotek, 0 podatności/ostrzeżeń RustSec. Wszystkie dane syntetyczne.
+[Kontrakt](IMPORT-GG-RETRO.md), [wyniki](VERIFICATION-2026-11-01-dev15.md).

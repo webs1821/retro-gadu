@@ -15,7 +15,7 @@ wyniku testów działającego gg-retro.
 | OS lock, SQLite WAL/FULL, migracje, nowa epoka po awarii | gotowe lokalnie | testy store + `lifecycle.py` | nie dotyczy |
 | Ramkowanie GG, fragmentacja, limit, niepełny EOF | gotowe lokalnie | `frame::tests`, `rgg-transport::tests` | nie sprawdzono |
 | Parser LOGIN60, CP1250, GG32 | gotowe lokalnie | testy protokołu i `gg6_sessions.py` | nie sprawdzono |
-| Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI i WWW, offline rotacja kluczy ze wznowieniem; importer brak | accounts::tests, credentials::tests, accounts_cli.py, keys_cli.py | nie dotyczy |
+| Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI i WWW, offline rotacja kluczy ze wznowieniem; importer ggv1 gotowy na sztucznych danych | accounts::tests, credentials::tests, accounts_cli.py, keys_cli.py | nie dotyczy |
 | Logowanie klienta GG | gotowe lokalnie dla LOGIN60/GG32 | logowanie poprawne/błędne, obcy UIN, stare wyzwanie, timeout, pakiet przed loginem | nie sprawdzono |
 | Generacje sesji, zastąpienie sesji, reconnect GG po restarcie | sesje i ponowne otwarcie TCP gotowe lokalnie; automatyczny reconnect oryginalnego klienta niepotwierdzony | bariera zamknięcia, stale credentials, stary detach, FIN po SIGTERM | nie sprawdzono |
 | Trwała kolejka offline, FIFO, ACK po commit | gotowe lokalnie dla tekstu GG6 | `messaging_tests`, `gg6_sessions.py`, powtarzany seq i cofnięty zegar | nie sprawdzono |
@@ -33,7 +33,7 @@ wyniku testów działającego gg-retro.
 | Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | częściowe: katalog WWW/JSON, niezmienne pliki, SHA-256 i instrukcje gotowe lokalnie; pakiet/patcher rGG nadal brak | http_downloads.py, podgląd desktop z syntetycznymi plikami | nie sprawdzono |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane; brak kwalifikacji wydajności/RSS/soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca | nie dotyczy |
-| Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, backup/verify/restore i rotacja gotowe lokalnie; importer brak | accounts_cli.py, backups_cli.py, keys_cli.py: roundtrip, błędne dane, 5 przerwań procesu | nie dotyczy |
+| Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, backup/verify/restore, rotacja oraz pełny import przypiętego gg-retro gotowe lokalnie; brak próby na rzeczywistej kopii | accounts_cli.py, backups_cli.py, keys_cli.py, legacy_import.py: roundtrip, błędne dane, 8 przerwań procesu; migracja 9 → 10 | nie dotyczy |
 | Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | brak | — | — |
 
 ## Warunek rozważenia podmiany

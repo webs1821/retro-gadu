@@ -33,6 +33,7 @@ jobs:
       - run: python tests/http_discovery.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_registration.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/legacy_invitations.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_statistics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_downloads.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_conferences.py --admin target/debug/rgg-admin --server target/debug/rgg-server
@@ -45,6 +46,7 @@ jobs:
       - run: cargo build --workspace --locked --features rgg-admin/test-hooks
       - run: python tests/backups_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: python tests/keys_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
+      - run: python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: cargo build --workspace --locked
       - run: cargo install cargo-audit --version 0.22.2 --locked
       - run: cargo audit

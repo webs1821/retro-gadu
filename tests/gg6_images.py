@@ -102,7 +102,7 @@ def crash(lab,stage):
 def migration(lab,server,admin):
     lab.start();a=lab.client(1);assert a.message(2,77,'schema seven')==3
     assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(7,)]
-    lab.stop(hard=True);lab.binary=server;lab.admin=admin;lab.start();assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(9,)]
+    lab.stop(hard=True);lab.binary=server;lab.admin=admin;lab.start();assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(10,)]
     b=lab.client(2);k,p=b.receive();assert k==10 and p[16:]==b'schema seven\0';barrier(b)
     a=lab.client(1);barrier(a);offer(a);text(b);download(a,b)
 def main():

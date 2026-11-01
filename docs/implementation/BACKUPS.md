@@ -56,9 +56,10 @@ To dowód zachowania procesu/SQLite, nie certyfikacja fizycznego zaniku zasilani
 
 ## Granice tej wersji
 
-Weryfikator przyjmuje dokładnie bieżący schemat (8 w dev.12/13, **9 od dev.14**)
+Weryfikator przyjmuje dokładnie bieżący schemat (8 w dev.12/13, 9 w dev.14, **10 w dev.15**)
 i jego osadzone migracje. Przetestowana ścieżka starszej kopii: restore narzędziem
 dev.13 do nowego katalogu, następnie otwarcie tego katalogu dev.14 i migracja 8 → 9.
+Dodatkowo sprawdzono restore schematu 9 narzędziem dev.14 i migrację do dev.15 (10).
 Nie konwertuje historycznych kopii w miejscu; procedura przyszłych aktualizacji
 wymaga osobnego testu i rozszerzenia reguły zgodności. Nie ma kopii na żywo,
 szyfrowania całego archiwum, uploadu, retencji, automatycznego pruning ani

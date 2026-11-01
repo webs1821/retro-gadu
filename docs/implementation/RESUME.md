@@ -1,55 +1,44 @@
-# Punkt wznowienia — 2026-11-01, dev.14
+# Punkt wznowienia — 2026-11-01, dev.15
 
-Użytkownik wznowił prace. Nadal wyłącznie lokalnie: testy i commity jako webs1821,
-bez push i wdrożenia rGG. Master, origin wskazuje webs1821/retro-gadu; nie był używany.
-Plan implementacji i recenzje pozostają niezmienione.
+Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłącznie
+lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
+origin webs1821/retro-gadu nieużywany. Plan i recenzje pozostają niezmienione.
+Nie uruchamiać nowych agentów bez zlecenia delegacji. Brak aktywnego celu/narzędzia goal.
 
-Gotowe: konta/zaproszenia, logowanie, sesje, kolejka offline, obecność/prywatność,
-archiwa kontaktów, katalog, discovery, WWW/rejestracja/liczniki, konferencje,
-obrazki klasyczne bez trwałego cache (commit 11cf7a1) i opcjonalny katalog pobierania
-z manifestem, hashami, pochodzeniem oraz instrukcjami. Schemat 9, wersja 0.1.0-dev.14.
+Gotowe lokalnie: konta/zaproszenia (także stare kody), LOGIN60/GG32, sesje,
+trwały tekst online/offline, obecność/prywatność, archiwa kontaktów, katalog,
+discovery, WWW/rejestracja/liczniki, konferencje, klasyczne obrazki bez trwałego
+cache oraz katalog pobierania kontrolowany manifestem. CLI ma pełne kopie,
+verify/restore, rotację kluczy ze wznowieniem i importer gg-retro.
 
-[Kontrakt obrazków](IMAGES.md) i [weryfikacja](VERIFICATION-2026-11-01-dev10.md):
-68 testów Rust, TCP/process/CLI/HTTP, awarie i rzeczywiste migracje dev.8/dev.9.
-10 modułów; nowy rgg-transfers zależy od application/domain, nigdy odwrotnie.
-190 wersji zależności, CRC z już obecnego crc 3.4.0. Zwykły końcowy build bez hooków.
-Natywny GG6 i Windows nadal niekwalifikowane.
+Dev.15: schema 10, 10 modułów, 190 wersji zewnętrznych zależności, 74 testy Rust.
+Pełny import sztucznego przypiętego gg-retro 0.8.3: wszystkie hasła weryfikowane
+i przeszyfrowane świeżym keyringiem, dane w jednej transakcji, receipt z hashami,
+marker przed utworzeniem bazy, trzy awarie procesu i retry do nowego katalogu.
+Sprawdzono TCP po imporcie, zaproszenia, katalog, kontakty, FIFO/obrazek,
+backup/restore, błędne dane/klucze i pełną regresję wcześniejszych funkcji.
+Rzeczywista migracja dev.14 schema 9 → 10 i restore starej kopii przeszły.
+[Kontrakt importu](IMPORT-GG-RETRO.md), [raport](VERIFICATION-2026-11-01-dev15.md).
 
-Dev.11: 69 testów Rust, 4 grupy HTTP pobierania, regresje WWW/GG i podgląd desktop;
-[raport](VERIFICATION-2026-11-01-dev11.md). Zwykłe binarki, podgląd zamknięty.
-Katalog pobierania gotowy; prawdziwe pakiety klienta nadal nie są dołączone.
+Import wymaga jawnego potwierdzenia brakującej historii usuniętych UIN/prywatności
+i osobnej listy rezerwacji. Pending TTL jest odnawiany, delivered ma tylko nagłówki,
+stare tokeny odrzucane; wszystkie decyzje opisane i raportowane. Nie testowano
+importu prawdziwej bazy ani klucza. Pochodzenie: źródło MIS referencyjnie, niezależne
+wektory ggv1 z libsodium; żadnego skopiowanego kodu gg-retro/libgadu.
 
-Dev.12: offline backup-create/backup-verify/restore gotowe. Kontrola wszystkich
-sekretów, manifest publikowany ostatni, marker niepełnego restore blokuje start.
-69 testów Rust, pełny roundtrip danych i dwa przerwania procesu; [raport](VERIFICATION-2026-11-01-dev12.md).
-Normalny build bez hooków. Kopie zawierają bazę i klucze, bez config/plików klientów.
+Kolejne luki: upload kontaktów (odroczone ACK, pełny końcowy fragment 2047 B),
+patcher/pakiet klienta, domena/profil wdrożeniowy, lokalny kontener i pomiary/soak.
+Natywny GG6/Windows nadal niekwalifikowane. Do czasu parytetu nie rozważać podmiany.
+[PARITY](PARITY.md) zawiera aktualne rozróżnienie kodu i kwalifikacji.
 
-Dev.13: keys-status/keys-rotate/keys-resume z obowiązkowym backupem, zachowaniem
-starszych kluczy i wznowieniem po przerwaniu. 71 testów Rust, 3 awarie rotacji,
-backupy i logowanie po restore sprawdzone; [raport](VERIFICATION-2026-11-01-dev13.md).
-Importer gg-retro: wykonana inwentaryzacja lokalnego czystego forka 0.8.3 i
-kontrola źródła tools/inspect_gg_retro.py (read-only, pinned schema/checksums,
-liczniki i luki). Testy Windows/Linux przeszły. [Mapowanie i dalsze prace](IMPORT-GG-RETRO.md).
-Nie ma jeszcze konwersji do rGG ani weryfikacji hasła ggv1. Stare zaproszenia to
-SHA256 case-sensitive 24–128 ASCII, inne niż rGG. Dev.14 dodał już pustą tabelę
-legacy_invitations i adapter WWW/CLI zachowujący used/active; importer jej jeszcze
-nie wypełnia. 72 testy Rust i migracja z rzeczywistych binarek dev.13 sprawdzone.
-Brak historii usuniętych UIN oraz pełnej prywatności wymaga jawnego
-raportu. Źródło prywatnego klucza ggv1: plik 32 raw bytes; AAD UIN little endian.
-Następny temat: właściwy importer na danych syntetycznych, bez produkcyjnej bazy.
-
-Następne luki do parytetu: patcher/pakiet klienta, konfiguracja docelowej domeny,
-importer dotychczasowego gg-retro, lokalny kontener, pomiary i testy natywne.
-Nie kopiować binarek klienta do kodu AGPL ani kodu gg-retro (niestandardowa MIS).
-Szczegóły [PARITY](PARITY.md) oraz plan. Przy obsłudze pobierania użyć jawnego
-manifestu, limitów plików, braku ścieżek z żądań i istniejącej ochrony Host/IP WWW.
-
-Repo: D:\Dokumenty\Documents\RetroGadu.
+Repo: D:\Dokumenty\Documents\RetroGadu, poza writable roots — polecenia mutujące
+wymagają require_escalated z konkretnym uzasadnieniem. Git author webs1821.
 WSL: CARGO_HOME=/tmp/gg-retro-toolchain/cargo,
 RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup, CARGO_TARGET_DIR=/tmp/rgg-target,
 CC=/tmp/gg-retro-toolchain/gcc/cc; dodać CARGO_HOME/bin do PATH.
-Binarki: /tmp/rgg-target/debug/rgg-server oraz rgg-admin.
-Zachowane stare binarki do testów: /tmp/rgg-baseline-dev8, /tmp/rgg-baseline-dev9 i /tmp/rgg-baseline-dev13.
-Python Windows 3.13 do tomllib i kontroli repo; WSL Python 3.8 do TCP/process.
-W WSL brak rg. Oficjalne źródła libgadu: przypięte 9eb2aa0eb6ad020fda7c7264538e48c7b78ba602,
-lokalne referencje w D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-reference-libgadu.
+Binarki: /tmp/rgg-target/debug/rgg-server i rgg-admin, zwykłe bez test-hooks.
+Baselines: /tmp/rgg-baseline-dev8, dev9, dev13 i dev14 (osobne katalogi).
+Python Windows 3.13 do tomllib/kontroli repo, WSL 3.8 do TCP/process. W WSL brak rg.
+Referencja libgadu: 9eb2aa0eb6ad020fda7c7264538e48c7b78ba602,
+D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-reference-libgadu.
+gg-retro reference: D:\Dokumenty\Documents\gg-retro, ed9640cc247764754b5e47891053eb07a53f76d5.

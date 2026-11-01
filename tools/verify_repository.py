@@ -53,7 +53,7 @@ def verify():
         "rgg-transport": {"rgg-domain", "rgg-application", "rgg-protocol"},
         "rgg-http": {"rgg-domain", "rgg-application"},
         "rgg-credentials": {"rgg-domain", "rgg-application"},
-        "rgg-admin": {"rgg-domain", "rgg-application", "rgg-store-sqlite", "rgg-credentials"},
+        "rgg-admin": {"rgg-domain", "rgg-application", "rgg-store-sqlite", "rgg-credentials", "rgg-protocol"},
         "rgg-transfers": {"rgg-domain", "rgg-application"},
         "rgg-server": {"rgg-transfers", "rgg-domain", "rgg-application", "rgg-protocol", "rgg-store-sqlite", "rgg-transport", "rgg-http", "rgg-credentials"},
     }

@@ -1,0 +1,24 @@
+{
+  "generator": "libsodium 1.0.18",
+  "function": "crypto_aead_xchacha20poly1305_ietf_encrypt",
+  "synthetic_key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "synthetic_password": "LocalTest9!",
+  "vectors": [
+    {
+      "uin": 1,
+      "encoded": "ggv1:AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA9mwYNvVJ7vQmvgnuItElo8IJpO+uXxUotxDK"
+    },
+    {
+      "uin": 2,
+      "encoded": "ggv1:AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAxqvMcqMet+63aZn+R+ORm+HdOhcHdH1XUPZd"
+    },
+    {
+      "uin": 3,
+      "encoded": "ggv1:AwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAVbZ0xs+tLkQxvHAIZ0OXhXoZHtUlPKaCI4cv"
+    },
+    {
+      "uin": 4,
+      "encoded": "ggv1:BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4jjRHxuySPD4+/t7HiNaDrGcYKPSpYeq9xr5"
+    }
+  ]
+}

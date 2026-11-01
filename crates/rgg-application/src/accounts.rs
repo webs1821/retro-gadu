@@ -72,19 +72,20 @@ impl Registration {
         {
             return Err(AccountError::UnsupportedNumber);
         }
-        if self.email.len() > 254
-            || self
-                .email
-                .chars()
-                .any(|c| c.is_control() || c.is_whitespace())
-            || self.email.split_once('@').is_none_or(|(local, domain)| {
-                local.is_empty() || domain.is_empty() || domain.contains('@')
-            })
-        {
-            return Err(AccountError::InvalidEmail);
-        }
-        Ok(())
+        validate_email(&self.email)
     }
+}
+
+pub fn validate_email(email: &str) -> Result<(), AccountError> {
+    if email.len() > 254
+        || email.chars().any(|c| c.is_control() || c.is_whitespace())
+        || email.split_once('@').is_none_or(|(local, domain)| {
+            local.is_empty() || domain.is_empty() || domain.contains('@')
+        })
+    {
+        return Err(AccountError::InvalidEmail);
+    }
+    Ok(())
 }
 
 pub struct LoginCredential {
