@@ -1,0 +1,32 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.25",
+  "server_sha256": "1087e5ee538c519e1ae261bef6bee64f4fa5a624154745afdfa71cbd03b356fe",
+  "admin_sha256": "a7af13bd5f5fcbbcf66b7039659121e3fbd680ee32697e58295ef9d880f1fc9e",
+  "checks": [
+    {
+      "test": "http_patcher",
+      "passed": true,
+      "seconds": 0.814,
+      "driver_sha256": "dfa415e912f9b494c47779f60c2f52d1eb7b31b3a3d7f5043ee0188fa2519ff7",
+      "stdout": "PASS: opt-in, exact embedded assets, CSP and navigation\nPASS: no upload, Host/Origin/body/query guards, shared budget and early config validation\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_downloads",
+      "passed": true,
+      "seconds": 1.694,
+      "driver_sha256": "fff3da76e5935377a53cda8631cc37ee333e16a1f7e4f2cac95fedafc2720764",
+      "stdout": "PASS: hash verified immutable snapshot, HTML escaping, headers and integration\nPASS: bad manifests, traversal, duplicates, sizes and symlinks fail before startup\nPASS: independent opt-in, budget and GG isolation\nPASS: four slow streams bounded, disconnect releases capacity\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "passed": true,
+      "seconds": 10.671,
+      "driver_sha256": "510deaf2bf8e48a25a9773415d57c12a04f6d9774c663382183afc24492dd11f",
+      "stdout": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n",
+      "stderr": ""
+    }
+  ]
+}

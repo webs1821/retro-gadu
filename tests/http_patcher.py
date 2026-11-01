@@ -26,7 +26,7 @@ def delivery(lab):
         assert headers['content-type'].startswith('application/json' if path.endswith('.json') else 'text/javascript')
         assert headers['cache-control']=='no-store' and 'access-control-allow-origin' not in headers
         assert not request(lab,path,method='HEAD')[2]
-    recipe=json.loads(request(lab,'/assets/client-patch-plan.json')[2]);assert recipe['client_size']==790528 and len(recipe['edits'])==24
+    recipe=json.loads(request(lab,'/assets/client-patch-plan.json')[2]);assert recipe['client_size']==790528 and len(recipe['edits'])==27
     for path in ['/','/downloads']:
         code,headers,body=request(lab,path);assert code==200 and b'href="/patcher"' in body
         assert "script-src" not in headers['content-security-policy']

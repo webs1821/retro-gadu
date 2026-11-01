@@ -111,7 +111,9 @@ def real_installer(path):
             assert source.stream[:build_client.CLIENT_POSITION]==rebuilt.stream[:build_client.CLIENT_POSITION]
             assert source.stream[build_client.CLIENT_POSITION+CLIENT_SIZE:]==rebuilt.stream[build_client.CLIENT_POSITION+CLIENT_SIZE:]
             assert rebuilt.stream[build_client.CLIENT_POSITION:build_client.CLIENT_POSITION+CLIENT_SIZE]==client
-            assert files['gg-setup.exe'][:source.offset]==data[:source.offset] and client[:0x1000]==original[:0x1000]
+            assert files['gg-setup.exe'][:source.offset]==data[:source.offset]
+            assert client[:0x220]==original[:0x220] and client[0x224:0x1000]==original[0x224:0x1000]
+            assert struct.unpack_from('<I',client,0x220)==(0x78480,)  # map the new code padding
             assert client[0x45f80:0x45f92]==bytes.fromhex('31c0c3909090')*3
             assert client[0x841bc:0x841cf]==b'wiadomosc\0dostepny\0' and client[0x841dc:0x841e2]==b'Online'
             assert client[0x22bc4:0x22bd1]==original[0x22bc4:0x22bd1] and client[0x33235:0x332bd]==original[0x33235:0x332bd]
@@ -131,7 +133,7 @@ def real_installer(path):
         p=subprocess.run([sys.executable,str(ROOT/'tools/build_client.py'),'--installer',str(damaged),'--config',str(ROOT/'config/client.example.toml'),'--output',str(target)],capture_output=True,timeout=15)
         assert p.returncode!=0 and not target.exists()
         assert sha(path.read_bytes())==sha(data)
-    print('PASS: pinned real installer, three hosts, exact payload/stub preservation, updater/sounds, source unchanged'+('; '+str(len(ids))+' Windows LoadStringW resources without executing GG' if native_before is not None else ''),flush=True)
+    print('PASS: pinned real installer, three hosts, installer stub/payload preservation, updater/sounds/contact completion, source unchanged'+('; '+str(len(ids))+' Windows LoadStringW resources without executing GG' if native_before is not None else ''),flush=True)
 
 if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--installer',type=Path);args=parser.parse_args()

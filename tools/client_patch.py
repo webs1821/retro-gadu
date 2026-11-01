@@ -93,6 +93,60 @@ def apply_edits(data, edits):
         end = edit.start + len(edit.before)
     return bytes(output)
 
+def contact_upload_stub():
+    """Own x86 code: append one empty MORE after a positive multiple of2047.
+
+    Preserve the original thiscall ABI,50000-byte cap, first empty PUT and
+    epilogue. This code is not copied from another client/server.
+    """
+    base = 0x479400
+    code = bytearray()
+    fixups = []
+    labels = {}
+
+    def emit(value):
+        code.extend(bytes.fromhex(value))
+
+    def branch(opcode, target):
+        emit(opcode)
+        fixups.append((len(code), target))
+        code.extend(bytes(4))
+
+    emit('3bf0')                       # cmp esi,eax (eax is zero at the hook)
+    branch('0f8f', 0x424a42)           # remaining bytes: original send path
+    emit('3945fc')                     # cmp [ebp-4],eax (first fragment)
+    branch('0f85', 0x424a42)           # retain the original empty PUT
+    emit('85db')                       # test ebx,ebx (total bytes already sent)
+    branch('0f84', 'exit')             # zero bytes need no extra terminator
+    emit('89d8 31d2 b9ff070000 f7f1 85d2')  # divide total by2047; test remainder
+    branch('0f85', 'exit')             # a short last fragment already finished
+    emit('ff879c000000')               # count the additional expected reply
+    emit('c685fcf7ffff01')             # existing stack buffer: MORE with no data
+    emit('6a01 8d85fcf7ffff 50 6a16 8bcf')  # length1, buffer, kind0x16, this=edi
+    branch('e8', 0x42459a)             # existing packet sender; callee pops args
+    labels['exit'] = base + len(code)
+    emit('31c0')                       # retain the original zero return value
+    branch('e9', 0x424a85)             # original saved-register/stack epilogue
+    for position, target in fixups:
+        destination = labels[target] if isinstance(target, str) else target
+        struct.pack_into('<i', code, position, destination - (base + position + 4))
+    if len(code) > 128:
+        raise Invalid('contact upload stub exceeds its reserved padding')
+    return bytes(code)
+
+
+def contact_upload_edits():
+    return [
+        Edit(0x220, struct.pack('<I', 0x78398), struct.pack('<I', 0x78480),
+             'contact uploader mapped padding'),
+        Edit(0x24a39, bytes.fromhex('3bf07f053945fc7443'),
+             b'\xe9' + struct.pack('<i', 0x479400 - 0x424a39 - 5) + b'\x90' * 4,
+             'contact uploader completion branch'),
+        Edit(0x79400, bytes(128), contact_upload_stub().ljust(128, b'\0'),
+             'contact uploader empty final fragment'),
+    ]
+
+
 def patch_client(data, destination):
     hostname(destination)
     if len(data) != CLIENT_SIZE or sha(data) != CLIENT_SHA256:
@@ -110,9 +164,12 @@ def patch_client(data, destination):
         Edit(0x33221, bytes.fromhex('6886000000e8caacfeff59'),
              bytes.fromhex('68c6414800589090909090'), 'online sound pointer and stack cleanup'),
     ]
+    edits += contact_upload_edits()
     output = apply_edits(data, edits)
     # Decode the resulting table with the same structural reader; native Windows tests are separate.
     changed = PE32(output)
+    if changed.file_offset(0x79400, 128) != 0x79400:
+        raise Invalid('contact uploader code mapping failed')
     for r in pe.resources():
         if r.kind == 6:
             old, _ = pe.strings(r)

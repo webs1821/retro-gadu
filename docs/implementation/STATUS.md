@@ -434,3 +434,22 @@ Archiwum61680178B:95088150316b620c0812c19350981bcc05d1050bb6d925bb451f6df005432d
 Źródło bf94fbd78d813f1a64e9192ba59dafebde4968b9, manifest i surowe raporty zapisane
 w repo i workspace/rgg-container-2026-11-01-dev24. Prywatny daemon zatrzymany.
 Długi soak/natywny GG/publiczny profil nadal otwarte. Brak push/deploy.
+
+
+## 2026-11-01 — dev.25: zakończenie uploadu kontaktów GG6.1
+
+Generator klienta i instalatora oraz patcher przeglądarkowy dodają pusty MORE
+po dodatniej wielokrotności 2047 bajtów i zwiększają licznik oczekiwanych ACK.
+Własny kod x86 zachowuje limit 50000 B, pusty PUT i ABI. Oryginalny klient bez
+poprawki nadal nie ma jednoznacznego końca; serwer nie stosuje heurystyki czasu.
+Trzy nowe zakresy dają łącznie 27. Schema 12 i zależności Rust bez zmian.
+
+Samodzielny walidator MIT z zewnętrznym Unicornem: 79 przypadków CPU, a następnie
+8 przechwyconych sekwencji przez TCP, atomowość archiwum i restart. 102 testy Rust,
+fmt, Clippy, 3 regresje TCP/HTTP, parser pakietu, 3 adresy, 464 zasoby Windows,
+6 porównań JS/Python oraz pobieranie gotowych plików przeszły. Zapisano pochodzenie
+rozwiązania i oddzielnego narzędzia w THIRD_PARTY.toml (10 wpisów).
+Pakiet dla 127.0.0.1 w workspace/rgg-client-local-2026-11-01-dev25.
+Całej aplikacji/instalatora nie uruchomiono, istniejące GG i serwery bez zmian.
+Obraz/R0 pozostaje dev.24; brak push i wdrożenia.
+[Kontrakt](CLIENT-UPLOAD.md), [weryfikacja](VERIFICATION-2026-11-01-dev25.md).

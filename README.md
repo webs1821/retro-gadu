@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.24**, schemat SQLite **12**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.25**, schemat SQLite **12**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -26,10 +26,11 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   ponowne szyfrowanie, zachowanie danych i liczników, transakcja oraz blokada
   startu po nieukończonym imporcie. Testowano wyłącznie sztuczną bazę.
 - Lokalny generator klienta/instalatora GG6: adres z konfiguracji, wyłączony
-  aktualizator, poprawione nazwy dźwięków i manifest pobierania z hashami.
+  aktualizator, poprawione nazwy dźwięków, koniec uploadu kontaktów i manifest
+  pobierania z hashami. Poprawkę uploadu sprawdzono w emulatorze CPU i przez TCP.
   Przebudowa i zasoby Windows sprawdzone; plików EXE nie uruchamiano.
 - Opcjonalny patcher GG6 w przeglądarce: weryfikacja oryginalnego pliku,
-  zmiana adresu/aktualizatora/dźwięków i pobranie nowej kopii bez uploadu.
+  zmiana adresu/aktualizatora/dźwięków/zakończenia kontaktów i pobranie nowej kopii bez uploadu.
 - HTTP ma limity gniazd globalnie/na IP oraz czasu bezczynności, zablokowanego
   zapisu i całego połączenia. Syntetyczny pomiar online/offline jest powtarzalny.
 - Prywatne metryki na osobnym, opcjonalnym porcie loopback: sesje, kolejka,
@@ -46,7 +47,9 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
 [Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
 zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
-pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożeniowy.
+pracy m.in. kwalifikacja klienta, długi soak i profil wdrożeniowy. Klient GG6.1
+z naszą poprawką ma jawny koniec uploadu; niezmieniony oryginał nadal nie zapewnia
+go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementation/CLIENT-UPLOAD.md).
 
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)

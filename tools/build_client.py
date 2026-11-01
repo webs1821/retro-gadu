@@ -84,6 +84,9 @@ def prepare(installer_path, settings):
               'gg-setup.exe: oryginalny kreator z wymienionym gg.exe.\n'
               'manifest.toml: katalog pobierania dla opcji downloads_manifest w rGG.\n'
               'receipt.json: hashe, zakresy poprawek i stan kwalifikacji.\n\n'
+              'Pakiet poprawia zapis listy kontaktów na serwerze rGG, domyślne nazwy\n'
+              'dźwięków i wyłącza dawny aktualizator. Zgodność całej aplikacji wymaga\n'
+              'osobnej próby; innych serwerów nie kwalifikowano.\n\n'
               'Legacy klient używa HTTP huba na porcie 80. Profil 127.0.0.1 wymaga\n'
               'osiągalnego lokalnego huba na tym porcie; serwer wskazuje właściwy port GG.\n'
               'Generator nie zmienia portów, DNS, hosts, instalacji ani uruchomionych usług.\n\n' + settings['license'] + '\n')

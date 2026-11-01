@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.24
+# Punkt wznowienia — 2026-11-01, dev.25
 
 ## Zakres i najbliższa praca
 
@@ -43,24 +43,26 @@ Eksport workspace/rgg-container-2026-11-01-dev24/rgg-dev24-runtime.tar.gz,
 Manifest container-artifact-2026-11-01-dev24.json i6 surowych raportów skopiowano
 do repo. Prywatny daemon zatrzymany po eksporcie (dawna sesja71330 wyszła0).
 
-Kolejność dalszej pracy:
-1. Zakończyć osobny lokalny commit dokumentacji kwalifikacji obrazu dev24.
-2. Dokończyć rozpoczętą poprawkę klienta (planowane dev25). W worktree zmieniono
-   tools/client_patch.py (3 dodatkowe zakresy,82B własnego kodu w128B paddingu),
-   mapę przeglądarkową27 zakresów, test instalatora i liczby zakresów HTTP,
-   tekst patchera. Dodano samodzielny MIT validation/gg6_upload_cpu/check.py,
-   LICENSE,README,przypięty wheel Unicorna oraz tests/client_upload_wire.py.
-   Nie usuwać tych niezacommitowanych zmian. Repo nadal ma wersjędev24.
-3. Prototyp i pełny klient przeszły79 przypadków CPU (wszystkie granice2047,
-   limit50000,NULL),8 rzeczywistych sekwencji TCP i restart. Pełny klient dla
-   127.0.0.1 ma SHA b5e5c51f61467a07a0dce1079c45bfd4596cb3659aeb8a5b37843ad53faaaaeb.
-   tests/client_package.py z oryginałem przeszedł5 testów+3 adresy+464 zasoby
-   Windows LoadStringW bez startu GG. Node/JS vs Python:6 wektorów identycznych.
-   Po ostatniej walidacji dodano tylko ograniczenie długości plików wejściowych
-   do check.py; ponowić finalną walidację, aby report.driver_sha256 się zgadzał.
-4. Zapisać dokumentację/proweniencję poprawki, bumpdev25, metadane Cargo,
-   odpowiednie testy HTTP/Rust i lokalny commit. Następnie dalsze prace lokalne.
-   Natywnego GG nadal nie uruchamiano. Żadnych podmian zainstalowanego klienta.
+Dev.25: zakończono poprawkę uploadu klienta: pusty MORE dla dodatniej
+wielokrotności 2047, licznik odpowiedzi, 27 zakresów, własny stub 82 B w 128 B.
+79 przypadków CPU, 8 rzeczywistych sekwencji TCP/restart, test pakietu (3 hosty,
+464 zasoby Windows), 6 JS/Python, 102 Rust/fmt/Clippy oraz 3 regresje HTTP/TCP
+przeszły. Rzeczywisty pakiet pobrany przez loopback, bez wykonywania EXE.
+Finalne raporty CPU/TCP odpowiadają bieżącym hashom sterowników.
+THIRD_PARTY ma 10 wpisów; walidator CPU jest osobnym programem MIT,
+Unicorn 2.1.4 tylko w zewnętrznym katalogu workspace. Plan i schema12 bez zmian.
+Pakiet workspace/rgg-client-local-2026-11-01-dev25:
+GG.exe SHA b5e5c51f61467a07a0dce1079c45bfd4596cb3659aeb8a5b37843ad53faaaaeb,
+installer 166f31d95505a090750a7f0da09fe93ed4067e694dda6e6c88a57a3b7aaeb833.
+Nowe dokumenty CLIENT-UPLOAD.md i VERIFICATION-2026-11-01-dev25.md.
+Obraz dev24 nie zawiera recepty dev25; nie przypisywać mu nowych testów.
+Natywny klient nadal niekwalifikowany, nie instalować na obecnym profilu GG.
+
+Dalsza praca: sprawdzić koszt globalnego sprzątania historii dostarczeń
+w messaging.rs (purge_bodies/expire) przy pełnym limicie 100000 wpisów.
+To na razie hipoteza: najpierw pomiar i plan zapytań na sztucznej bazie,
+bez zmian polityki TTL, prywatności, retencji lub limitów czasu.
+Następnie dalszy rozwój lokalny; żadnych push, deploy ani zmian produkcji.
 
 ## Wyniki obrazu dev.22 i odtworzenie błędu
 

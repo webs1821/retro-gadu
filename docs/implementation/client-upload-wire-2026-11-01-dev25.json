@@ -1,0 +1,60 @@
+{
+  "format": 1,
+  "passed": true,
+  "cases": [
+    {
+      "input_length": 0,
+      "frames": 1,
+      "payload_bytes": 0,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 2047,
+      "frames": 2,
+      "payload_bytes": 2047,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 2048,
+      "frames": 2,
+      "payload_bytes": 2048,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 4094,
+      "frames": 3,
+      "payload_bytes": 4094,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 4095,
+      "frames": 3,
+      "payload_bytes": 4095,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 49128,
+      "frames": 25,
+      "payload_bytes": 49128,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 50000,
+      "frames": 25,
+      "payload_bytes": 50000,
+      "exact_roundtrip": true
+    },
+    {
+      "input_length": 50001,
+      "frames": 25,
+      "payload_bytes": 50000,
+      "exact_roundtrip": true
+    }
+  ],
+  "cpu_transcript_sha256": "a26f1c57c7dfded01675833d6f389e5668f4917cea391cf802f2962d9a1c7992",
+  "patched_client_sha256": "b5e5c51f61467a07a0dce1079c45bfd4596cb3659aeb8a5b37843ad53faaaaeb",
+  "server_sha256": "1087e5ee538c519e1ae261bef6bee64f4fa5a624154745afdfa71cbd03b356fe",
+  "driver_sha256": "6354520ea4bf88a7388a872fa53d4ee93aab45fbba97a40d1fbb0505b91f349a",
+  "restart_verified": true,
+  "native_client_qualified": false
+}
