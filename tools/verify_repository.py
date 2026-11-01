@@ -70,7 +70,8 @@ def verify():
             check(not any(d == "axum" or d == "sqlx" or d.startswith("sqlx-") for d in dependencies), f"Infrastructure leaked into {name}")
         if name in {"rgg-domain", "rgg-protocol"}:
             check("tokio" not in dependencies, f"Runtime dependency in pure crate: {name}")
-        for source in (ROOT / member / "src").rglob("*.rs"):
+        for source in (ROOT / member / "src").rglob("*"):
+            if source.suffix not in {".rs", ".mjs"}:continue
             text = source.read_text(encoding="utf-8")
             check("SPDX-License-Identifier: AGPL-3.0-or-later" in text[:500], f"Missing license notice: {source}")
             check("SPDX-FileCopyrightText:" in text[:500], f"Missing author notice: {source}")

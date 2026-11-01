@@ -20,6 +20,7 @@ pub struct Config {
     #[serde(default)]
     pub web_public_stats: bool,
     pub downloads_manifest: Option<PathBuf>,
+    pub client_patcher: Option<rgg_http::patcher::Settings>,
     #[serde(default)]
     pub http: crate::http_listener::Limits,
     #[serde(default)]
@@ -53,6 +54,10 @@ pub enum ConfigError {
     WebRegistration,
     #[error("metrics must use a separate loopback endpoint")]
     MetricsEndpoint,
+    #[error(
+        "client_patcher.default_host must be 1..16 ASCII alphanumeric characters with single dot/hyphen separators"
+    )]
+    ClientPatcher,
 }
 impl Config {
     pub fn load(path: &Path) -> Result<Self, ConfigError> {
@@ -83,6 +88,13 @@ impl Config {
             return Err(ConfigError::MetricsEndpoint);
         }
         let q = &config.queue;
+        if config
+            .client_patcher
+            .as_ref()
+            .is_some_and(|settings| !settings.valid())
+        {
+            return Err(ConfigError::ClientPatcher);
+        }
         if !config.network.valid()
             || !config.http.valid()
             || !(1..=10000).contains(&q.per_recipient_messages)
@@ -114,6 +126,56 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn browser_patcher_is_opt_in_and_validates_hostname_before_database_open() {
+        let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n";
+        assert!(
+            Config::parse(base, Path::new("."))
+                .unwrap()
+                .client_patcher
+                .is_none()
+        );
+        for host in ["127.0.0.1", "rgg.local", "Ab-c.def", "abcdefghijklmnop"] {
+            assert!(
+                Config::parse(
+                    &format!("{base}[client_patcher]\ndefault_host='{host}'"),
+                    Path::new(".")
+                )
+                .is_ok()
+            );
+        }
+        for host in [
+            "",
+            "abcdefghijklmnopq",
+            "https://rgg",
+            "a..b",
+            "a--b",
+            "a.-b",
+            "-a",
+            "a.",
+            "żółć",
+            "a:80",
+            "a/b",
+            "a\"b",
+        ] {
+            assert!(
+                Config::parse(
+                    &format!("{base}[client_patcher]\ndefault_host='{host}'"),
+                    Path::new(".")
+                )
+                .is_err()
+            );
+        }
+        for settings in ["", "default_host='rgg.local'\nunknown=true"] {
+            assert!(
+                Config::parse(
+                    &format!("{base}[client_patcher]\n{settings}"),
+                    Path::new(".")
+                )
+                .is_err()
+            );
+        }
+    }
     #[test]
     fn metrics_are_opt_in_loopback_and_separate_from_client_services() {
         let base = "data_dir='data'\nhttp_bind='127.0.0.1:8088'\ngg_bind='127.0.0.1:8074'\n";

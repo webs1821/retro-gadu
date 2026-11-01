@@ -126,14 +126,24 @@ async fn run() -> Result<(), Error> {
     };
     let address = listener.local_addr()?;
     let state = HttpState::new(store.clone());
-    let state = if config.web_registration || config.web_public_stats || downloads.is_some() {
+    let state = if config.web_registration
+        || config.web_public_stats
+        || downloads.is_some()
+        || config.client_patcher.is_some()
+    {
         let statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>> =
             if config.web_public_stats {
                 Some(store.clone())
             } else {
                 None
             };
-        state.with_website(registration, statistics, downloads, address)?
+        state.with_website(
+            registration,
+            statistics,
+            downloads,
+            config.client_patcher,
+            address,
+        )?
     } else {
         state
     };

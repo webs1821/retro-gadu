@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "license": "AGPL-3.0-or-later",
+  "authors": [
+    "webs1821"
+  ],
+  "client_version": "6.1.0.158",
+  "client_size": 790528,
+  "client_sha256": "74b78af318c52f86dff8a7ee27a7a0b5ea545167aebb594a8a559ec97f2e3a57",
+  "domains": [
+    "appsrv.gadu-gadu.pl",
+    "appmsg.gadu-gadu.pl",
+    "register.gadu-gadu.pl",
+    "adserver.gadu-gadu.pl",
+    "update.gadu-gadu.pl",
+    "www.gadu-gadu.pl",
+    "pubdir.gadu-gadu.pl",
+    "retr.gadu-gadu.pl",
+    "smsat.gadu-gadu.pl"
+  ],
+  "edits": [
+    {
+      "offset": 209415,
+      "length": 5,
+      "kind": "fixed",
+      "before": "6885000000",
+      "after": "68bc414800"
+    },
+    {
+      "offset": 209441,
+      "length": 11,
+      "kind": "fixed",
+      "before": "6886000000e8caacfeff59",
+      "after": "68c6414800589090909090"
+    },
+    {
+      "offset": 286592,
+      "length": 18,
+      "kind": "fixed",
+      "before": "ff257ca84700ff2578a84700ff2574a84700",
+      "after": "31c0c390909031c0c390909031c0c3909090"
+    },
+    {
+      "offset": 505387,
+      "length": 37,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 505473,
+      "length": 33,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 510215,
+      "length": 20,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 541055,
+      "length": 16,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 541116,
+      "length": 32,
+      "kind": "fixed",
+      "before": "687474703a2f2f7570646174652e676164752d676164752e706c2f6175746f00",
+      "after": "776961646f6d6f736300646f737465706e790000000000000000000000000000"
+    },
+    {
+      "offset": 541232,
+      "length": 19,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 543279,
+      "length": 35,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 553756,
+      "length": 16,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 556151,
+      "length": 31,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 561748,
+      "length": 21,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 566531,
+      "length": 48,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 566595,
+      "length": 49,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 566663,
+      "length": 48,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 566719,
+      "length": 48,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 695630,
+      "length": 32,
+      "kind": "cstring",
+      "width": 2
+    },
+    {
+      "offset": 705414,
+      "length": 32,
+      "kind": "cstring",
+      "width": 2
+    },
+    {
+      "offset": 751277,
+      "length": 143,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 751733,
+      "length": 144,
+      "kind": "cstring",
+      "width": 1
+    },
+    {
+      "offset": 769760,
+      "length": 776,
+      "kind": "rt_string"
+    },
+    {
+      "offset": 771704,
+      "length": 1004,
+      "kind": "rt_string"
+    },
+    {
+      "offset": 775728,
+      "length": 1668,
+      "kind": "rt_string"
+    }
+  ]
+}

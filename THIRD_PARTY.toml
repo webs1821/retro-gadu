@@ -51,9 +51,9 @@ commit = "ed9640cc247764754b5e47891053eb07a53f76d5"
 kind = "reference-only"
 upstream_authors = ["macbury", "webs1821"]
 license_ref = "LicenseRef-MIS-macbury"
-local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md", "tools/migrate_gg_retro.py", "tests/legacy_import.py", "crates/rgg-credentials/src/gg_retro.rs", "crates/rgg-admin/src/import/validate.rs", "crates/rgg-store-sqlite/src/import_data.rs", "tools/client_patch.py", "tools/build_client.py", "tests/client_package.py", "docs/implementation/CLIENT-PACKAGES.md"]
+local_paths = ["docs/implementation/PARITY.md", "PLAN_IMPLEMENTACJI.md", "docs/implementation/PUBLIC-DIRECTORY.md", "crates/rgg-protocol/src/gg6_directory.rs", "tools/inspect_gg_retro.py", "tests/legacy_inspection.py", "docs/implementation/gg-retro-schema-reference.json", "docs/implementation/IMPORT-GG-RETRO.md", "crates/rgg-credentials/src/lib.rs", "crates/rgg-store-sqlite/migrations/0009_legacy_invitations.sql", "tests/legacy_invitations.py", "docs/implementation/LEGACY-INVITATIONS.md", "tools/migrate_gg_retro.py", "tests/legacy_import.py", "crates/rgg-credentials/src/gg_retro.rs", "crates/rgg-admin/src/import/validate.rs", "crates/rgg-store-sqlite/src/import_data.rs", "tools/client_patch.py", "tools/build_client.py", "tests/client_package.py", "docs/implementation/CLIENT-PACKAGES.md", "tools/client_plan.py", "crates/rgg-http/src/client-patcher-core.mjs", "crates/rgg-http/src/client-patch-plan.json", "tests/client_browser.py", "docs/implementation/BROWSER-PATCHER.md"]
 symbols = ["0.8.3"]
-changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Importer dev.15 niezależnie odczytuje ggv1/AAD, konwertuje CP1250 i opcje GG6, zachowuje zaproszenia, numery i stan danych w transakcji rGG. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Dev.17 wykorzystuje sprawdzone fakty formatu konkretnego GG6.1: hash, offsety, ABI aktualizatora i nazwy dźwięków. Parser PE/NSIS, przebudowa RT_STRING i generator są niezależną implementacją; nie skopiowano tools/build_client.py, patch_client.cjs ani patcher.js. Klient binarny ma własne warunki i pozostaje poza repo. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
+changes = "Punkt odniesienia zakresu funkcjonalnego i obserwacji kompatybilności. Inspekcja przed importem używa faktów schematu (kolumny i sumy 11 migracji), formatów ggv1 i hashy zaproszeń; referencja JSON nie zawiera kopii SQL. Testy tworzą własne dane z tych faktów. Importer dev.15 niezależnie odczytuje ggv1/AAD, konwertuje CP1250 i opcje GG6, zachowuje zaproszenia, numery i stan danych w transakcji rGG. Kod serwera, migracje i testy upstream nie zostały skopiowane. Licencja upstream jest niestandardowa (MIS), nie MIT. Dev.17 wykorzystuje sprawdzone fakty formatu konkretnego GG6.1: hash, offsety, ABI aktualizatora i nazwy dźwięków. Parser PE/NSIS, przebudowa RT_STRING i generator są niezależną implementacją; nie skopiowano tools/build_client.py, patch_client.cjs ani patcher.js. Dev.20 przenosi własną receptę rGG do niezależnego modułu ES; JSON zawiera wyłącznie fakty zakresów i minimalne stałe sekwencje ABI, bez klienta lub tablic tekstowych. Wynik JS/Python porównano bajtowo dla trzech adresów i pobrano w przeglądarce. Klient binarny ma własne warunki i pozostaje poza repo. Każdy przyszły port wymaga osobnego wpisu i zachowania oryginalnej licencji."
 verification = "Lokalny przegląd przypiętej wersji forka; lista braków w macierzy zgodności. Własne testy inspekcji schematu i zgodności hashy zaproszeń, w tym zachowanie zużycia i aktywności przez WWW/CLI/restore."
 reviewed_on = "2026-11-01"
 
@@ -106,4 +106,17 @@ local_paths = ["tools/client_format.py", "tests/client_package.py", "docs/implem
 symbols = ["LoadStringW", "LoadLibraryExW", "PE32"]
 changes = "Fakty dotyczące tablic po 16 tekstów z prefiksem długości i mapowania DATAFILE_EXCLUSIVE/IMAGE_RESOURCE bez wykonania. Własny parser i test ctypes; żadnego skopiowanego kodu ani tekstu dokumentacji."
 verification = "Windows LoadStringW porównuje 464 teksty oryginału i każdego z trzech wariantów. Nie jest to test działania klienta GG."
+reviewed_on = "2026-11-01"
+
+
+[[sources]]
+id = "w3c-file-crypto-reference"
+project = "W3C File API and Web Cryptography"
+upstream_url = "https://www.w3.org/TR/FileAPI/"
+kind = "reference-only"
+upstream_authors = ["W3C", "Autorzy File API i Web Cryptography"]
+local_paths = ["crates/rgg-http/src/client-patcher-core.mjs", "crates/rgg-http/src/client-patcher.mjs", "docs/implementation/BROWSER-PATCHER.md"]
+symbols = ["SHA-256", "createObjectURL"]
+changes = "Własne wywołania digest SHA-256, File.arrayBuffer i Blob URL zgodnie z kontraktem API. Dodatkowa specyfikacja: https://www.w3.org/TR/webcrypto/. Nie skopiowano implementacji ani tekstu dokumentacji."
+verification = "Porównanie JS/Python, testy snapshotów asynchronicznych oraz przygotowanie/pobranie pliku i unieważnienie linku w rzeczywistej przeglądarce."
 reviewed_on = "2026-11-01"

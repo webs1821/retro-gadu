@@ -339,3 +339,20 @@ Kod serwera i progi nie wymagały zmian. Archiwum obrazu, manifest i raporty
 zapisano na komputerze; prywatny daemon wyłączono po sprawdzeniu cleanup.
 Długi soak, klient natywny i pełna kwalifikacja produkcyjna pozostają otwarte.
 [Raport](VERIFICATION-2026-11-01-r0.md), [scenariusz](R0-LOAD.md).
+
+
+## 2026-11-01 — dev.20: przygotowanie GG6 w przeglądarce
+
+Dodano opcjonalny lokalny formularz, niezależny moduł ES i mapę 24 zakresów
+z przypiętego oryginału. Zmiany adresu/updatera/dźwięków wykonywane wyłącznie
+w przeglądarce, z pełnym SHA-256, zachowaniem RT_STRING i snapshotem wejścia.
+Bez uploadu, podmiany zainstalowanego GG, push i wdrożenia. Włączenie wymaga
+[client_patcher]; ustawienia sprawdzane przed otwarciem danych. Pozostałe
+strony zachowują CSP bez JS. Nie zmieniono schematu 11 ani bibliotek.
+
+89 testów Rust, Clippy, 6 porównań JS/Python całych plików oraz HTTP patchera
+i regresje współdzielonych stron przeszły. W rzeczywistej przeglądarce odrzucono
+zły plik, przygotowano i pobrano poprawny, porównano hash z dysku i sprawdzono
+usunięcie starego linku po zmianie adresu. Natywnego klienta nie uruchamiano.
+Podgląd wyłączony. Obraz/R0 nadal odnosi się do dev.19; nie powtarzano go.
+[Kontrakt](BROWSER-PATCHER.md), [weryfikacja](VERIFICATION-2026-11-01-dev20.md).

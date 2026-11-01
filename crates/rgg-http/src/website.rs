@@ -113,6 +113,7 @@ pub(crate) struct Website {
     pub(crate) service: Option<Arc<RegistrationService>>,
     pub(crate) statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
     pub(crate) downloads: Option<Arc<crate::downloads::Catalog>>,
+    pub(crate) patcher: Option<crate::patcher::Settings>,
     authority: String,
     origin: String,
     gate: Mutex<Gate>,
@@ -123,11 +124,16 @@ impl Website {
         service: Option<Arc<RegistrationService>>,
         statistics: Option<Arc<dyn rgg_application::statistics::StatisticsRepository>>,
         downloads: Option<Arc<crate::downloads::Catalog>>,
+        patcher: Option<crate::patcher::Settings>,
         address: SocketAddr,
     ) -> Result<Self, &'static str> {
         if !address.ip().is_loopback()
             || address.port() == 0
-            || (service.is_none() && statistics.is_none() && downloads.is_none())
+            || (service.is_none()
+                && statistics.is_none()
+                && downloads.is_none()
+                && patcher.is_none())
+            || patcher.as_ref().is_some_and(|settings| !settings.valid())
         {
             return Err("registration website requires a bound loopback listener");
         }
@@ -135,6 +141,7 @@ impl Website {
             service,
             statistics,
             downloads,
+            patcher,
             authority: address.to_string(),
             origin: format!("http://{address}"),
             gate: Mutex::new(Gate::new(Instant::now())),
@@ -187,6 +194,10 @@ pub(crate) fn routes(state: HttpState) -> Router<HttpState> {
         .route("/downloads", get(crate::downloads::page))
         .route("/downloads/{id}", get(crate::downloads::file))
         .route("/api/downloads", get(crate::downloads::manifest))
+        .route("/patcher", get(crate::patcher::page))
+        .route("/assets/client-patcher.js", get(crate::patcher::ui))
+        .route("/assets/client-patcher-core.js", get(crate::patcher::core))
+        .route("/assets/client-patch-plan.json", get(crate::patcher::plan))
         .route("/register", get(form).post(submit))
         .route("/assets/registration.css", get(styles))
         .layer(DefaultBodyLimit::max(4096))
@@ -206,11 +217,41 @@ async fn guard(
         "/" | "/api/stats" => web.statistics.is_some(),
         "/assets/registration.css" => true,
         "/downloads" | "/api/downloads" => web.downloads.is_some(),
+        "/patcher"
+        | "/assets/client-patcher.js"
+        | "/assets/client-patcher-core.js"
+        | "/assets/client-patch-plan.json" => web.patcher.is_some(),
         path if path.starts_with("/downloads/") => web.downloads.is_some(),
         _ => false,
     };
     if !enabled {
         return notice(StatusCode::NOT_FOUND, "Ta strona jest wyłączona.");
+    }
+    let patcher_page = request.uri().path() == "/patcher";
+    let patcher_route = patcher_page || request.uri().path().starts_with("/assets/client-patch");
+    if patcher_route {
+        if request.method() != Method::GET && request.method() != Method::HEAD {
+            return notice(
+                StatusCode::METHOD_NOT_ALLOWED,
+                "Ta strona nie przyjmuje plików.",
+            );
+        }
+        if request.uri().query().is_some()
+            || request.headers().contains_key(header::TRANSFER_ENCODING)
+            || (request.headers().contains_key(header::CONTENT_LENGTH)
+                && single_header(request.headers(), header::CONTENT_LENGTH) != Some("0"))
+        {
+            return notice(StatusCode::BAD_REQUEST, "Nieprawidłowe żądanie.");
+        }
+        if (request.headers().contains_key(header::ORIGIN)
+            && single_header(request.headers(), header::ORIGIN) != Some(web.origin.as_str()))
+            || request.headers().get_all("sec-fetch-site").iter().count() > 1
+        {
+            return notice(
+                StatusCode::FORBIDDEN,
+                "Otwórz stronę pod lokalnym adresem tego serwera.",
+            );
+        }
     }
     if !state.ready.load(Ordering::Acquire) {
         return notice(
@@ -240,7 +281,16 @@ async fn guard(
         );
     };
     match tokio::time::timeout(Duration::from_secs(5), next.run(request)).await {
-        Ok(response) => secured(response),
+        Ok(response) => {
+            let mut response = secured(response);
+            if patcher_page && response.status() == StatusCode::OK {
+                response.headers_mut().insert(
+                    header::CONTENT_SECURITY_POLICY,
+                    HeaderValue::from_static(crate::patcher::CSP),
+                );
+            }
+            response
+        }
         Err(_) => notice(
             StatusCode::REQUEST_TIMEOUT,
             "Przekroczono czas obsługi formularza.",

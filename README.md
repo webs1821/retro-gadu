@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.19**, schemat SQLite **11**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.20**, schemat SQLite **11**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -26,6 +26,8 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 - Lokalny generator klienta/instalatora GG6: adres z konfiguracji, wyłączony
   aktualizator, poprawione nazwy dźwięków i manifest pobierania z hashami.
   Przebudowa i zasoby Windows sprawdzone; plików EXE nie uruchamiano.
+- Opcjonalny patcher GG6 w przeglądarce: weryfikacja oryginalnego pliku,
+  zmiana adresu/aktualizatora/dźwięków i pobranie nowej kopii bez uploadu.
 - HTTP ma limity gniazd globalnie/na IP oraz czasu bezczynności, zablokowanego
   zapisu i całego połączenia. Syntetyczny pomiar online/offline jest powtarzalny.
 - Prywatne metryki na osobnym, opcjonalnym porcie loopback: sesje, kolejka,
@@ -43,6 +45,7 @@ pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożenio
 - [Kontener lokalny](docs/implementation/CONTAINERS.md), [raport obrazu dev.18](docs/implementation/VERIFICATION-2026-11-01-container.md)
 - [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.19 i pomiar R0](docs/implementation/VERIFICATION-2026-11-01-r0.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
+- [Patcher przeglądarkowy](docs/implementation/BROWSER-PATCHER.md), [weryfikacja dev.20](docs/implementation/VERIFICATION-2026-11-01-dev20.md)
 - [Ograniczenia HTTP](docs/implementation/HTTP-LIMITS.md), [weryfikacja dev.18](docs/implementation/VERIFICATION-2026-11-01-dev18.md)
 - [Pakiet klienta](docs/implementation/CLIENT-PACKAGES.md), [weryfikacja dev.17](docs/implementation/VERIFICATION-2026-11-01-dev17.md)
 - [Zmiana hasła](docs/implementation/PASSWORD-CHANGE.md), [weryfikacja dev.16](docs/implementation/VERIFICATION-2026-11-01-dev16.md)
@@ -79,6 +82,7 @@ W WSL zalecany jest katalog danych w linuksowym systemie plików, np.
 python tools/verify_repository.py
 python tools/gg32_vectors.py
 python tests/client_package.py
+python tests/client_browser.py # Node 22+; bez pakietów npm
 cargo metadata --locked --format-version 1 | python tools/dependency_inventory.py
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --locked -- -D warnings

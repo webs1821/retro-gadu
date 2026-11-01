@@ -1,4 +1,22 @@
-# Punkt wznowienia — 2026-11-01, dev.19
+# Punkt wznowienia — 2026-11-01, dev.20
+
+## Najnowsza implementacja: patcher w przeglądarce
+
+Dev.20, schema11, 10 modułów, 190 wersji zależności, 89 testów Rust.
+Opt-in [client_patcher] default_host: 1..16 ASCII alnum z pojedynczymi . / -.
+Strona /patcher i 3 osadzone assets. Własny ES module: pełny hash oryginału,
+24 zakresy (3 RT_STRING, 17 Cstrings, 4 updater/sounds), snapshot wejścia/mapy,
+Blob URL download, bez uploadu i zmian zainstalowanego klienta. Generator mapy
+tools/client_plan.py korzysta z przypiętego instalatora jako danych (limit2MiB).
+Node24.11.1/Python3.13: 6 porównań całego pliku, błędne dane i async mutation.
+Rust89, Clippy, HTTP patcher/downloads/stats/register/metrics/lifecycle przeszły.
+IAB: błędny plik odrzucony, właściwy przygotowany/pobrany, zmiana hosta usuwa
+stary link, brak błędów JS. Pobrano testowy E:\Downloads\gg.exe (127.0.0.1),
+hash ddbc24fc91ffbb5e4bd29ff628436e60a8eb1ca4a7cd617bad3e32910bdf541f;
+nie uruchomiono. Podgląd localhost zatrzymany, karta zamknięta.
+Debug server SHA1eccd3201968cc4244f8e72c104a7b3322f17d632a80aa3fca6778551e6704d1.
+Kontrakt BROWSER-PATCHER.md, raport VERIFICATION-2026-11-01-dev20.md.
+Nie budowano obrazu dev20: ostatni sprawdzony obraz/R0 pozostaje dev19 poniżej.
 
 ## Zakończony obraz dev.19 i krótka próba R0
 
@@ -42,7 +60,7 @@ discovery, WWW/rejestracja/liczniki, konferencje, klasyczne obrazki bez trwałeg
 cache oraz katalog pobierania kontrolowany manifestem. CLI ma pełne kopie,
 verify/restore, rotację kluczy ze wznowieniem i importer gg-retro.
 
-Aktualnie dev.19: schema 11, 10 modułów, 190 wersji zależności, 88 testów Rust.
+W dev.19: schema 11, 10 modułów, 190 wersji zależności, 88 testów Rust.
 Dodano opt-in metrics_bind na osobnym loopback (niedozwolony ten sam endpoint
 co HTTP/GG). Private /metrics: 12 rodzin/19 gauge, stałe etykiety, aktywne/
 wyłączone konta, retired, valid ready/synchronizing z niewidocznymi, stany

@@ -1,0 +1,21 @@
+<!-- SPDX-License-Identifier: AGPL-3.0-or-later -->
+<!-- SPDX-FileCopyrightText: 2026 webs1821 -->
+<!doctype html>
+<html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Przygotuj klienta — Retro Gadu</title><link rel="stylesheet" href="/assets/registration.css"><script type="module" src="/assets/client-patcher.js"></script></head>
+<body><main>
+<p class="brand">Retro Gadu <span>rGG</span></p><p class="badge">Instancja lokalna · GG 6.1</p>
+<h1>Przygotuj swojego GG.</h1>
+<p class="intro">Wybierz oryginalny <strong>gg.exe z wersji 6.1.0.158</strong>. Plik zostanie zmieniony w tej przeglądarce i zapisany jako nowa kopia. Nie wysyłamy go na serwer.</p>
+<form id="patch-form">
+<label for="client-file">Oryginalny plik gg.exe</label><input id="client-file" type="file" accept=".exe" required aria-describedby="file-hint">
+<p id="file-hint" class="hint">Wybierz plik z folderu zainstalowanego, oryginalnego GG 6.1 — nie instalator ani wcześniej zmienioną wersję.</p>
+<label for="server-host">Adres Twojego serwera</label><input id="server-host" type="text" value="{{default_host}}" maxlength="16" required spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="host-hint">
+<p id="host-hint" class="hint">Nazwa lub IPv4, maksymalnie 16 znaków. Bez http://, portu i ścieżki. Administrator musi przygotować połączenie pod tym adresem.</p>
+<button id="prepare-client" type="submit" disabled>Przygotuj plik</button>
+</form>
+<noscript><p>Włącz JavaScript w nowoczesnej przeglądarce, aby przygotować plik.</p></noscript>
+<p id="patch-status" class="patch-status" role="status" aria-live="polite">Wczytywanie narzędzia…</p>
+<a id="patched-download" class="button patch-download" download="gg.exe" hidden>Pobierz przygotowany gg.exe</a>
+<details id="patch-result" class="patch-result" hidden><summary>Suma kontrolna nowego pliku</summary><code id="patch-sha"></code></details>
+<p class="footnote">Nowa kopia otrzyma wybrany adres serwera, poprawione domyślne nazwy dźwięków i wyłączony dawny aktualizator. Zainstalowane GG pozostaje bez zmian. Przed ręczną podmianą gg.exe zamknij klienta i zachowaj oryginał. Plik zachowuje własne warunki używania; licencja rGG ich nie zmienia.</p>
+</main></body></html>

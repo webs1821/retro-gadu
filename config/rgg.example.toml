@@ -36,3 +36,7 @@ global_messages = 10000
 per_recipient_bytes = 4194304
 global_bytes = 33554432
 ttl_seconds = 2592000
+
+# Optional browser-only GG 6.1 executable patcher; no file upload endpoint.
+# [client_patcher]
+# default_host = "127.0.0.1"
