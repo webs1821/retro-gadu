@@ -1,0 +1,17 @@
+{
+  "history": 100000,
+  "pending": 200,
+  "receivers": 20,
+  "server_sha256": "63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73",
+  "capacity_qualified": false,
+  "passed": true,
+  "seconds": 2.937,
+  "received": 200,
+  "server_exit": 0,
+  "server_log_tail": "2026-11-01T22:03:23.998439Z  INFO rgg_server: GG6 listening (local development) gg_endpoint=127.0.0.1:41787\n2026-11-01T22:03:23.998728Z  INFO rgg_server: HTTP listening (local development) address=127.0.0.1:37715 version=\"0.1.0-dev.26\"\n2026-11-01T22:03:26.957448Z  INFO rgg_server: draining connections\n2026-11-01T22:03:27.376360Z  INFO rgg_server: database closed; shutdown complete\n",
+  "states": {
+    "TransportWrittenUnconfirmed": 100002
+  },
+  "integrity": "ok",
+  "foreign_keys_ok": true
+}

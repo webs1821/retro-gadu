@@ -34,6 +34,7 @@ jobs:
       - run: python tests/password_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_concurrent_replay.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/gg6_history_retention.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_presence_contacts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_directory.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_discovery.py --admin target/debug/rgg-admin --server target/debug/rgg-server

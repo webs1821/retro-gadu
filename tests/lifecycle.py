@@ -77,7 +77,7 @@ def main():
             restarted.ready()
             with sqlite3.connect(str(root / "data/rgg.sqlite")) as db:
                 assert db.execute("SELECT process_epoch FROM runtime_state").fetchone()[0] != first_epoch
-                assert db.execute("SELECT max(version) FROM _sqlx_migrations").fetchone()[0] == 12
+                assert db.execute("SELECT max(version) FROM _sqlx_migrations").fetchone()[0] == 13
                 assert db.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
             restarted.close()
             assert restarted.process.returncode == 0, restarted.log.read_text()

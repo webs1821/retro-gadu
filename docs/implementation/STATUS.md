@@ -453,3 +453,21 @@ Pakiet dla 127.0.0.1 w workspace/rgg-client-local-2026-11-01-dev25.
 Całej aplikacji/instalatora nie uruchomiono, istniejące GG i serwery bez zmian.
 Obraz/R0 pozostaje dev.24; brak push i wdrożenia.
 [Kontrakt](CLIENT-UPLOAD.md), [weryfikacja](VERIFICATION-2026-11-01-dev25.md).
+
+
+## 2026-11-01 — dev.26: sprzątanie przy pełnej historii
+
+Próba 100000 zakończonych dostarczeń + 200 offline ujawniła EOF w dev25:
+109 odebranych, 91 nadal Pending, bez naruszenia integralności bazy. Po zmianie
+indeksów/zapytań ten sam scenariusz odebrał 200/200 w 2.937 s. Zachowano oba
+raporty. Migracja 13 dodaje messages_with_payload; wygasanie i prywatność
+przechodzą po aktywnej kolejce, a purge po nadal przechowywanych payloadach.
+Usunięcie konta czyści również conference w tej samej transakcji.
+
+Nowy test pełnej historii obejmuje nowe przyjęcie, restart i retencję; dodany
+w CI oraz suite kontenera. 103 testy Rust, fmt/Clippy, 25 grup regresji i 9 grup
+awarii przeszły. Przywrócono normalne binarki. Prawdziwa kopia dev25 została
+odtworzona starym adminem i zmigrowana do13, z zachowaniem danych i12 sum.
+Nie zmieniono zależności, planu ani limitów czasu/retencji. Ostatni obraz/R0 to
+nadal dev24. Brak push/deploy. [Kontrakt](HISTORY-RETENTION.md),
+[raport](VERIFICATION-2026-11-01-dev26.md).

@@ -79,7 +79,7 @@ def migration(server,admin,root,baseline):
     try:
         prepare(lab);assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(10,)]
         snapshot=root/'schema10';create(lab,snapshot);lab.binary=server;lab.admin=admin
-        assert change(lab)['credential_version']==2 and lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(12,)]
+        assert change(lab)['credential_version']==2 and lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(13,)]
         lab.start();b=lab.client(2);text(b);a=login(lab,1,NEW);barrier(a);download(a,b);lab.stop()
         restored=root/'restored10';p=subprocess.run([str(baseline/'rgg-admin'),'restore','--backup',str(snapshot),'--data-dir',str(restored)],capture_output=True,timeout=15);assert p.returncode==0,p.stderr
         lab.data=restored;assert change(lab)['credential_version']==2

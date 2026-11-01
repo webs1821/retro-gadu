@@ -1,0 +1,147 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.26",
+  "checks": [
+    {
+      "test": "gg6_sessions",
+      "driver_sha256": "863535565028808c251fec761e7525696446b553e6bfb502e208dc80587ff4a3",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 7.729,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: crash before_accept_commit\nPASS: crash after_accept_commit\nPASS: crash before_delivery_write\nPASS: crash after_delivery_write\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "driver_sha256": "510deaf2bf8e48a25a9773415d57c12a04f6d9774c663382183afc24492dd11f",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 11.289,
+      "stdout": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: crash before_archive_commit\nPASS: crash after_archive_commit\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_conferences",
+      "driver_sha256": "b01be38be5e6b44d187aa5dd0733a1317795ffc7420540cf8111f16581e6f443",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 3.742,
+      "stdout": "PASS: four participants: one copy each, ordered context/styles, offline restart\nPASS: per-target privacy, malformed contexts and no-ACK\nPASS: participant bound and context bytes charged to quota\nPASS: conference crash before_accept_commit\nPASS: conference crash after_accept_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_images",
+      "driver_sha256": "957b4bb2f8aa6f1f4546fbb798b5de613ff69b9442a22eee300b3b05e5182ea0",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 7.049,
+      "stdout": "PASS: online verified chunks, recipient authorization and no-ACK\nPASS: offline references, missing sender, restart and post-delivery retrieval\nPASS: ordering CRC blocks malformed packets and session replacement\nPASS: LOGIN60 capacity limits and hidden presence\nPASS: 255 KiB image and conference context grants no additional access\nPASS: atomic image offer crash before_accept_commit\nPASS: atomic image offer crash after_accept_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_password",
+      "driver_sha256": "26f8496905360f066eb9f5a3c77c32a2d920e25529462add66f23cab88bde6b0",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 2.952,
+      "stdout": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\nPASS: before_web_password_commit\nPASS: after_web_password_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "backups_cli",
+      "driver_sha256": "39faf8c889cee97db52bd16c1e6eee8a35b4ac5b1f6d406df88378e351fe1a6e",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 2.015,
+      "stdout": "PASS: complete snapshot and authenticated restored text/images/profile/contacts/invites\nPASS: existing/live destinations and corrupt/incomplete/wrong-key backups refused\nPASS: interrupted publication and restore fail closed; clean destination recovers\n",
+      "stderr": ""
+    },
+    {
+      "test": "keys_cli",
+      "driver_sha256": "f0d122faa9504a46d57af9bd9208ef998be418b4cee7da33dad1ba6f90473dd7",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 3.175,
+      "stdout": "PASS: rekey all accounts, retain keys, unchanged passwords/versions, older backup restore\nPASS: refuse active server, incomplete/unrelated pending keyring, corrupt account\nPASS: before_key_publish\nPASS: after_key_publish\nPASS: after_rekey_batch\n",
+      "stderr": ""
+    },
+    {
+      "test": "legacy_import",
+      "driver_sha256": "ce5fe5ed58840e14ace2ebd764111f6eba8eadd138fe707670a95aa393e4831a",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 2.128,
+      "stdout": "PASS: full import, GG login/offline messages/images/profile/contacts/invites, source unchanged\nPASS: invalid key/data/relations/limits rejected before creating target; wrapper check\nPASS: before_import_database\nPASS: before_import_commit\nPASS: after_import_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "password_cli",
+      "driver_sha256": "0af13a434f80f19ba31f5f2ae184b75053adfcbf54d5889940ff1530d2716cfd",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--faults"
+      ],
+      "passed": true,
+      "seconds": 2.468,
+      "stdout": "PASS: new/old GG6 login, retained messages/images/profile/contacts, audit and independent backups\nPASS: bad credentials/input, active server, pending rotation and missing data/key refused\nPASS: before_password_commit\nPASS: after_password_commit\n",
+      "stderr": ""
+    }
+  ],
+  "server_sha256": "f4c576595fcc039694fc380787077a7b439706c18c81c06cdd0908f4fdf2e601",
+  "admin_sha256": "988ea37d94384abe3481108ef9ff0fe3afcfcad9ba56616b2b5647f72f72874d",
+  "restored_normal": true,
+  "normal_server_sha256": "63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73",
+  "normal_admin_sha256": "b00fb3f370eb2a24ac8be6e1dfbed116bef3b2a7e21b8b5567e1cdfeeca9845e",
+  "passed": true
+}

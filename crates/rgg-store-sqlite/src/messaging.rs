@@ -29,12 +29,16 @@ pub(crate) async fn fence(
 }
 
 async fn purge_bodies(tx: &mut Tx<'_>) -> Result<(), MessagingError> {
-    sqlx::query("UPDATE messages SET body=NULL,styles=NULL,conference=NULL WHERE (body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL) AND id IN (SELECT message_id FROM deliveries WHERE state NOT IN ('Pending','Leased'))")
+    // The partial index excludes already scrubbed history. Drive the correlated
+    // lookup from remaining payloads instead of materializing every terminal ID.
+    sqlx::query("UPDATE messages SET body=NULL,styles=NULL,conference=NULL WHERE (body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL) AND EXISTS(SELECT 1 FROM deliveries d WHERE d.message_id=messages.id AND d.state NOT IN ('Pending','Leased'))")
         .execute(&mut **tx).await.map_err(db)?;
     Ok(())
 }
 async fn privacy_rejections(tx: &mut Tx<'_>, user: UserId, now: i64) -> Result<(), MessagingError> {
-    sqlx::query("UPDATE deliveries SET state='RejectedByPrivacy',terminal_at=?,reason='blocked' WHERE recipient=? AND state='Pending' AND message_id IN (SELECT m.id FROM messages m JOIN contact_rules r ON r.owner=m.recipient AND r.peer=m.sender WHERE (r.flags & 4)!=0)")
+    // Keep the explicit live-state predicate: it permits the existing partial
+    // FIFO index, bounding this scan by the recipient's active queue.
+    sqlx::query("UPDATE deliveries SET state='RejectedByPrivacy',terminal_at=?,reason='blocked' WHERE recipient=? AND state IN ('Pending','Leased') AND state='Pending' AND EXISTS(SELECT 1 FROM messages m JOIN contact_rules r ON r.owner=m.recipient AND r.peer=m.sender WHERE m.id=deliveries.message_id AND (r.flags & 4)!=0)")
         .bind(now).bind(i64::from(user.get())).execute(&mut **tx).await.map_err(db)?;
     crate::images::revoke(tx, now).await?;
     purge_bodies(tx).await
@@ -42,7 +46,7 @@ async fn privacy_rejections(tx: &mut Tx<'_>, user: UserId, now: i64) -> Result<(
 async fn expire(tx: &mut Tx<'_>, now: i64) -> Result<(), MessagingError> {
     crate::images::revoke(tx, now).await?;
     // A live writer owns Leased until its transport barrier, even if UTC jumps forward.
-    sqlx::query("UPDATE deliveries SET state='Expired',terminal_at=?,reason='ttl' WHERE state='Pending' AND message_id IN (SELECT id FROM messages WHERE expires_at<=?)")
+    sqlx::query("UPDATE deliveries SET state='Expired',terminal_at=?,reason='ttl' WHERE state IN ('Pending','Leased') AND state='Pending' AND EXISTS(SELECT 1 FROM messages m WHERE m.id=deliveries.message_id AND m.expires_at<=?)")
         .bind(now).bind(now).execute(&mut **tx).await.map_err(db)?;
     purge_bodies(tx).await?;
     sqlx::query("DELETE FROM messages WHERE id IN (SELECT message_id FROM deliveries WHERE terminal_at IS NOT NULL AND terminal_at<?)")

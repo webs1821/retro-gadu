@@ -1,0 +1,19 @@
+{
+  "history": 100000,
+  "pending": 200,
+  "receivers": 20,
+  "server_sha256": "1087e5ee538c519e1ae261bef6bee64f4fa5a624154745afdfa71cbd03b356fe",
+  "capacity_qualified": false,
+  "passed": false,
+  "seconds": 26.875,
+  "received": 109,
+  "error": "['IncompleteReadError: 0 bytes read on a total of 8 expected bytes', 'IncompleteReadError: 0 bytes read on a total of 8 expected bytes', 'IncompleteReadError: 0 bytes read on a total of 8 expected bytes']",
+  "server_exit": 0,
+  "server_log_tail": "2026-11-01T21:59:54.040183Z  INFO rgg_server: GG6 listening (local development) gg_endpoint=127.0.0.1:44543\n2026-11-01T21:59:54.040572Z  INFO rgg_server: HTTP listening (local development) address=127.0.0.1:41995 version=\"0.1.0-dev.25\"\n2026-11-01T22:00:20.941491Z  INFO rgg_server: draining connections\n2026-11-01T22:00:22.896780Z  INFO rgg_server: database closed; shutdown complete\n",
+  "states": {
+    "Pending": 91,
+    "TransportWrittenUnconfirmed": 100000
+  },
+  "integrity": "ok",
+  "foreign_keys_ok": true
+}

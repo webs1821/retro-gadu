@@ -47,7 +47,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 12;
+pub const SCHEMA_VERSION: i64 = 13;
 
 // The bundled engine must include the WAL-reset fix. Check the linked runtime,
 // not the version of a system sqlite3/Python command used by external diagnostics.

@@ -269,6 +269,81 @@ async fn new_epoch_recovers_leases_and_stale_sessions_cannot_write() {
     s.integrity_check().await.unwrap();
     s.close().await;
 }
+#[tokio::test]
+async fn full_history_scrubs_sparse_payloads_without_expiring_a_live_writer() {
+    let (_root, s, _) = setup().await;
+    let a = session(&s, 1, 1).await;
+    let b = session(&s, 2, 2).await;
+    let first = s
+        .accept_message_bundle(&a, message(1), 100, &QueueLimits::default())
+        .await
+        .unwrap();
+    let second = s
+        .accept_message_bundle(&a, message(2), 100, &QueueLimits::default())
+        .await
+        .unwrap();
+    let lease = s.claim_delivery(&b, 101).await.unwrap().unwrap();
+    assert_eq!(lease.id, first);
+    let mut tx = s.writer.begin().await.unwrap();
+    sqlx::query("WITH RECURSIVE n(id) AS (VALUES(100) UNION ALL SELECT id+1 FROM n WHERE id<100104) INSERT INTO messages(id,sender,recipient,client_sequence,payload_version,presentation,body,styles,conference,payload_bytes,accepted_at,expires_at) SELECT id,1,2,id,1,8,CASE WHEN id=100102 THEN 'private text' END,CASE WHEN id=100103 THEN '[]' END,CASE WHEN id=100104 THEN '[3]' END,16,100,200 FROM n").execute(&mut *tx).await.unwrap();
+    sqlx::query("INSERT INTO deliveries(message_id,recipient,enqueue_order,state,terminal_at) SELECT id,2,id,'TransportWrittenUnconfirmed',CASE WHEN id=100 THEN 1000-7*86400-1 ELSE 990 END FROM messages WHERE id>=100").execute(&mut *tx).await.unwrap();
+    tx.commit().await.unwrap();
+
+    s.prune(1000).await.unwrap();
+    assert_eq!(
+        count(
+            &s,
+            "SELECT count(*) FROM deliveries WHERE terminal_at IS NOT NULL"
+        )
+        .await,
+        100000
+    );
+    assert_eq!(
+        count(
+            &s,
+            "SELECT min(message_id) FROM deliveries WHERE terminal_at IS NOT NULL"
+        )
+        .await,
+        105
+    );
+    assert_eq!(count(&s, "SELECT count(*) FROM messages WHERE id>=100 AND (body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL)").await, 0);
+    assert_eq!(
+        count(
+            &s,
+            "SELECT count(*) FROM messages WHERE id<100 AND body IS NOT NULL"
+        )
+        .await,
+        2
+    );
+    assert_eq!(
+        count(&s, "SELECT count(*) FROM deliveries WHERE state='Leased'").await,
+        1
+    );
+
+    // An abrupt UTC jump may expire Pending and history, never a live writer.
+    let future = 101 + i64::from(QueueLimits::default().ttl_seconds);
+    s.prune(future).await.unwrap();
+    assert_eq!(count(&s, "SELECT count(*) FROM deliveries").await, 2);
+    assert_eq!(
+        count(&s, "SELECT count(*) FROM deliveries WHERE state='Expired'").await,
+        1
+    );
+    assert_eq!(
+        sqlx::query_scalar::<_, i64>("SELECT message_id FROM deliveries WHERE state='Expired'")
+            .fetch_one(&s.pool)
+            .await
+            .unwrap(),
+        second
+    );
+    assert_eq!(count(&s, "SELECT count(*) FROM messages WHERE body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL").await, 1);
+    // Returning UTC cannot resurrect the expired entry, and the original lease remains valid.
+    s.record_transport_write(&b, &lease, 102).await.unwrap();
+    assert!(s.claim_delivery(&b, 103).await.unwrap().is_none());
+    assert_eq!(count(&s, "SELECT count(*) FROM messages WHERE body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL").await, 0);
+    s.integrity_check().await.unwrap();
+    s.close().await;
+}
+
 struct TestClock;
 #[tokio::test]
 async fn concurrent_acceptance_obeys_atomic_recipient_quota_and_retirement_purges_payloads() {
@@ -302,7 +377,7 @@ async fn concurrent_acceptance_obeys_atomic_recipient_quota_and_retirement_purge
     assert_eq!(count(&s, "SELECT count(*) FROM messages").await, 3);
     s.retire_account(uid(2)).await.unwrap();
     assert_eq!(
-        count(&s, "SELECT count(*) FROM messages WHERE body IS NOT NULL").await,
+        count(&s, "SELECT count(*) FROM messages WHERE body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL").await,
         0
     );
     assert_eq!(

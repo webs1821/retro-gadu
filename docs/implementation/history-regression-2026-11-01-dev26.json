@@ -1,0 +1,375 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.26",
+  "checks": [
+    {
+      "test": "lifecycle",
+      "driver_sha256": "c8a47d49bab2972cf133cad726f1d8bbd67c3c948df1610f39411200a8fde5eb",
+      "options": [
+        "--binary",
+        "/tmp/rgg-target/debug/rgg-server"
+      ],
+      "passed": true,
+      "seconds": 0.266,
+      "stdout": "PASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\n",
+      "stderr": ""
+    },
+    {
+      "test": "accounts_cli",
+      "driver_sha256": "4b6ad809078ed5c6e61d6d6fa1dd406fa0a2c4bbb8ccca6d68fd9e743534f9b8",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 0.565,
+      "stdout": "PASS: CLI init/register/invites, three-use limit, custom/automatic UIN, persistent retirement, encrypted credentials, lost-key refusal, server/admin mutual exclusion\n",
+      "stderr": ""
+    },
+    {
+      "test": "backups_cli",
+      "driver_sha256": "39faf8c889cee97db52bd16c1e6eee8a35b4ac5b1f6d406df88378e351fe1a6e",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 1.744,
+      "stdout": "PASS: complete snapshot and authenticated restored text/images/profile/contacts/invites\nPASS: existing/live destinations and corrupt/incomplete/wrong-key backups refused\n",
+      "stderr": ""
+    },
+    {
+      "test": "keys_cli",
+      "driver_sha256": "f0d122faa9504a46d57af9bd9208ef998be418b4cee7da33dad1ba6f90473dd7",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 1.229,
+      "stdout": "PASS: rekey all accounts, retain keys, unchanged passwords/versions, older backup restore\nPASS: refuse active server, incomplete/unrelated pending keyring, corrupt account\n",
+      "stderr": ""
+    },
+    {
+      "test": "password_cli",
+      "driver_sha256": "0af13a434f80f19ba31f5f2ae184b75053adfcbf54d5889940ff1530d2716cfd",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-dir",
+        "/tmp/rgg-baseline-dev15"
+      ],
+      "passed": true,
+      "seconds": 2.996,
+      "stdout": "PASS: new/old GG6 login, retained messages/images/profile/contacts, audit and independent backups\nPASS: bad credentials/input, active server, pending rotation and missing data/key refused\nPASS: real dev.15 schema-10 migration/restore, queued image and password change\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_sessions",
+      "driver_sha256": "863535565028808c251fec761e7525696446b553e6bfb502e208dc80587ff4a3",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 5.603,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_concurrent_replay",
+      "driver_sha256": "be180f814112792d0c1494614527bce4f529adb5650f7ae454f9164a82bb664b",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 34.377,
+      "stdout": "PASS: concurrent replay {\"passed\": true, \"history\": 3000, \"offline\": 3000, \"receivers\": 20, \"seconds\": 33.374, \"capacity_qualified\": false}\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "driver_sha256": "510deaf2bf8e48a25a9773415d57c12a04f6d9774c663382183afc24492dd11f",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 10.669,
+      "stdout": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_directory",
+      "driver_sha256": "01fea4414dc105b6fc3aa993a802c09582066a7b6545d812771673b8940abbcf",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 1.303,
+      "stdout": "PASS: opt-in profiles, native reply forms, Polish filters and persistence\nPASS: directory presence follows viewer privacy\nPASS: directory readiness, malformed fields and persistent rate limit\nPASS: synthetic directory suite; native GG6 qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_discovery",
+      "driver_sha256": "6cd8fd44bca42e7340754a243198e9f5c4d763351ff1fa8b27240d661b1ea36d",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 0.449,
+      "stdout": "PASS: disabled/enabled discovery, actual loopback listener, hostile Host ignored, HTTP/1.0 and GG login\nPASS: legacy account operations refused without invitation/account mutations or secret logging\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_registration",
+      "driver_sha256": "d92fe2683b94a179180317541e4e18ebe8362a93c0d9970d5d003461b5757d34",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 6.384,
+      "stdout": "PASS: manual/automatic UIN, invite use, login, messaging and persistence\nPASS: Host/Origin/CSRF, replay, malformed inputs and bounded body\nPASS: twelve concurrent registrations share a three-use invitation\nPASS: request deadline and source-IP budget ignore forwarded headers\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_password",
+      "driver_sha256": "26f8496905360f066eb9f5a3c77c32a2d920e25529462add66f23cab88bde6b0",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-dir",
+        "/tmp/rgg-baseline-dev20"
+      ],
+      "passed": true,
+      "seconds": 4.666,
+      "stdout": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\nPASS: real schema 11\u219213, old backup restore and audit high-water mark (empty=False)\nPASS: real schema 11\u219213, old backup restore and audit high-water mark (empty=True)\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_statistics",
+      "driver_sha256": "6679e30e4ddb6403680344fa3509ab7dd87e3aa6cf1d12c1d3af47a7d44ffac7",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 1.317,
+      "stdout": "PASS: snapshot privacy, readiness, replacement, restart and retirement\nPASS: registration integration and independent opt-ins\nPASS: disabled endpoints, Host and shared source-IP budgets\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_downloads",
+      "driver_sha256": "fff3da76e5935377a53cda8631cc37ee333e16a1f7e4f2cac95fedafc2720764",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 1.686,
+      "stdout": "PASS: hash verified immutable snapshot, HTML escaping, headers and integration\nPASS: bad manifests, traversal, duplicates, sizes and symlinks fail before startup\nPASS: independent opt-in, budget and GG isolation\nPASS: four slow streams bounded, disconnect releases capacity\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_patcher",
+      "driver_sha256": "dfa415e912f9b494c47779f60c2f52d1eb7b31b3a3d7f5043ee0188fa2519ff7",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 0.728,
+      "stdout": "PASS: opt-in, exact embedded assets, CSP and navigation\nPASS: no upload, Host/Origin/body/query guards, shared budget and early config validation\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_limits",
+      "driver_sha256": "98491b672c20e67b69d6935f27b223c9ce7a1a97f7632c24237192712f697010",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 9.513,
+      "stdout": "PASS: connection_and_idle_limits\nPASS: traffic_cannot_extend_lifetime\nPASS: stalled_downloads_release_all_capacity\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_metrics",
+      "driver_sha256": "3fa880dbe63f14c2a3d9324585fa22952b7125456397eb9b12a053fb56626524",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 7.156,
+      "stdout": "PASS: private gauges, invisible users, offline queue, restart and retirement\nPASS: dedicated endpoint, browser guards, bounded sockets and clean stop\n",
+      "stderr": ""
+    },
+    {
+      "test": "runtime_metrics",
+      "driver_sha256": "306a71e2665a9452732f93c70e0cd24fac0547994267e97f98938c1bb76d9b29",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 3.997,
+      "stdout": "PASS: login outcomes, malformed frames, timeout, replacement and socket release\nPASS: accept results, cumulative histograms, offline replay and volatile reset\nPASS: per-IP/global/rate admission counters and closed connection gauges\nPASS: blocked TCP delivery is timed out, counted and released to Pending\n",
+      "stderr": ""
+    },
+    {
+      "test": "r0_smoke",
+      "driver_sha256": "67bf5116aca695f25fb04b44d64db37a2463bbf66ab050ea0d624c5855d22027",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 8.183,
+      "stdout": "LOAD_EVENT={\"phase\": \"measure_start\", \"at\": 193.764122432, \"sessions\": 6}\nLOAD_EVENT={\"phase\": \"measure_end\", \"at\": 198.765451779}\nLOAD_EVENT={\"phase\": \"offline_replay\", \"messages\": 5}\nLOAD_REPORT={\"format\": 1, \"passed\": true, \"sessions\": 6, \"offline_accounts\": 2, \"rate\": 2, \"duration_seconds\": 5.001, \"scheduled\": 10, \"accepted\": 10, \"online_verified\": 5, \"offline_verified\": 5, \"all_payloads_exact\": true, \"offline_fifo\": true, \"ack_p50_ms\": 3.723, \"ack_p95_ms\": 4.114, \"ack_max_ms\": 4.114, \"online_p95_ms\": 7.981, \"online_max_ms\": 7.981, \"schedule_lag_max_ms\": 1.691, \"achieved_rate\": 1.9995, \"measure_start\": 193.764122432, \"measure_end\": 198.765451779, \"metrics_samples\": [{\"at\": 193.766767267, \"ready_sessions\": 6.0, \"pending\": 0.0, \"queue_bytes\": 0.0}, {\"at\": 194.769630503, \"ready_sessions\": 6.0, \"pending\": 1.0, \"queue_bytes\": 132.0}, {\"at\": 195.772532925, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 396.0}, {\"at\": 196.775428414, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 528.0}, {\"at\": 197.77837816, \"ready_sessions\": 6.0, \"pending\": 4.0, \"queue_bytes\": 528.0}], \"errors\": [], \"native_client_qualified\": false}\nPASS: load driver smoke, 6 sessions/10 messages; R0 not qualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_conferences",
+      "driver_sha256": "b01be38be5e6b44d187aa5dd0733a1317795ffc7420540cf8111f16581e6f443",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-dir",
+        "/tmp/rgg-baseline-dev8"
+      ],
+      "passed": true,
+      "seconds": 3.135,
+      "stdout": "PASS: four participants: one copy each, ordered context/styles, offline restart\nPASS: per-target privacy, malformed contexts and no-ACK\nPASS: participant bound and context bytes charged to quota\nPASS: actual dev.8 schema-6 queue upgrades with authenticated delivery\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_images",
+      "driver_sha256": "957b4bb2f8aa6f1f4546fbb798b5de613ff69b9442a22eee300b3b05e5182ea0",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-dir",
+        "/tmp/rgg-baseline-dev9"
+      ],
+      "passed": true,
+      "seconds": 6.584,
+      "stdout": "PASS: online verified chunks, recipient authorization and no-ACK\nPASS: offline references, missing sender, restart and post-delivery retrieval\nPASS: ordering CRC blocks malformed packets and session replacement\nPASS: LOGIN60 capacity limits and hidden presence\nPASS: 255 KiB image and conference context grants no additional access\nPASS: actual dev.9 queue migration and image transfer\n",
+      "stderr": ""
+    },
+    {
+      "test": "legacy_invitations",
+      "driver_sha256": "1209276e809e21802306bcadb1655f91101a92a7642c4c6d62c34676dbbcd49e",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-server",
+        "/tmp/rgg-baseline-dev13/rgg-server",
+        "--baseline-admin",
+        "/tmp/rgg-baseline-dev13/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 2.17,
+      "stdout": "PASS: case-sensitive legacy usage, rollback, revocation, exhaustion and restore\nPASS: 128-character code, 12 concurrent HTTP attempts, exactly one remaining use\nPASS: modern code never falls through to legacy after exhaustion\nPASS: real dev.13 migration and schema-8 restore through old binary, text/images preserved\n",
+      "stderr": ""
+    },
+    {
+      "test": "legacy_import",
+      "driver_sha256": "ce5fe5ed58840e14ace2ebd764111f6eba8eadd138fe707670a95aa393e4831a",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-dir",
+        "/tmp/rgg-baseline-dev14"
+      ],
+      "passed": true,
+      "seconds": 2.548,
+      "stdout": "PASS: full import, GG login/offline messages/images/profile/contacts/invites, source unchanged\nPASS: invalid key/data/relations/limits rejected before creating target; wrapper check\nPASS: real dev.14 schema-9 migration/restore; invites and queued images preserved\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_history_retention",
+      "driver_sha256": "b7f56e3fbb31ce593bd37abb5e572d219d5980868446738945f837faa95c1af5",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "passed": true,
+      "seconds": 5.848,
+      "stdout": "PASS: full history {\"replay_seconds\": 3.02, \"total_seconds\": 3.113, \"new_acceptance_ack_ms\": 12.959, \"passed\": true, \"history\": 100000, \"offline\": 200, \"receivers\": 20, \"restart_retention_verified\": true, \"server_sha256\": \"63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73\", \"capacity_qualified\": false}\n",
+      "stderr": ""
+    },
+    {
+      "test": "sqlite_upgrade",
+      "driver_sha256": "2e9dbff7b4de9df6ee253f9105ddafc7aaf28318d91886dda1ea9e79ed8f1985",
+      "options": [
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin",
+        "--baseline-dir",
+        "/tmp/rgg-baseline-dev25",
+        "--expected-schema",
+        "13"
+      ],
+      "passed": true,
+      "seconds": 1.767,
+      "stdout": "{\n  \"passed\": true,\n  \"binaries_sha256\": {\n    \"baseline_server\": \"1087e5ee538c519e1ae261bef6bee64f4fa5a624154745afdfa71cbd03b356fe\",\n    \"baseline_admin\": \"a7af13bd5f5fcbbcf66b7039659121e3fbd680ee32697e58295ef9d880f1fc9e\",\n    \"server\": \"63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73\",\n    \"admin\": \"b00fb3f370eb2a24ac8be6e1dfbed116bef3b2a7e21b8b5567e1cdfeeca9845e\"\n  },\n  \"migration_checksums_preserved\": 12,\n  \"schema_before\": 12,\n  \"schema_after\": 13,\n  \"old_snapshot_and_source_unchanged\": true,\n  \"old_credentials_offline_text_image_contacts_profile\": true,\n  \"new_write_and_backup_restore\": true\n}\n",
+      "stderr": ""
+    }
+  ],
+  "server_sha256": "63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73",
+  "admin_sha256": "b00fb3f370eb2a24ac8be6e1dfbed116bef3b2a7e21b8b5567e1cdfeeca9845e",
+  "passed": true
+}

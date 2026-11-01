@@ -33,6 +33,7 @@ def main():
     parser.add_argument("--server", type=Path, required=True)
     parser.add_argument("--admin", type=Path, required=True)
     parser.add_argument("--baseline-dir", type=Path, required=True)
+    parser.add_argument("--expected-schema", type=int, required=True)
     args = parser.parse_args()
     assert os.name == "posix", "this qualification currently requires POSIX"
     server, admin = args.server.resolve(), args.admin.resolve()
@@ -72,7 +73,11 @@ def main():
             assert lab.sql("SELECT uin FROM retired_uins") == [(3,)]
             assert lab.sql("SELECT peer,flags FROM contact_rules WHERE owner=1") == [(3, 4)]
             assert lab.sql("SELECT used FROM invitations") == [(3,)]
-            assert lab.sql("SELECT version,checksum FROM _sqlx_migrations ORDER BY version") == migrations
+            upgraded = lab.sql("SELECT version,checksum FROM _sqlx_migrations ORDER BY version")
+            assert upgraded[:len(migrations)] == migrations
+            assert [row[0] for row in upgraded] == list(range(1, args.expected_schema + 1))
+            if args.expected_schema >= 13:
+                assert lab.sql("SELECT count(*) FROM sqlite_master WHERE type='index' AND name='messages_with_payload'") == [(1,)]
             lab.start()
             recipient = lab.client(2)
             text(recipient)
@@ -98,6 +103,7 @@ def main():
             assert restore(lab, current_backup, root / "new-restored")["restored"]
             print(json.dumps({"passed": True, "binaries_sha256": binaries,
                               "migration_checksums_preserved": len(migrations),
+                              "schema_before": migrations[-1][0], "schema_after": upgraded[-1][0],
                               "old_snapshot_and_source_unchanged": True,
                               "old_credentials_offline_text_image_contacts_profile": True,
                               "new_write_and_backup_restore": True}, indent=2))

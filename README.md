@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.25**, schemat SQLite **12**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.26**, schemat SQLite **13**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -40,6 +40,9 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   równocześni odbiorcy nie blokowali się wzajemnie podczas opróżniania kolejek.
   Wbudowane SQLite3.51.3 zawiera poprawkę WAL-reset; otwarcie magazynu sprawdza
   wersję silnika. [Aktualizacja i zgodność kopii](docs/implementation/SQLITE-UPGRADE.md).
+  Sprzątanie payloadów i aktywnej kolejki wykorzystuje indeksy, dzięki czemu
+  pełna historia nie powoduje rozłączeń w nowej regresji 100000 wpisów/200 offline.
+  [Retencja, migracja i zakres testu](docs/implementation/HISTORY-RETENTION.md).
 - Przypięty lokalny obraz dev.24 z kompletem źródeł:26 zestawów kontroli,
   trwały wolumen, restart i backup/restore. Dłuższy R0 przeszedł:100 sesji,
   6000 wiadomości przez600s,1CPU/256MiB/swap0. Zachowano wcześniejszą nieudaną

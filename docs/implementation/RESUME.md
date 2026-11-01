@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.25
+# Punkt wznowienia — 2026-11-01, dev.26
 
 ## Zakres i najbliższa praca
 
@@ -58,11 +58,32 @@ Nowe dokumenty CLIENT-UPLOAD.md i VERIFICATION-2026-11-01-dev25.md.
 Obraz dev24 nie zawiera recepty dev25; nie przypisywać mu nowych testów.
 Natywny klient nadal niekwalifikowany, nie instalować na obecnym profilu GG.
 
-Dalsza praca: sprawdzić koszt globalnego sprzątania historii dostarczeń
-w messaging.rs (purge_bodies/expire) przy pełnym limicie 100000 wpisów.
-To na razie hipoteza: najpierw pomiar i plan zapytań na sztucznej bazie,
-bez zmian polityki TTL, prywatności, retencji lub limitów czasu.
-Następnie dalszy rozwój lokalny; żadnych push, deploy ani zmian produkcji.
+Dev.25 zapisany w lokalnym commicie 77d88ac (czysty punkt przed dev26).
+Dev.26: potwierdzono EOF przy pełnej historii 100000 + 200 offline/20 klientów:
+109 odebranych, 91 Pending, integrity/FK ok. Szczegółowego powodu EOF nie ma
+w logu. Oryginalny raport history-diagnostic-2026-11-01-dev25.json zachowany.
+Migracja 13 dodaje messages_with_payload; purge stosuje EXISTS po kluczu
+zamiast listy wszystkich terminalnych. Expire/privacy używają predykatu indeksu
+deliveries_fifo i korelacji po kluczu. Retire czyści też conference atomowo.
+Na kandydacie ten sam test odebrał 200/200 w 2.937s. Formalny nowy test
+w CI/container_suite sprawdza ponadto nowe przyjęcie/ACK, restart i dokładną
+retencję 100000. Regresja: 3.020s replay i ACK12.959ms. Nie jest to pomiar R0.
+
+103 testy Rust, fmt/Clippy i 25 grup regresji TCP/HTTP/CLI/migracji przeszły.
+Migracja prawdziwego backupu dev25 (schema12) do13 zachowała 12 starych sum,
+konta, offline/obrazki, kontakty/profil, nowy backup/restore. sqlite_upgrade.py
+wymaga teraz --expected-schema. Dwa pola reportu: schema_before/schema_after.
+Bieżący zwykły serwer SHA63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73,
+admin b00fb3f370eb2a24ac8be6e1dfbed116bef3b2a7e21b8b5567e1cdfeeca9845e.
+Baseline /tmp/rgg-baseline-dev25 ma zachowane stare binarki.
+Raporty history-diagnostic/regression/faults-2026-11-01-dev*.json.
+
+9 grup awarii dev26 przeszło; sesja46813 zakończona0, restored_normal=true,
+hashe przywróconych normalnych binarek zgodne z powyższymi. Zakończyć lokalny
+commit dev26 po końcowym przeglądzie. Żadne testy nie pozostają aktywne.
+Prywatny Docker pozostaje zatrzymany; ostatni eksport/R0 to dev24. Następna
+praca: kwalifikacja nowego obrazu, ewentualnie większy wariant pełnej historii.
+Nie przypisywać wyników R0 dev24 nowej wersji. Dalej wyłącznie lokalnie.
 
 ## Wyniki obrazu dev.22 i odtworzenie błędu
 
