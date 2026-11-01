@@ -53,7 +53,7 @@ fn message(seq: u32) -> MessageBundle {
         conference: Default::default(),
     }
 }
-async fn count(store: &SqliteStore, sql: &str) -> i64 {
+async fn count(store: &SqliteStore, sql: &'static str) -> i64 {
     sqlx::query_scalar(sql)
         .fetch_one(&store.pool)
         .await

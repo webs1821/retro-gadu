@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "binaries_sha256": {
+    "baseline_server": "81d22eb6286d6d24b67bac074e1367efe2a09402be1a49c0ba28f43a40ff4d3c",
+    "baseline_admin": "a86b6cb27da044675c3a38e265612e258cbf4ee4830e885aa6e476394466a77a",
+    "server": "8a583b5a0e6fceffe743b7b875d861c465c59633e2e58dc880d6941f429cdef0",
+    "admin": "945e7ba652a1fe801e02d6018df7e0de597402f60027fd7eebbb1b86bc0cc0d8"
+  },
+  "migration_checksums_preserved": 12,
+  "old_snapshot_and_source_unchanged": true,
+  "old_credentials_offline_text_image_contacts_profile": true,
+  "new_write_and_backup_restore": true
+}

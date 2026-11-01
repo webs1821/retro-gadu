@@ -1,0 +1,193 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.24",
+  "server_sha256": "8a583b5a0e6fceffe743b7b875d861c465c59633e2e58dc880d6941f429cdef0",
+  "admin_sha256": "945e7ba652a1fe801e02d6018df7e0de597402f60027fd7eebbb1b86bc0cc0d8",
+  "checks": [
+    {
+      "test": "lifecycle",
+      "driver_sha256": "1913231f26c1f2669ff32e143992ed899fe50783c3238a9433d0ca6f380f5482",
+      "passed": true,
+      "seconds": 0.238,
+      "stdout": "PASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\n",
+      "stderr": ""
+    },
+    {
+      "test": "accounts_cli",
+      "driver_sha256": "4b6ad809078ed5c6e61d6d6fa1dd406fa0a2c4bbb8ccca6d68fd9e743534f9b8",
+      "passed": true,
+      "seconds": 0.518,
+      "stdout": "PASS: CLI init/register/invites, three-use limit, custom/automatic UIN, persistent retirement, encrypted credentials, lost-key refusal, server/admin mutual exclusion\n",
+      "stderr": ""
+    },
+    {
+      "test": "backups_cli",
+      "driver_sha256": "39faf8c889cee97db52bd16c1e6eee8a35b4ac5b1f6d406df88378e351fe1a6e",
+      "passed": true,
+      "seconds": 1.658,
+      "stdout": "PASS: complete snapshot and authenticated restored text/images/profile/contacts/invites\nPASS: existing/live destinations and corrupt/incomplete/wrong-key backups refused\n",
+      "stderr": ""
+    },
+    {
+      "test": "keys_cli",
+      "driver_sha256": "f0d122faa9504a46d57af9bd9208ef998be418b4cee7da33dad1ba6f90473dd7",
+      "passed": true,
+      "seconds": 1.173,
+      "stdout": "PASS: rekey all accounts, retain keys, unchanged passwords/versions, older backup restore\nPASS: refuse active server, incomplete/unrelated pending keyring, corrupt account\n",
+      "stderr": ""
+    },
+    {
+      "test": "password_cli",
+      "driver_sha256": "209400b70980cf7aad2b92a7b9d6d7b9b134987165ad598fd8394f39762c2941",
+      "passed": true,
+      "seconds": 1.929,
+      "stdout": "PASS: new/old GG6 login, retained messages/images/profile/contacts, audit and independent backups\nPASS: bad credentials/input, active server, pending rotation and missing data/key refused\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_sessions",
+      "driver_sha256": "863535565028808c251fec761e7525696446b553e6bfb502e208dc80587ff4a3",
+      "passed": true,
+      "seconds": 5.515,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_concurrent_replay",
+      "driver_sha256": "be180f814112792d0c1494614527bce4f529adb5650f7ae454f9164a82bb664b",
+      "passed": true,
+      "seconds": 48.635,
+      "stdout": "PASS: concurrent replay {\"passed\": true, \"history\": 3000, \"offline\": 3000, \"receivers\": 20, \"seconds\": 47.647, \"capacity_qualified\": false}\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "driver_sha256": "510deaf2bf8e48a25a9773415d57c12a04f6d9774c663382183afc24492dd11f",
+      "passed": true,
+      "seconds": 10.612,
+      "stdout": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_directory",
+      "driver_sha256": "01fea4414dc105b6fc3aa993a802c09582066a7b6545d812771673b8940abbcf",
+      "passed": true,
+      "seconds": 1.312,
+      "stdout": "PASS: opt-in profiles, native reply forms, Polish filters and persistence\nPASS: directory presence follows viewer privacy\nPASS: directory readiness, malformed fields and persistent rate limit\nPASS: synthetic directory suite; native GG6 qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_discovery",
+      "driver_sha256": "6cd8fd44bca42e7340754a243198e9f5c4d763351ff1fa8b27240d661b1ea36d",
+      "passed": true,
+      "seconds": 0.445,
+      "stdout": "PASS: disabled/enabled discovery, actual loopback listener, hostile Host ignored, HTTP/1.0 and GG login\nPASS: legacy account operations refused without invitation/account mutations or secret logging\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_registration",
+      "driver_sha256": "d92fe2683b94a179180317541e4e18ebe8362a93c0d9970d5d003461b5757d34",
+      "passed": true,
+      "seconds": 6.376,
+      "stdout": "PASS: manual/automatic UIN, invite use, login, messaging and persistence\nPASS: Host/Origin/CSRF, replay, malformed inputs and bounded body\nPASS: twelve concurrent registrations share a three-use invitation\nPASS: request deadline and source-IP budget ignore forwarded headers\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_password",
+      "driver_sha256": "412cce3e87724b48eb46575696f10b18ac465743f1d3a03c1e671a2bd09ca59e",
+      "passed": true,
+      "seconds": 4.535,
+      "stdout": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\nPASS: real schema 11\u219212, old backup restore and audit high-water mark (empty=False)\nPASS: real schema 11\u219212, old backup restore and audit high-water mark (empty=True)\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_statistics",
+      "driver_sha256": "6679e30e4ddb6403680344fa3509ab7dd87e3aa6cf1d12c1d3af47a7d44ffac7",
+      "passed": true,
+      "seconds": 1.332,
+      "stdout": "PASS: snapshot privacy, readiness, replacement, restart and retirement\nPASS: registration integration and independent opt-ins\nPASS: disabled endpoints, Host and shared source-IP budgets\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_downloads",
+      "driver_sha256": "fff3da76e5935377a53cda8631cc37ee333e16a1f7e4f2cac95fedafc2720764",
+      "passed": true,
+      "seconds": 1.72,
+      "stdout": "PASS: hash verified immutable snapshot, HTML escaping, headers and integration\nPASS: bad manifests, traversal, duplicates, sizes and symlinks fail before startup\nPASS: independent opt-in, budget and GG isolation\nPASS: four slow streams bounded, disconnect releases capacity\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_patcher",
+      "driver_sha256": "2a372bebd54a013cd521f8f4c5245ed9b5771066afe90d8d15b4f70e46ee1622",
+      "passed": true,
+      "seconds": 0.733,
+      "stdout": "PASS: opt-in, exact embedded assets, CSP and navigation\nPASS: no upload, Host/Origin/body/query guards, shared budget and early config validation\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_limits",
+      "driver_sha256": "98491b672c20e67b69d6935f27b223c9ce7a1a97f7632c24237192712f697010",
+      "passed": true,
+      "seconds": 9.491,
+      "stdout": "PASS: connection_and_idle_limits\nPASS: traffic_cannot_extend_lifetime\nPASS: stalled_downloads_release_all_capacity\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_metrics",
+      "driver_sha256": "740f30cc0dbfb57f76aedbcc277b7b589bc81b41858f3c68446bbfe4ea80c839",
+      "passed": true,
+      "seconds": 7.144,
+      "stdout": "PASS: private gauges, invisible users, offline queue, restart and retirement\nPASS: dedicated endpoint, browser guards, bounded sockets and clean stop\n",
+      "stderr": ""
+    },
+    {
+      "test": "runtime_metrics",
+      "driver_sha256": "306a71e2665a9452732f93c70e0cd24fac0547994267e97f98938c1bb76d9b29",
+      "passed": true,
+      "seconds": 4.005,
+      "stdout": "PASS: login outcomes, malformed frames, timeout, replacement and socket release\nPASS: accept results, cumulative histograms, offline replay and volatile reset\nPASS: per-IP/global/rate admission counters and closed connection gauges\nPASS: blocked TCP delivery is timed out, counted and released to Pending\n",
+      "stderr": ""
+    },
+    {
+      "test": "r0_smoke",
+      "driver_sha256": "67bf5116aca695f25fb04b44d64db37a2463bbf66ab050ea0d624c5855d22027",
+      "passed": true,
+      "seconds": 8.183,
+      "stdout": "LOAD_EVENT={\"phase\": \"measure_start\", \"at\": 4811.973352625, \"sessions\": 6}\nLOAD_EVENT={\"phase\": \"measure_end\", \"at\": 4816.974141123}\nLOAD_EVENT={\"phase\": \"offline_replay\", \"messages\": 5}\nLOAD_REPORT={\"format\": 1, \"passed\": true, \"sessions\": 6, \"offline_accounts\": 2, \"rate\": 2, \"duration_seconds\": 5.001, \"scheduled\": 10, \"accepted\": 10, \"online_verified\": 5, \"offline_verified\": 5, \"all_payloads_exact\": true, \"offline_fifo\": true, \"ack_p50_ms\": 3.872, \"ack_p95_ms\": 4.291, \"ack_max_ms\": 4.291, \"online_p95_ms\": 8.299, \"online_max_ms\": 8.299, \"schedule_lag_max_ms\": 1.618, \"achieved_rate\": 1.9997, \"measure_start\": 4811.973352625, \"measure_end\": 4816.974141123, \"metrics_samples\": [{\"at\": 4811.975900798, \"ready_sessions\": 6.0, \"pending\": 0.0, \"queue_bytes\": 0.0}, {\"at\": 4812.978666393, \"ready_sessions\": 6.0, \"pending\": 1.0, \"queue_bytes\": 132.0}, {\"at\": 4813.981653152, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 396.0}, {\"at\": 4814.983960811, \"ready_sessions\": 6.0, \"pending\": 3.0, \"queue_bytes\": 528.0}, {\"at\": 4815.986764757, \"ready_sessions\": 6.0, \"pending\": 4.0, \"queue_bytes\": 528.0}], \"errors\": [], \"native_client_qualified\": false}\nPASS: load driver smoke, 6 sessions/10 messages; R0 not qualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_conferences",
+      "driver_sha256": "f91a75e7e3957245c5325920003014591130b01e938067a16395b3dd5ceb2cc4",
+      "passed": true,
+      "seconds": 2.809,
+      "stdout": "PASS: four participants: one copy each, ordered context/styles, offline restart\nPASS: per-target privacy, malformed contexts and no-ACK\nPASS: participant bound and context bytes charged to quota\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_images",
+      "driver_sha256": "8939dd9817155e6b67aaf6f5e53501f7138f0e4224b1d66fdb9feb39788f01b3",
+      "passed": true,
+      "seconds": 5.791,
+      "stdout": "PASS: online verified chunks, recipient authorization and no-ACK\nPASS: offline references, missing sender, restart and post-delivery retrieval\nPASS: ordering CRC blocks malformed packets and session replacement\nPASS: LOGIN60 capacity limits and hidden presence\nPASS: 255 KiB image and conference context grants no additional access\n",
+      "stderr": ""
+    },
+    {
+      "test": "legacy_invitations",
+      "driver_sha256": "95aae98ca1b665c672a320b4b37467911a680e559a7cac70ff18fadd537f156e",
+      "passed": true,
+      "seconds": 1.155,
+      "stdout": "PASS: case-sensitive legacy usage, rollback, revocation, exhaustion and restore\nPASS: 128-character code, 12 concurrent HTTP attempts, exactly one remaining use\nPASS: modern code never falls through to legacy after exhaustion\n",
+      "stderr": ""
+    },
+    {
+      "test": "legacy_import",
+      "driver_sha256": "6ac4665457c6f21e6a42d75dac759d7b6947bf2626a32d5b489c1ac6637a8f74",
+      "passed": true,
+      "seconds": 1.538,
+      "stdout": "PASS: full import, GG login/offline messages/images/profile/contacts/invites, source unchanged\nPASS: invalid key/data/relations/limits rejected before creating target; wrapper check\n",
+      "stderr": ""
+    }
+  ],
+  "complete": true
+}

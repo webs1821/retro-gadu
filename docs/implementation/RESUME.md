@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.23
+# Punkt wznowienia — 2026-11-01, dev.24
 
 ## Zakres i najbliższa praca
 
@@ -17,18 +17,28 @@ Nowy tests/gg6_concurrent_replay.py jest w CI/container_suite: syntetyczna histo
 3000 + kolejka3000,20 klientów, payload/FIFO/integrity. Czas debug około48s;
 nie jest testem pojemności. Surowe wyniki sqlite-writer-*.json.
 
+Dev.23 zapisany w lokalnym commicie24e0343. Dev.24 aktualizuje SQLx0.9.0,
+libsqlite3-sys0.37.0 i wbudowane SQLite3.51.3 (sprawdzony nagłówek oficjalnej paczki).
+Przy otwarciu każdej puli SELECT sqlite_version() wymaga co najmniej3.51.3.
+Statyczne migracje używają SqlSafeStr; bez zmiany12 skryptów SQL/sum ani schematu.
+102 testy Rust, Clippy,23 regresje,9 grup awarii przeszły; normalne binarki
+przywrócone. Nowy tests/sqlite_upgrade.py wymaga prawdziwych starych binarek:
+kopię dev23 odtworzono starym adminem, potem nowy serwer zalogował stare konta,
+odebrał offline i obrazek, odczytał kontakty/profil, przyjął nową wiadomość,
+zrobił nowy backup/restore. Oryginały niezmienione. Baseline /tmp/rgg-baseline-dev23.
+Inwentarz190, RustSec0/0 (1395 porad, commit2295466c4e9df26647fd67d8fa1c705ac2fc7f81).
+SQLITE-UPGRADE.md, sqlite-upgrade/regression/faults-2026-11-01-dev24.json są dowodami.
+
 Kolejność dalszej pracy:
-1. Zakończyć lokalny commit dev.23, jeżeli jeszcze nie istnieje.
-2. Aktualizacja SQLx0.8.6 / libsqlite3-sys0.30.1 (wbudowane SQLite3.46.0).
-   Producent opisuje WAL-reset bug, poprawiony od3.51.3, także3.44.6/3.50.7.
-   https://www.sqlite.org/wal.html#the_wal_reset_bug
-   SQLx0.9.0 jest stabilny, dopuszcza libsqlite3-sys >=0.30.1,<0.38.0.
-   libsqlite3-sys0.37.0 opublikowany2026-03-15; sprawdzić faktyczny nagłówek
-   i SELECT sqlite_version() po pobraniu. Nie kopiować ręcznie amalgamacji do repo.
-   Przypiąć zgodne wersje, zaktualizować inwentarz, przejść testy i RustSec.
-   Zachować stare binarki do migracji/restore. To oddzielna zmiana od writer FIFO.
-3. Nowy obraz z zatwierdzonego commitu, suite26, runtime restart/restore i R0
-   600s/6000 z niezmienionymi progami. Dopiero po pełnym sukcesie eksport artefaktu.
+1. Zakończyć lokalny commit dev.24, jeśli jeszcze nie istnieje.
+2. Nowy obraz z zatwierdzonego commitu: tools/build_container.py --docker
+   /tmp/rgg-docker-local-20261101/bin/docker --socket .../docker29.sock
+   --target runtime/verification --report nowy_plik.json. Uruchamiać w WSL jako
+   root z jawnym socketem; log budowania zapisać poza repo. Żadnego push.
+3. Testy tests/container_suite.py, container_runtime.py, container_load.py.
+   R0 ustalić600s przed startem, te same progi co dev22,100Ready/6000 wiadomości.
+   Suite/runtime deklarują swap=max; R0 jawnie i zweryfikowanie ustawia swap0.
+   Dopiero po pełnym sukcesie eksport artefaktu. Zachować wszystkie nieudane próby.
 4. Wrócić do poprawki końca uploadu GG6 w generatorze klienta (opis niżej).
 
 ## Wyniki obrazu dev.22 i odtworzenie błędu
@@ -120,7 +130,7 @@ ani pełnego disassembly do Git. Recepta patchera zachowuje pochodzenie w THIRD_
 
 ## Pozostałe odniesienia
 
-SQLITE-WRITER.md i VERIFICATION-2026-11-01-dev23.md — najnowsze dowody.
+SQLITE-UPGRADE.md oraz VERIFICATION-2026-11-01-dev24.md — najnowsze dowody.
 PARITY.md rozróżnia implementację od kwalifikacji; warunek podmiany niespełniony.
 Plan niezmieniony SHA256 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 Historyczne szczegóły dev1–22 w STATUS.md i osobnych kontraktach/raportach.

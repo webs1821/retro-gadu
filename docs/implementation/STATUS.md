@@ -408,3 +408,17 @@ kwalifikacją; nie jest dowodem uszkodzenia baz w opisanym teście.
 Analiza funkcji uploadu GG6.1 i13 przypadków emulatora CPU potwierdziły brak
 pustego terminatora dla wielokrotności2047 i limit klienta50000B. Poprawka pakietu
 klienta jest kolejną pracą; aplikacji Windows nie uruchomiono.
+
+
+## 2026-11-01 — dev.24: aktualizacja SQLite i kontrola zgodności danych
+
+SQLx0.9.0 i libsqlite3-sys0.37.0 (wbudowane SQLite3.51.3, poprawka WAL-reset).
+Magazyn sprawdza wersję rzeczywistego silnika, minimum3.51.3. Osadzone statyczne
+migracje dostosowano do SqlStr; treść SQL,12 sum migracji i schema12 bez zmian.
+102 testy Rust, fmt, Clippy,23 grupy regresji i9 grup --faults przeszły.
+Przywrócono zwykłe binarki. Inwentarz190 zależności zgodny; RustSec0/0.
+Osobny test przyjął prawdziwy backup poprzednich binarek dev23: stare hasła,
+wiadomości offline, obrazek, kontakty i profil działały; nowy zapis i backup/restore
+również. Oryginał i stare archiwum niezmienione. [Kontrakt](SQLITE-UPGRADE.md)
+i surowe raporty sqlite-*-2026-11-01-dev24.json. Obraz/R0 nadal do wykonania.
+Brak push, wdrożenia i kwalifikacji natywnego klienta.

@@ -49,6 +49,21 @@ use std::{path::Path, sync::Arc, time::Duration};
 
 pub const SCHEMA_VERSION: i64 = 12;
 
+// The bundled engine must include the WAL-reset fix. Check the linked runtime,
+// not the version of a system sqlite3/Python command used by external diagnostics.
+fn sqlite_version_supported(value: &str) -> bool {
+    let mut parts = value.split('.');
+    let mut version = [0_u32; 3];
+    for component in &mut version {
+        let Some(value) = parts.next().and_then(|part| part.parse().ok()) else {
+            return false;
+        };
+        *component = value;
+    }
+    // 3.52 was withdrawn, not a supported successor to the fixed 3.51.3 release.
+    parts.next().is_none() && version >= [3, 51, 3] && version[..2] != [3, 52]
+}
+
 #[derive(Debug, thiserror::Error)]
 pub enum OpenError {
     #[error(transparent)]
@@ -165,6 +180,15 @@ impl SqliteStore {
             .acquire_timeout(Duration::from_secs(5))
             .after_connect(|connection, _| {
                 Box::pin(async move {
+                    let version: String = sqlx::query_scalar("SELECT sqlite_version()")
+                        .fetch_one(&mut *connection)
+                        .await?;
+                    if !sqlite_version_supported(&version) {
+                        return Err(sqlx::Error::Protocol(
+                            "SQLite 3.51.3+ required; withdrawn 3.52 excluded (WAL-reset fix)"
+                                .into(),
+                        ));
+                    }
                     let synchronous: i64 = sqlx::query_scalar("PRAGMA synchronous")
                         .fetch_one(&mut *connection)
                         .await?;
@@ -266,6 +290,24 @@ impl HealthRepository for SqliteStore {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn sqlite_engine_floor_rejects_unfixed_and_unrecognized_versions() {
+        for version in [
+            "3.46.0",
+            "3.51.2",
+            "3.52.0",
+            "",
+            "3.51",
+            "3.51.3.0",
+            "unrecognized",
+        ] {
+            assert!(!sqlite_version_supported(version), "{version}");
+        }
+        for version in ["3.51.3", "3.53.0", "4.0.0"] {
+            assert!(sqlite_version_supported(version), "{version}");
+        }
+    }
 
     #[tokio::test]
     async fn import_opener_requires_marker_and_cannot_reopen_existing_database() {

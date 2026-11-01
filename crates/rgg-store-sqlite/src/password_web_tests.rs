@@ -48,7 +48,7 @@ fn hub(store: &Arc<SqliteStore>) -> Arc<SessionHub> {
         QueueLimits::default(),
     ))
 }
-async fn count(store: &SqliteStore, query: &str) -> i64 {
+async fn count(store: &SqliteStore, query: &'static str) -> i64 {
     sqlx::query_scalar(query)
         .fetch_one(&store.pool)
         .await

@@ -1,0 +1,82 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.24",
+  "server_sha256": "751abe2d26cf82bee09b68c0bd75b46cad14153b3a22475dfbc77f7d251823e6",
+  "admin_sha256": "3bb1d66077987d1539d340e08b34f6242ee1969fb3d30c3a4b3d69e2edb040fa",
+  "checks": [
+    {
+      "test": "gg6_sessions",
+      "driver_sha256": "863535565028808c251fec761e7525696446b553e6bfb502e208dc80587ff4a3",
+      "passed": true,
+      "seconds": 7.588,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: crash before_accept_commit\nPASS: crash after_accept_commit\nPASS: crash before_delivery_write\nPASS: crash after_delivery_write\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "driver_sha256": "510deaf2bf8e48a25a9773415d57c12a04f6d9774c663382183afc24492dd11f",
+      "passed": true,
+      "seconds": 11.261,
+      "stdout": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: crash before_archive_commit\nPASS: crash after_archive_commit\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_conferences",
+      "driver_sha256": "f91a75e7e3957245c5325920003014591130b01e938067a16395b3dd5ceb2cc4",
+      "passed": true,
+      "seconds": 3.684,
+      "stdout": "PASS: four participants: one copy each, ordered context/styles, offline restart\nPASS: per-target privacy, malformed contexts and no-ACK\nPASS: participant bound and context bytes charged to quota\nPASS: conference crash before_accept_commit\nPASS: conference crash after_accept_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_images",
+      "driver_sha256": "8939dd9817155e6b67aaf6f5e53501f7138f0e4224b1d66fdb9feb39788f01b3",
+      "passed": true,
+      "seconds": 6.99,
+      "stdout": "PASS: online verified chunks, recipient authorization and no-ACK\nPASS: offline references, missing sender, restart and post-delivery retrieval\nPASS: ordering CRC blocks malformed packets and session replacement\nPASS: LOGIN60 capacity limits and hidden presence\nPASS: 255 KiB image and conference context grants no additional access\nPASS: atomic image offer crash before_accept_commit\nPASS: atomic image offer crash after_accept_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_password",
+      "driver_sha256": "412cce3e87724b48eb46575696f10b18ac465743f1d3a03c1e671a2bd09ca59e",
+      "passed": true,
+      "seconds": 2.939,
+      "stdout": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\nPASS: before_web_password_commit\nPASS: after_web_password_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "backups_cli",
+      "driver_sha256": "39faf8c889cee97db52bd16c1e6eee8a35b4ac5b1f6d406df88378e351fe1a6e",
+      "passed": true,
+      "seconds": 1.988,
+      "stdout": "PASS: complete snapshot and authenticated restored text/images/profile/contacts/invites\nPASS: existing/live destinations and corrupt/incomplete/wrong-key backups refused\nPASS: interrupted publication and restore fail closed; clean destination recovers\n",
+      "stderr": ""
+    },
+    {
+      "test": "keys_cli",
+      "driver_sha256": "f0d122faa9504a46d57af9bd9208ef998be418b4cee7da33dad1ba6f90473dd7",
+      "passed": true,
+      "seconds": 3.149,
+      "stdout": "PASS: rekey all accounts, retain keys, unchanged passwords/versions, older backup restore\nPASS: refuse active server, incomplete/unrelated pending keyring, corrupt account\nPASS: before_key_publish\nPASS: after_key_publish\nPASS: after_rekey_batch\n",
+      "stderr": ""
+    },
+    {
+      "test": "legacy_import",
+      "driver_sha256": "6ac4665457c6f21e6a42d75dac759d7b6947bf2626a32d5b489c1ac6637a8f74",
+      "passed": true,
+      "seconds": 2.062,
+      "stdout": "PASS: full import, GG login/offline messages/images/profile/contacts/invites, source unchanged\nPASS: invalid key/data/relations/limits rejected before creating target; wrapper check\nPASS: before_import_database\nPASS: before_import_commit\nPASS: after_import_commit\n",
+      "stderr": ""
+    },
+    {
+      "test": "password_cli",
+      "driver_sha256": "209400b70980cf7aad2b92a7b9d6d7b9b134987165ad598fd8394f39762c2941",
+      "passed": true,
+      "seconds": 2.451,
+      "stdout": "PASS: new/old GG6 login, retained messages/images/profile/contacts, audit and independent backups\nPASS: bad credentials/input, active server, pending rotation and missing data/key refused\nPASS: before_password_commit\nPASS: after_password_commit\n",
+      "stderr": ""
+    }
+  ],
+  "complete": true,
+  "restored_normal": true
+}

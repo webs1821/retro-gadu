@@ -9,6 +9,7 @@ pub(crate) use sqlx_core::{
     query::query,
     query_scalar::query_scalar,
     row::Row,
+    sql_str::SqlSafeStr,
     transaction::Transaction,
 };
 pub(crate) use sqlx_sqlite::{self as sqlite, Sqlite, SqlitePool};
