@@ -1,0 +1,34 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.24",
+  "schema": 12,
+  "source_commit": "bf94fbd78d813f1a64e9192ba59dafebde4968b9",
+  "cargo_lock_sha256": "b79f02fdc1ebfd17b6fa887e632e61c41638f6ed09346ee21ca15a694e3367c3",
+  "runtime_image": "sha256:054d8dd16f12e3a08cf11bc5aaf3a65064704f7c8c89cff8fea3b1a48eb7c016",
+  "verification_image": "sha256:6ee934bb355ecd7ff47909b4b12e2d1d806a5373dd5c6623412e2ed11d6dfcb0",
+  "server_sha256": "68faf007173ab6667905e181d4617843714d85129a7a71309f0c887ac6f1609a",
+  "source_archive_sha256": "60ca04f9e4c39145115e1db4b7ed76a9ef1d64cf7f4332a4b9960bfb87cc280f",
+  "artifact_file": "rgg-dev24-runtime.tar.gz",
+  "artifact_size": 61680178,
+  "artifact_sha256": "95088150316b620c0812c19350981bcc05d1050bb6d925bb451f6df005432d37",
+  "reports_sha256": {
+    "container-build-2026-11-01-dev24.json": "030912e9028c3b418cc2fdd17e99aee9b835fb95275a51cf4ee25e1aec955a11",
+    "container-test-image-2026-11-01-dev24.json": "8b81e341a623d5cf30dbad3d73d8f615f48788bfca77bdd4c2bf6a6e5c9b0bd6",
+    "container-suite-2026-11-01-dev24.json": "f77da4a32791faa4c0bb6193ce888ea5c7e3dcd6df7bcb3ee7bc3ec1a15178bf",
+    "container-runtime-2026-11-01-dev24.json": "2a5d74d06e8f160429bf2d4ce39dc9ab960c3bf3b882790dae48c58f321d77e8",
+    "r0-2026-11-01-dev24-plan.json": "132e9fd7dbad990f878f3a63f559ee5541626232e9fc9363be9ac3fbbe152ead",
+    "r0-2026-11-01-dev24.json": "a1b6d0c05d2050a4a4f66ce828e7db1170dde863b96ca3f9835356fd15a40e88"
+  },
+  "driver_sha256": {
+    "container_suite": "6e946805a748b70d0cb3f4ef4ed9385db1fd64a4380ec19a038ed6e9361209e7",
+    "container_load": "8db118c2ff4cd9a40c1d38e0778791622d31c7c1fa6cf1adc968d10903d11941",
+    "r0_workload": "9b1a543f305257a72a7ed991f2d99ebb0d84b7c32c1ee09c2276faf083dfc541"
+  },
+  "checks_passed": true,
+  "r0_sample_qualified": true,
+  "soak_qualified": false,
+  "native_client_qualified": false,
+  "production_qualified": false,
+  "pushed": false,
+  "deployed": false
+}

@@ -39,11 +39,10 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   równocześni odbiorcy nie blokowali się wzajemnie podczas opróżniania kolejek.
   Wbudowane SQLite3.51.3 zawiera poprawkę WAL-reset; otwarcie magazynu sprawdza
   wersję silnika. [Aktualizacja i zgodność kopii](docs/implementation/SQLITE-UPGRADE.md).
-- Przypięty lokalny obraz dev.19 z kompletem źródeł; sprawdzone 22 zestawy
-  kontroli i krótki profil R0 (100 sesji, 10 wiadomości/s, 1 CPU/256 MiB).
-  Starsza próba dev.18 obejmuje też trwały wolumen, restart i backup/restore.
-  Obraz dev.22 przeszedł 25 zestawów oraz restart/restore, ale dłuższy R0
-  ujawnił timeout dostarczenia; pełna kwalifikacja poprawki pozostaje otwarta.
+- Przypięty lokalny obraz dev.24 z kompletem źródeł:26 zestawów kontroli,
+  trwały wolumen, restart i backup/restore. Dłuższy R0 przeszedł:100 sesji,
+  6000 wiadomości przez600s,1CPU/256MiB/swap0. Zachowano wcześniejszą nieudaną
+  próbę dev.22, która ujawniła problem kolejki.
 
 [Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
 zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
@@ -52,7 +51,7 @@ pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożenio
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
 - [Kontener lokalny](docs/implementation/CONTAINERS.md), [raport obrazu dev.18](docs/implementation/VERIFICATION-2026-11-01-container.md)
-- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.19 i pomiar R0](docs/implementation/VERIFICATION-2026-11-01-r0.md)
+- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.24 i dłuższy pomiar](docs/implementation/VERIFICATION-2026-11-01-r0-dev24.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
 - [Liczniki i histogramy](docs/implementation/RUNTIME-METRICS.md), [weryfikacja dev.22](docs/implementation/VERIFICATION-2026-11-01-dev22.md)
 - [Kolejka zapisów SQLite i odtworzony błąd](docs/implementation/SQLITE-WRITER.md)

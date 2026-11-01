@@ -29,17 +29,38 @@ zrobił nowy backup/restore. Oryginały niezmienione. Baseline /tmp/rgg-baseline
 Inwentarz190, RustSec0/0 (1395 porad, commit2295466c4e9df26647fd67d8fa1c705ac2fc7f81).
 SQLITE-UPGRADE.md, sqlite-upgrade/regression/faults-2026-11-01-dev24.json są dowodami.
 
+Dev.24 zapisany w bf94fbd78d813f1a64e9192ba59dafebde4968b9.
+Obraz dev24 przeszedł26 zestawów, restart/restore i R0:600s,100Ready,6000 wiadomości,
+3000online/3000offline,1CPU/256MiB/swap0/PID128. ACKp95=4.535ms,onlinep95=9.180ms,
+CPU0.115566,RSSpeak18522112B,cgrouppeak20459520B. Wszystkie bramki,6000TWU,
+zero sesji/payloadów,integrity/FK oraz cleanup przeszły. Raport R0 nie jest soak.
+Runtime sha256:054d8dd16f12e3a08cf11bc5aaf3a65064704f7c8c89cff8fea3b1a48eb7c016.
+Verification sha256:6ee934bb355ecd7ff47909b4b12e2d1d806a5373dd5c6623412e2ed11d6dfcb0.
+Server release68faf007173ab6667905e181d4617843714d85129a7a71309f0c887ac6f1609a.
+Sourcearchive60ca04f9e4c39145115e1db4b7ed76a9ef1d64cf7f4332a4b9960bfb87cc280f.
+Eksport workspace/rgg-container-2026-11-01-dev24/rgg-dev24-runtime.tar.gz,
+61680178B,SHA95088150316b620c0812c19350981bcc05d1050bb6d925bb451f6df005432d37.
+Manifest container-artifact-2026-11-01-dev24.json i6 surowych raportów skopiowano
+do repo. Prywatny daemon zatrzymany po eksporcie (dawna sesja71330 wyszła0).
+
 Kolejność dalszej pracy:
-1. Zakończyć lokalny commit dev.24, jeśli jeszcze nie istnieje.
-2. Nowy obraz z zatwierdzonego commitu: tools/build_container.py --docker
-   /tmp/rgg-docker-local-20261101/bin/docker --socket .../docker29.sock
-   --target runtime/verification --report nowy_plik.json. Uruchamiać w WSL jako
-   root z jawnym socketem; log budowania zapisać poza repo. Żadnego push.
-3. Testy tests/container_suite.py, container_runtime.py, container_load.py.
-   R0 ustalić600s przed startem, te same progi co dev22,100Ready/6000 wiadomości.
-   Suite/runtime deklarują swap=max; R0 jawnie i zweryfikowanie ustawia swap0.
-   Dopiero po pełnym sukcesie eksport artefaktu. Zachować wszystkie nieudane próby.
-4. Wrócić do poprawki końca uploadu GG6 w generatorze klienta (opis niżej).
+1. Zakończyć osobny lokalny commit dokumentacji kwalifikacji obrazu dev24.
+2. Dokończyć rozpoczętą poprawkę klienta (planowane dev25). W worktree zmieniono
+   tools/client_patch.py (3 dodatkowe zakresy,82B własnego kodu w128B paddingu),
+   mapę przeglądarkową27 zakresów, test instalatora i liczby zakresów HTTP,
+   tekst patchera. Dodano samodzielny MIT validation/gg6_upload_cpu/check.py,
+   LICENSE,README,przypięty wheel Unicorna oraz tests/client_upload_wire.py.
+   Nie usuwać tych niezacommitowanych zmian. Repo nadal ma wersjędev24.
+3. Prototyp i pełny klient przeszły79 przypadków CPU (wszystkie granice2047,
+   limit50000,NULL),8 rzeczywistych sekwencji TCP i restart. Pełny klient dla
+   127.0.0.1 ma SHA b5e5c51f61467a07a0dce1079c45bfd4596cb3659aeb8a5b37843ad53faaaaeb.
+   tests/client_package.py z oryginałem przeszedł5 testów+3 adresy+464 zasoby
+   Windows LoadStringW bez startu GG. Node/JS vs Python:6 wektorów identycznych.
+   Po ostatniej walidacji dodano tylko ograniczenie długości plików wejściowych
+   do check.py; ponowić finalną walidację, aby report.driver_sha256 się zgadzał.
+4. Zapisać dokumentację/proweniencję poprawki, bumpdev25, metadane Cargo,
+   odpowiednie testy HTTP/Rust i lokalny commit. Następnie dalsze prace lokalne.
+   Natywnego GG nadal nie uruchamiano. Żadnych podmian zainstalowanego klienta.
 
 ## Wyniki obrazu dev.22 i odtworzenie błędu
 
@@ -76,7 +97,7 @@ Nie usuwać starych archiwów dev18/dev19 ani raportów niepowodzeń.
 Prywatny Docker29.9.2/runc1.5.2 w WSL:
 /tmp/rgg-docker-local-20261101 (root0700), bin/, data29/, run29/,
 daemon29.json, docker29.sock, daemon29.pid, daemon-dev22.log.
-Daemon działa w sesji71330; po zakończeniu prób lub pauzie zatrzymać tylko ten
+Daemon zatrzymany po dev24 (sesja71330 wyszła0). Przy przyszłych próbach zatrzymać tylko ten
 sprawdzony PID (SIGTERM), wcześniej sprawdzić brak własnych kontenerów/wolumenów.
 Docker Desktop pozostaje wyłączony. Zawsze jawny --host unix://... i pusty
 osobny --config, bez DOCKER_*; nie używać domyślnego kontekstu.

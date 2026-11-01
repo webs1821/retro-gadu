@@ -422,3 +422,15 @@ wiadomości offline, obrazek, kontakty i profil działały; nowy zapis i backup/
 również. Oryginał i stare archiwum niezmienione. [Kontrakt](SQLITE-UPGRADE.md)
 i surowe raporty sqlite-*-2026-11-01-dev24.json. Obraz/R0 nadal do wykonania.
 Brak push, wdrożenia i kwalifikacji natywnego klienta.
+
+
+## 2026-11-01 — kwalifikacja obrazu dev.24
+
+26 grup release, restart/wolumen/backup-restore oraz pełny dłuższy R0 przeszły.
+100 Ready,600s,6000 wiadomości,3000 online i3000 offline z dokładnymi payloadami
+oraz FIFO. ACK p95 4.535ms, online p95 9.180ms, CPU11.5566%, RSS peak17.66MiB;
+1CPU/256MiB/swap0/PID128. Po SIGTERM integralność/FK ok,6000TWU,zero sesji/payloadów.
+Archiwum61680178B:95088150316b620c0812c19350981bcc05d1050bb6d925bb451f6df005432d37.
+Źródło bf94fbd78d813f1a64e9192ba59dafebde4968b9, manifest i surowe raporty zapisane
+w repo i workspace/rgg-container-2026-11-01-dev24. Prywatny daemon zatrzymany.
+Długi soak/natywny GG/publiczny profil nadal otwarte. Brak push/deploy.

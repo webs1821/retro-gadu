@@ -83,3 +83,13 @@ Raporty container-*-2026-11-01-dev22.json i r0-2026-11-01-dev22-failed.json
 zachowują rozdział udanych kontroli funkcji od nieudanej próby obciążenia.
 [Poprawka w dev.23](SQLITE-WRITER.md) przeszła osobne odtworzenie, ale nadal
 wymaga aktualizacji biblioteki SQLite i nowej pełnej kwalifikacji artefaktu.
+
+
+## Dev.24 — zakończona próba po poprawkach SQLite
+
+Źródło bf94fbd78d813f1a64e9192ba59dafebde4968b9 przeszło26 grup release,
+restart/restore oraz ten sam dłuższy R0:600s/100 sesji/6000 wiadomości.
+Wszystkie bramki przeszły. [Raport](VERIFICATION-2026-11-01-r0-dev24.md)
+wiąże konkretne obrazy, binarkę, źródła i archiwum. Wynik nie kwalifikuje
+późniejszych zmian ani natywnej aplikacji. Prywatny daemon po eksporcie
+zatrzymano; kontenery i wolumeny testów usunięto, cache/archiwa zachowano.
