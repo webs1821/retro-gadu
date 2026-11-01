@@ -33,9 +33,9 @@ wyniku testów działającego gg-retro.
 | Statystyki online/zarejestrowani z respektowaniem niewidoczności | gotowe lokalnie: strona główna i /api/stats, opt-in | statistics_tests, http_statistics.py; epoka/generacja/credential/Ready, niewidoczność/tylko znajomi, restart/retirement | przeglądarka desktop: wygląd |
 | Konfigurowana domena i legacy HTTP discovery | częściowe: opcjonalne lokalne discovery GG6; profil publicznej domeny pozostaje do wykonania | HTTP/1.0, adres listenera, brak wpływu Host, logowanie do odkrytego portu | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | katalog WWW/JSON i pakiet/patcher CLI gotowe lokalnie dla przypiętego GG6.1; brak patchera w przeglądarce i kwalifikacji wykonania | http_downloads.py, client_package.py: 3 hosty i 464 zasoby Windows; client_downloads.py: rzeczywiste artefakty przez loopback | zasoby odczytane jako dane; aplikacji nie uruchamiano |
-| Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane; brak kwalifikacji wydajności/RSS/soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca | nie dotyczy |
+| Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane, także gniazda i czas HTTP; powtarzalna lokalna próba RSS/CPU, bez kwalifikacji produkcyjnej/długiego soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca; http_limits.py, local_endurance.py | nie dotyczy |
 | Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, backup/verify/restore, rotacja oraz pełny import przypiętego gg-retro gotowe lokalnie; brak próby na rzeczywistej kopii | accounts_cli.py, backups_cli.py, keys_cli.py, legacy_import.py: roundtrip, błędne dane, 8 przerwań procesu; migracja 9 → 10 | nie dotyczy |
-| Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | brak | — | — |
+| Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | częściowe: lokalny pomiar krótkotrwały; obraz, długi soak i pełna kwalifikacja nadal do wykonania | local_endurance.py, raport dev.18 | — |
 
 ## Warunek rozważenia podmiany
 

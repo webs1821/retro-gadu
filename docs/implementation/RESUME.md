@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.17
+# Punkt wznowienia — 2026-11-01, dev.18
 
 Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłącznie
 lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
@@ -11,8 +11,7 @@ discovery, WWW/rejestracja/liczniki, konferencje, klasyczne obrazki bez trwałeg
 cache oraz katalog pobierania kontrolowany manifestem. CLI ma pełne kopie,
 verify/restore, rotację kluczy ze wznowieniem i importer gg-retro.
 
-Aktualnie dev.17: schema 11, 10 modułów, 190 wersji zależności. Ostatni pełny
-wynik Rust: 77 testów w dev.16; runtime Rust dev.17 poza wersją nie zmieniono.
+Aktualnie dev.18: schema 11, 10 modułów, 190 wersji zależności, 83 testy Rust.
 Dev.15 dodał pełny importer (commit 6b5b219):
 Pełny import sztucznego przypiętego gg-retro 0.8.3: wszystkie hasła weryfikowane
 i przeszyfrowane świeżym keyringiem, dane w jednej transakcji, receipt z hashami,
@@ -51,10 +50,24 @@ Katalog wynikowy: D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-client-local-2026-1
 adres 127.0.0.1; nic nie podmieniono. [Kontrakt](CLIENT-PACKAGES.md),
 [raport](VERIFICATION-2026-11-01-dev17.md). Python pakowania wymaga >=3.11.
 
+Dev.18: BoundedListener/BoundedIo w rgg-server ogranicza HTTP przed parserem:
+64 gniazda/16 na faktyczne IP, idle 15s, zablokowany zapis 10s, lifetime 600s.
+Osobne rejestracje timerów odczytu/zapisu; incoming/flush nie przedłuża write.
+Sześć nowych testów Rust, trzy realne testy gniazd i regresja HTTP/GG przeszły.
+Clippy all-features i RustSec poprawnie. Zwykłe binarki bez test-hooks.
+Próba 180s: 4175 wiadomości online/offline, 167 cykli, szczyt RSS 24,1 MiB,
+180 pobrań/540 oczekiwanych 429, integralność DB i czysty SIGTERM.
+To nie długi soak ani dowód plateau RAM. [Raport](VERIFICATION-2026-11-01-dev18.md).
+
 Kolejne luki: upload kontaktów (odroczone ACK, pełny końcowy fragment 2047 B),
-domena/profil wdrożeniowy, lokalny kontener i pomiary/soak. Patcher jest przez CLI,
-brak odpowiednika w przeglądarce. Publiczny HTTP wymaga ograniczenia powolnych
-połączeń/zapisów, obecnie slot pobrania trwa aż do rozłączenia.
+domena/profil wdrożeniowy, lokalny kontener i długi soak. Patcher jest przez CLI,
+brak odpowiednika w przeglądarce. Limity HTTP są lokalnie sprawdzone, ale publiczny
+TLS/reverse proxy i jego pochodzenie żądań wymagają osobnego profilu/kwalifikacji.
+Docker.exe i /usr/bin/docker są dostępne. Konteksty default i desktop-linux
+wskazują lokalne named pipes. Odczyt docker --context desktop-linux info odmówił
+połączenia: named pipe nie istnieje, Docker Desktop nie ma uruchomionego silnika.
+Nie uruchamiano Dockera ani żadnego kontenera. Nie używać domyślnego kontekstu bez
+sprawdzenia endpointu; kolejny etap ma pozostać wyłącznie lokalny.
 Natywny GG6/Windows nadal niekwalifikowane. Do czasu parytetu nie rozważać podmiany.
 [PARITY](PARITY.md) zawiera aktualne rozróżnienie kodu i kwalifikacji.
 

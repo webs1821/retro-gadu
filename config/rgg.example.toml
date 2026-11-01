@@ -12,6 +12,13 @@ shutdown_seconds = 5
 # downloads_manifest = 'downloads/manifest.toml' # Optional verified client/installer artifacts.
 
 # Defaults, shown explicitly for local protocol testing:
+[http]
+max_connections = 64
+per_ip = 16
+idle_seconds = 15 # No bytes read or written; active downloads may last longer.
+write_seconds = 10 # A blocked TCP write cannot be extended by incoming bytes.
+lifetime_seconds = 600 # Absolute lifetime, including keep-alive and trickled headers.
+
 [network]
 max_connections = 64
 per_ip = 16

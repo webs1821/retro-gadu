@@ -57,9 +57,10 @@ To limit zawartości, nie obietnica identycznego RSS: występują narzuty alokat
 czasowe bufory odczytu i bufory HTTP/systemu. Kopie dla równoległych odbiorców
 współdzielą `Bytes`; nie powielają całego pliku. Maksymalnie 4 strumienie plików,
 fragmenty po 64 KiB, permit pozostaje z ciałem odpowiedzi do końca/anulowania.
-Zamknięcie połączenia oddaje slot. Wolny odbiorca może zajmować slot do rozłączenia;
-osobny timeout bezczynnego zapisu HTTP i pomiary obciążenia są bramką publicznego
-profilu, którego ta wersja nie deklaruje. Logowanie GG działa przy zajętych slotach.
+Zamknięcie połączenia oddaje slot. Od dev.18 [limity transportu HTTP](HTTP-LIMITS.md)
+obejmują zablokowany zapis TCP, bezczynność i maksymalny czas połączenia; timeout
+oddaje także slot pobierania. Logowanie GG działa przy zajętych slotach. Pomiar
+lokalny nie zastępuje kwalifikacji publicznego profilu.
 
 Każdy endpoint stosuje istniejącą kontrolę Host, Fetch-Site, Ready i wspólną kwotę
 źródłowego IP; X-Forwarded-For nie daje dodatkowego budżetu. Odpowiedzi mają

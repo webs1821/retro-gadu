@@ -275,3 +275,18 @@ przez lokalny HTTP oraz build/lifecycle dev.17. Kod Rust poza wersją nie zmieni
 77 testów Rust pozostaje wynikiem dev.16. Audyt 0 podatności/ostrzeżeń.
 Klienta i instalatora nie uruchamiano, niczego nie wdrożono ani nie pushowano.
 [Kontrakt](CLIENT-PACKAGES.md), [raport](VERIFICATION-2026-11-01-dev17.md).
+
+## 2026-11-01 — ograniczony transport HTTP i lokalny pomiar
+
+Wersja `0.1.0-dev.18`, schema 11 bez zmian. Dodano globalne/per-IP limity
+przyjmowania gniazd, bezczynność, ograniczenie zablokowanego zapisu i maksymalny
+czas połączenia. Terminy obejmują body pobierania, a zwolnienie socketu oddaje
+slot pliku. Dane od klienta i pusty flush nie utrzymują zablokowanego zapisu.
+
+83 testy Rust, Clippy i trzy testy realnych gniazd przeszły; także regresja
+wszystkich funkcji HTTP i sesji GG. Audyt: 0 podatności i ostrzeżeń. Własna
+trzyminutowa próba zweryfikowała 4175 wiadomości w 167 cyklach online/offline,
+180 pobrań pliku i 540 oczekiwanych ograniczeń 429. RSS maks. 24,1 MiB; baza
+poprawna i proces zamknięty czysto. Wynik nie zastępuje długiego soak ani pomiarów
+profilu produkcyjnego. Nadal wyłącznie lokalnie, bez push i podmiany usług.
+[Kontrakt](HTTP-LIMITS.md), [raport i surowe pomiary](VERIFICATION-2026-11-01-dev18.md).

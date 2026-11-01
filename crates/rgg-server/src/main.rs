@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 mod config;
+mod http_listener;
+use axum::serve::ListenerExt;
 use rgg_application::{
     accounts::{AccountRepository, SecretProtector},
     messaging::{Authenticator, Clock},
@@ -149,7 +151,8 @@ async fn run() -> Result<(), Error> {
         }
     });
     let server = axum::serve(
-        listener,
+        http_listener::BoundedListener::new(listener, config.http.clone())
+            .tap_io(|stream| stream.tcp_nodelay()),
         rgg_http::router(state.clone())
             .into_make_service_with_connect_info::<std::net::SocketAddr>(),
     )

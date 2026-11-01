@@ -23,5 +23,6 @@ tracing-subscriber.workspace = true
 test-hooks = ["rgg-transport/test-hooks", "rgg-store-sqlite/test-hooks"]
 [dev-dependencies]
 tempfile.workspace = true
+tokio = { workspace = true, features = ["test-util"] }
 [lints]
 workspace = true

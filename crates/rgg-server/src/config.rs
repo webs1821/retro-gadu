@@ -20,6 +20,8 @@ pub struct Config {
     pub web_public_stats: bool,
     pub downloads_manifest: Option<PathBuf>,
     #[serde(default)]
+    pub http: crate::http_listener::Limits,
+    #[serde(default)]
     pub network: rgg_transport::server::Limits,
     #[serde(default)]
     pub queue: rgg_application::messaging::QueueLimits,
@@ -42,7 +44,7 @@ pub enum ConfigError {
     Shutdown,
     #[error("data_dir must not be empty")]
     DataDirectory,
-    #[error("invalid network or queue limits")]
+    #[error("invalid network, HTTP or queue limits")]
     Limits,
     #[error("legacy_discovery requires a local IPv4 GG listener")]
     LegacyDiscovery,
@@ -72,6 +74,7 @@ impl Config {
         }
         let q = &config.queue;
         if !config.network.valid()
+            || !config.http.valid()
             || !(1..=10000).contains(&q.per_recipient_messages)
             || !(1..=10000).contains(&q.per_sender_messages)
             || !(1..=100000).contains(&q.global_messages)
@@ -101,6 +104,21 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn http_limits_are_bounded_and_reject_unknown_fields() {
+        let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n[http]\n";
+        assert!(Config::parse(base, Path::new(".")).is_ok());
+        for extra in [
+            "max_connections=0",
+            "per_ip=65",
+            "idle_seconds=0",
+            "write_seconds=121",
+            "lifetime_seconds=14",
+            "unknown=1",
+        ] {
+            assert!(Config::parse(&format!("{base}{extra}"), Path::new(".")).is_err());
+        }
+    }
     #[test]
     fn website_requires_the_initialized_gg_account_runtime() {
         assert!(matches!(
