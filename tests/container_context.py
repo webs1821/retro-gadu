@@ -18,20 +18,21 @@ class ContextTests(unittest.TestCase):
             root = Path(tmp); repo = root / 'repo'; repo.mkdir()
             git = ['git', '-C', str(repo)]
             subprocess.run(git + ['init', '-q'], check=True)
-            (repo / 'Cargo.toml').write_text('[workspace.package]\nversion = "0.1.0-test"\n')
+            (repo / 'Cargo.toml').write_bytes(b'[workspace.package]\nversion = "0.1.0-test"\n')
             subprocess.run(git + ['add', 'Cargo.toml'], check=True)
             subprocess.run(git + ['-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', '-c', 'commit.gpgsign=false', 'commit', '-qm', 'synthetic source'], check=True)
             (repo / 'private-secret.txt').write_text('SYNTHETIC-NOT-FOR-BUILD')
             with patch.object(build_container, 'ROOT', repo):
-                command, commit, version = build_container.source()
+                env = build_container.git_environment(root)
+                command, commit, version = build_container.source(env)
                 self.assertEqual(version, '0.1.0-test'); self.assertEqual(len(commit), 40)
                 archive = root / 'source.tar'
                 with archive.open('wb') as stream:
-                    subprocess.run(command + ['archive', '--format=tar', commit], stdout=stream, check=True)
+                    subprocess.run(command + ['archive', '--format=tar', commit], stdout=stream, env=env, check=True)
                 with tarfile.open(archive) as context:
                     self.assertEqual(context.getnames(), ['Cargo.toml'])
                 (repo / 'Cargo.toml').write_text('uncommitted changes')
-                with self.assertRaises(ValueError):build_container.source()
+                with self.assertRaises(ValueError):build_container.source(env)
 
     def test_regular_file_is_not_a_docker_endpoint(self):
         with tempfile.TemporaryDirectory(prefix='rgg-container-endpoint-') as tmp:

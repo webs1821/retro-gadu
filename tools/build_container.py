@@ -14,12 +14,20 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def source():
+def git_environment(directory):
+    env = {key: value for key, value in os.environ.items() if not key.startswith('GIT_')}
+    config = directory / 'gitconfig'
+    env.update(GIT_CONFIG_GLOBAL=str(config), GIT_CONFIG_NOSYSTEM='1', GIT_OPTIONAL_LOCKS='0', GIT_TERMINAL_PROMPT='0')
+    subprocess.run(['git', 'config', '--file', str(config), '--add', 'safe.directory', str(ROOT)], env=env, check=True)
+    return env
+
+
+def source(git_env=None):
     git = ['git', '-c', 'safe.directory=' + str(ROOT), '-C', str(ROOT)]
-    if subprocess.run(git + ['diff', '--quiet', 'HEAD']).returncode:
+    if subprocess.run(git + ['diff', '--quiet', 'HEAD'], env=git_env).returncode:
         raise ValueError('tracked source must be committed before building')
-    commit = subprocess.check_output(git + ['rev-parse', 'HEAD'], text=True).strip()
-    cargo = subprocess.check_output(git + ['show', 'HEAD:Cargo.toml'], text=True)
+    commit = subprocess.check_output(git + ['rev-parse', 'HEAD'], text=True, env=git_env).strip()
+    cargo = subprocess.check_output(git + ['show', 'HEAD:Cargo.toml'], text=True, env=git_env)
     versions = re.findall(r'^version = "([0-9A-Za-z.+-]{1,64})"$', cargo, re.MULTILINE)
     if len(versions) != 1 or not re.fullmatch('[a-f0-9]{40}', commit):
         raise ValueError('source identity is ambiguous')
@@ -37,14 +45,15 @@ def main():
         raise ValueError('an explicit existing local Unix socket is required')
     if args.report.exists():
         raise ValueError('report must be new')
-    git, commit, version = source()
-    tag = 'rgg-local:' + commit[:12] + '-' + args.target
     env = os.environ.copy()
     for key in ['DOCKER_HOST', 'DOCKER_CONTEXT', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH', 'DOCKER_AUTH_CONFIG', 'DOCKER_CONFIG']:
         env.pop(key, None)
     # This is a portable local development path; no BuildKit daemon is assumed.
     env['DOCKER_BUILDKIT'] = '0'
     with tempfile.TemporaryDirectory(prefix='rgg-container-build-') as tmp:
+        git_env = git_environment(Path(tmp))
+        git, commit, version = source(git_env)
+        tag = 'rgg-local:' + commit[:12] + '-' + args.target
         client = Path(tmp) / 'client'; client.mkdir()
         cli = [str(args.docker.resolve()), '--config', str(client), '--host', 'unix://' + str(args.socket)]
         engine = json.loads(subprocess.check_output(cli + ['info', '--format', '{{json .}}'], env=env))
@@ -55,7 +64,7 @@ def main():
             raise ValueError('this source/target image tag already exists; refusing overwrite')
         archive = Path(tmp) / 'source.tar'
         with archive.open('xb') as output:
-            subprocess.run(git + ['archive', '--format=tar', commit], stdout=output, check=True)
+            subprocess.run(git + ['archive', '--format=tar', commit], stdout=output, env=git_env, check=True)
         with archive.open('rb') as context:
             subprocess.run(cli + ['build', '--network=host', '--memory=3g', '--memory-swap=3g',
                                  '--cpu-period=100000', '--cpu-quota=200000', '--target', args.target,
