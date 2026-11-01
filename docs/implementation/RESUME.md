@@ -182,3 +182,26 @@ Nadal otwarte: klient natywny, publiczny TLS/proxy, rzeczywisty import, długi s
 kwalifikacja OS/dependencies i komplet metryk RSS/CPU/buforów.
 Referencja gg-retro ed9640cc247764754b5e47891053eb07a53f76d5 w D:\Dokumenty\Documents\gg-retro.
 Libgadu9eb2aa0eb6ad020fda7c7264538e48c7b78ba602 w workspace/rgg-reference-libgadu.
+
+
+## Obraz dev26 — pierwsza próba i poprawka fixture
+
+Commit funkcjonalny dev26: 0dfd1b6329f15c9e763202ac80697fc46ff7bb00.
+Zbudowane dwa obrazy, ale suite zatrzymała się na pełnej historii: metryki503.
+Potwierdzono SQLITE_FULL, wolne704512B przy32MiB tmpfs; fixture Python zostawiał
+połączenie i WAL14152232B. Z rozpakowanymi źródłami zajęte32849920B.
+Bez rozpakowanych źródeł ten sam obraz przeszedł, a po dodaniu contextlib.closing
+również z nimi: replay1.146s,ACK5.363ms. Runtime/limity bez zmian.
+Dowód container-dev26-attempt1.json. Nie nadpisywać wcześniejszych buildów/logów.
+Nowy lokalny commit zawiera tylko poprawkę zamykania połączeń testowych i dowody.
+Następnie budować z nowego commitu, raporty runtime-dev26-final-build.json
+oraz verification-dev26-final-build.json (dotychczasowe nazwy zajęte).
+Wersja nadal dev26/schema13; źródło obrazu będzie nowym commitem.
+
+Prywatny Docker WŁĄCZONY, własna sesja34969, log daemon-dev26.log.
+Build51900 i suite44430 zakończone; suite44430 nieudana, runtime/R0 nie ruszyły.
+Prywatny socket/data jak wcześniej. Stare obrazy26 niekwalifikowane; nie eksportować
+ich jako gotowej wersji. Po końcowym eksporcie zatrzymać wyłącznie własny daemon.
+Workspace ma sterowniki rgg-container-qualify26.py i rgg-container-r026.py;
+przed uruchomieniem podmienić w nich oczekiwany commit i nazwy buildów na finalne.
+Root r0-dev26-plan.json/r0-dev26-600s.json jeszcze NIE istnieją.

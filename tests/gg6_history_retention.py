@@ -7,6 +7,7 @@ without waiting days. This is a functional regression, not an R0/soak result.
 """
 import argparse
 import asyncio
+from contextlib import closing
 import hashlib
 import json
 from pathlib import Path
@@ -37,7 +38,9 @@ def fixture(data):
             yield (sequence, 1, recipient, sequence, 1, 8, text.decode() if pending else None,
                    '[]' if pending else None, '[]' if pending else None, 132, now, now + 86400)
 
-    with sqlite3.connect(data / 'rgg.sqlite') as db:
+    # Connection.__exit__ commits but does not close; an unclosed fixture keeps
+    # a 14 MB WAL beside the database until GC, exhausting the 32 MiB test tmpfs.
+    with closing(sqlite3.connect(data / 'rgg.sqlite')) as db, db:
         db.execute('PRAGMA foreign_keys=ON')
         db.executemany('INSERT INTO messages(id,sender,recipient,client_sequence,payload_version,presentation,body,styles,conference,payload_bytes,accepted_at,expires_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)', messages())
         db.executemany('INSERT INTO deliveries(message_id,recipient,enqueue_order,state,terminal_at) VALUES(?,?,?,?,?)',
@@ -117,7 +120,7 @@ def main():
         assert server.process.returncode == 0, server.log.read_text()
         # Each transition clears payloads atomically. Cardinality pruning runs during
         # acceptance/claim/maintenance, so final transitions can temporarily exceed the cap.
-        with sqlite3.connect(data / 'rgg.sqlite') as db:
+        with closing(sqlite3.connect(data / 'rgg.sqlite')) as db, db:
             assert db.execute('SELECT count(*) FROM account_sessions').fetchone()[0] == 0
             assert db.execute('SELECT count(*) FROM deliveries WHERE state!="TransportWrittenUnconfirmed"').fetchone()[0] == 0
             assert db.execute('SELECT count(*) FROM messages WHERE body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL').fetchone()[0] == 0
@@ -126,7 +129,7 @@ def main():
             server.ready()
             deadline = time.monotonic() + 8
             while True:
-                with sqlite3.connect(data / 'rgg.sqlite') as db:
+                with closing(sqlite3.connect(data / 'rgg.sqlite')) as db, db:
                     total = db.execute('SELECT count(*) FROM deliveries').fetchone()[0]
                 if total == HISTORY:
                     break
@@ -135,7 +138,7 @@ def main():
         finally:
             server.close()
         assert server.process.returncode == 0
-        with sqlite3.connect(data / 'rgg.sqlite') as db:
+        with closing(sqlite3.connect(data / 'rgg.sqlite')) as db, db:
             assert db.execute('PRAGMA integrity_check').fetchone()[0] == 'ok'
             assert db.execute('PRAGMA foreign_key_check').fetchall() == []
             assert db.execute('SELECT min(id),max(id),count(*) FROM messages').fetchone() == (PENDING + 2, HISTORY + PENDING + 1, HISTORY)

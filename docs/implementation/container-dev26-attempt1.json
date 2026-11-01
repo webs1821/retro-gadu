@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "source_commit": "0dfd1b6329f15c9e763202ac80697fc46ff7bb00",
+  "suite_passed": false,
+  "runtime_qualified": false,
+  "cause": "synthetic fixture left SQLite connection and 14 MB WAL open; extracted sources plus database/WAL exhausted the unchanged 32 MiB tmpfs",
+  "runtime_build": {
+    "format": 1,
+    "built": true,
+    "source_commit": "0dfd1b6329f15c9e763202ac80697fc46ff7bb00",
+    "version": "0.1.0-dev.26",
+    "target": "runtime",
+    "image": "rgg-local:0dfd1b6329f1-runtime",
+    "image_id": "sha256:c64d0d41ae32a6230c2805ade7a2e82fb2728949bf327cd369240de93a8681ea",
+    "architecture": "amd64",
+    "engine_version": "29.9.2",
+    "image_size": 119805589,
+    "source_archive": "git archive of the recorded commit; vendored Cargo sources included in runtime",
+    "pushed": false,
+    "deployed": false,
+    "runtime_qualified": false
+  },
+  "verification_build": {
+    "format": 1,
+    "built": true,
+    "source_commit": "0dfd1b6329f15c9e763202ac80697fc46ff7bb00",
+    "version": "0.1.0-dev.26",
+    "target": "verification",
+    "image": "rgg-local:0dfd1b6329f1-verification",
+    "image_id": "sha256:a51577905c18542696ebd16aa3ca3528e2b445c474f58d23bdff58847dcba725",
+    "architecture": "amd64",
+    "engine_version": "29.9.2",
+    "image_size": 165547570,
+    "source_archive": "git archive of the recorded commit; vendored Cargo sources included in runtime",
+    "pushed": false,
+    "deployed": false,
+    "runtime_qualified": false
+  },
+  "suite_failure_log": "OK: 10 provenance records, 10 crate boundaries, 13 migrations, source notices\nPASS: pinned schema, counts and semantic gaps; read-only files and redacted output\nPASS: unsupported schema/history, sidecars, symlink, permissions and size refused\nPASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\nPASS: CLI init/register/invites, three-use limit, custom/automatic UIN, persistent retirement, encrypted credentials, lost-key refusal, server/admin mutual exclusion\nPASS: complete snapshot and authenticated restored text/images/profile/contacts/invites\nPASS: existing/live destinations and corrupt/incomplete/wrong-key backups refused\nPASS: rekey all accounts, retain keys, unchanged passwords/versions, older backup restore\nPASS: refuse active server, incomplete/unrelated pending keyring, corrupt account\nPASS: new/old GG6 login, retained messages/images/profile/contacts, audit and independent backups\nPASS: bad credentials/input, active server, pending rotation and missing data/key refused\nPASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\nPASS: concurrent replay {\"passed\": true, \"history\": 3000, \"offline\": 3000, \"receivers\": 20, \"seconds\": 11.166, \"capacity_qualified\": false}\n\nWARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\ntest_config_bounds_and_no_binary_fetch (__main__.FormatTests.test_config_bounds_and_no_binary_fetch) ... ok\ntest_malformed_pe_and_patch_preconditions (__main__.FormatTests.test_malformed_pe_and_patch_preconditions) ... ok\ntest_no_manifest_on_interrupted_publication_and_no_overwrite (__main__.FormatTests.test_no_manifest_on_interrupted_publication_and_no_overwrite) ... ok\ntest_solid_installer_roundtrip_and_rejection (__main__.FormatTests.test_solid_installer_roundtrip_and_rejection) ... ok\ntest_string_tables_c_strings_suffixes_and_boundaries (__main__.FormatTests.test_string_tables_c_strings_suffixes_and_boundaries) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.211s\n\nOK\nTraceback (most recent call last):\n  File \"/tmp/rgg-image-source-fb4yck1_/tests/gg6_history_retention.py\", line 149, in <module>\n    main()\n    ~~~~^^\n  File \"/tmp/rgg-image-source-fb4yck1_/tests/gg6_history_retention.py\", line 114, in main\n    report = asyncio.run(replay(port, metrics, expected))\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 196, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 119, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/tmp/rgg-image-source-fb4yck1_/tests/gg6_history_retention.py\", line 74, in replay\n    await finished()\n  File \"/tmp/rgg-image-source-fb4yck1_/tests/gg6_history_retention.py\", line 67, in finished\n    while (await snapshot())['rgg_queued_payload_bytes'] != 0:\n           ^^^^^^^^^^^^^^^^\n  File \"/tmp/rgg-image-source-fb4yck1_/tests/gg6_history_retention.py\", line 58, in snapshot\n    return await loop.run_in_executor(None, metric_snapshot, '127.0.0.1', metrics)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/tmp/rgg-image-source-fb4yck1_/tests/r0_workload.py\", line 39, in metric_snapshot\n    assert response.status == 200, 'metrics unavailable'\n           ^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: metrics unavailable\nTraceback (most recent call last):\n  File \"<stdin>\", line 57, in <module>\n  File \"<stdin>\", line 42, in main\n  File \"/usr/local/lib/python3.13/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['/usr/local/bin/python', '/tmp/rgg-image-source-fb4yck1_/tests/gg6_history_retention.py', '--server', '/usr/local/bin/rgg-server', '--admin', '/usr/local/bin/rgg-admin']' returned non-zero exit status 1.\n",
+  "diagnostic_logs": {
+    "extract": "START_TMP_USAGE True usage(total=33554432, used=4403200, free=29151232)\nDIAGNOSTIC_ERROR AssertionError metrics unavailable\nTMP_USAGE usage(total=33554432, used=32849920, free=704512)\nDB_FILES [('rgg.sqlite-shm', 32768), ('rgg.sqlite-wal', 14152232), ('rgg.sqlite', 14245888)]\nPYTHON_SQL_ERROR OperationalError('database or disk is full') 0.008913504000020112\nMETRIC_RESPONSE 503 0.011474985999939236 b'metrics unavailable\\n'\nMETRIC_RESPONSE 503 0.030843884999967486 b'metrics unavailable\\n'\n\nWARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nTraceback (most recent call last):\n  File \"<stdin>\", line 31, in <module>\n  File \"/tmp/rgg-image-source-hukird5w/tests/gg6_history_retention.py\", line 114, in main\n    report = asyncio.run(replay(port, metrics, expected))\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 196, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 119, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"<stdin>\", line 13, in diagnostic\n  File \"/tmp/rgg-image-source-hukird5w/tests/gg6_history_retention.py\", line 74, in replay\n    await finished()\n  File \"/tmp/rgg-image-source-hukird5w/tests/gg6_history_retention.py\", line 67, in finished\n    while (await snapshot())['rgg_queued_payload_bytes'] != 0:\n           ^^^^^^^^^^^^^^^^\n  File \"/tmp/rgg-image-source-hukird5w/tests/gg6_history_retention.py\", line 58, in snapshot\n    return await loop.run_in_executor(None, metric_snapshot, '127.0.0.1', metrics)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/concurrent/futures/thread.py\", line 59, in run\n    result = self.fn(*self.args, **self.kwargs)\n  File \"/tmp/rgg-image-source-hukird5w/tests/r0_workload.py\", line 39, in metric_snapshot\n    assert response.status == 200, 'metrics unavailable'\n           ^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: metrics unavailable\n",
+    "direct": "START_TMP_USAGE False usage(total=33554432, used=0, free=33554432)\nPASS: full history {\"replay_seconds\": 1.053, \"total_seconds\": 1.1, \"new_acceptance_ack_ms\": 4.514, \"passed\": true, \"history\": 100000, \"offline\": 200, \"receivers\": 20, \"restart_retention_verified\": true, \"server_sha256\": \"9a83c9885ca7a0888d0e086a17d1c8ebbf4476a3c6ea444a7b045aee90d7c053\", \"capacity_qualified\": false}\n\nWARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\n",
+    "corrected-extract": "START_TMP_USAGE True usage(total=33554432, used=4403200, free=29151232)\nPASS: full history {\"replay_seconds\": 1.146, \"total_seconds\": 1.198, \"new_acceptance_ack_ms\": 5.363, \"passed\": true, \"history\": 100000, \"offline\": 200, \"receivers\": 20, \"restart_retention_verified\": true, \"server_sha256\": \"9a83c9885ca7a0888d0e086a17d1c8ebbf4476a3c6ea444a7b045aee90d7c053\", \"capacity_qualified\": false}\n\nWARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\n"
+  },
+  "corrected_driver_sha256": "b833105fc45a66bef4ebadefa969f063f2366d560f15ac530c65c39fd23d896c",
+  "corrected_driver_passed_same_image": true,
+  "runtime_code_changed": false,
+  "limits_changed": false,
+  "release_binary_sha256": "9a83c9885ca7a0888d0e086a17d1c8ebbf4476a3c6ea444a7b045aee90d7c053"
+}

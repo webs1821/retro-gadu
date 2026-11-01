@@ -65,3 +65,13 @@ Wyniki zbiorcze: history-regression-2026-11-01-dev26.json i
 history-faults-2026-11-01-dev26.json. Ostatni kwalifikowany obraz/R0 pozostaje
 dev.24. Nowa wersja wymaga osobnej kwalifikacji obrazu. Żadnych zmian produkcji,
 publikacji pakietów klienta ani push.
+
+
+Pierwsza próba suite kontenera ujawniła błąd samej fixture: kontekst sqlite3
+zatwierdza transakcję, ale nie zamyka połączenia. Pozostawiony 14-MB WAL wraz
+z bazą i rozpakowanymi źródłami wypełniał tmpfs32MiB, więc agregacja metryk
+zwracała SQLITE_FULL/HTTP503. Użyto contextlib.closing dla połączeń kontrolnych.
+Nie zwiększono tmpfs, RAM ani deadline. Ten sam release przeszedł poprawiony test
+z rozpakowanymi źródłami; pełny obraz wymaga ponownego builda/suite. Dowód:
+container-dev26-attempt1.json. Oryginalne 25 regresji dotyczą wcześniejszej wersji
+sterownika; oddzielny raport zachowuje hash poprawionego testu.
