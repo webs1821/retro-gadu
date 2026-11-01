@@ -201,3 +201,13 @@ znacznik niepełnego restore blokuje start. Dwie kontrolowane awarie przeszły,
 podobnie jak odtworzenie pełnych danych i logowanie/odbiór obrazka po restore.
 69 testów Rust, Clippy i audyt bez błędów. Brak nowych wersji zależności.
 [Kontrakt](BACKUPS.md), [wyniki](VERIFICATION-2026-11-01-dev12.md). Nadal lokalnie.
+
+## 2026-11-01 — rotacja kluczy, dev.13
+
+keys-status/keys-rotate/keys-resume, obowiązkowa kompletna kopia przed rotacją,
+publikacja pełnego keyringu przed zapisem rekordów, partie 64 i atomowa historia
+nonce. Starsze klucze pozostają; hasła i credential_version nie zmieniają się.
+71 testów Rust, w tym kolizja nonce i rollback całej partii, oraz trzy przerwania
+procesu i logowanie przed/po wznowieniu. Starszy backup odtwarza się niezależnie.
+Regresje backup/CLI/kolejki, Clippy i RustSec poprawne; normalny build bez hooków.
+[Kontrakt](KEY-ROTATION.md), [wyniki](VERIFICATION-2026-11-01-dev13.md).

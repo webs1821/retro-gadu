@@ -59,6 +59,11 @@ Wersja **0.1.0-dev.12** dodaje kompletne kopie offline z kluczami i manifestem,
 weryfikację bez zmiany kopii oraz odtwarzanie do nowego katalogu. Niepełne
 odtworzenie blokuje start bazy. Kontrola obejmuje sekret każdego konta.
 
+Wersja **0.1.0-dev.13** dodaje rotację kluczy z obowiązkową kopią i wznowieniem
+po awarii. Zachowuje starsze klucze, hasła użytkowników i ich wersje uprawnień.
+
+- [Rotacja kluczy](docs/implementation/KEY-ROTATION.md)
+- [Weryfikacja dev.13](docs/implementation/VERIFICATION-2026-11-01-dev13.md)
 - [Kopie i odtwarzanie](docs/implementation/BACKUPS.md)
 - [Weryfikacja dev.12](docs/implementation/VERIFICATION-2026-11-01-dev12.md)
 - [Katalog pobierania](docs/implementation/DOWNLOADS.md)
@@ -254,7 +259,7 @@ inwentaryzacji tych zależności ani przyszłego audytu wydania.
 
 Inwentaryzacja wersji, licencji deklarowanych w metadanych i sum źródeł znajduje się
 w [dependencies.json](docs/implementation/dependencies.json), a wynik RustSec w
-[raporcie audytu dev.12](docs/implementation/cargo-audit-2026-11-01-dev12.json).
+[raporcie audytu dev.13](docs/implementation/cargo-audit-2026-11-01-dev13.json).
 Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.

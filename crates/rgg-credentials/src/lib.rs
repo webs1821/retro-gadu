@@ -33,6 +33,8 @@ pub enum KeyringError {
     Random,
     #[error("keyring permissions must restrict access to its owner")]
     Permissions,
+    #[error("keyring has reached its retained-key limit")]
+    Full,
 }
 
 #[derive(Deserialize)]
@@ -53,6 +55,9 @@ fn valid_id(value: &str) -> bool {
 
 impl Keyring {
     pub fn load(path: &Path) -> Result<Self, KeyringError> {
+        if !std::fs::symlink_metadata(path)?.file_type().is_file() {
+            return Err(KeyringError::Invalid);
+        }
         let file = std::fs::File::open(path)?;
         #[cfg(unix)]
         {
@@ -139,6 +144,75 @@ impl Keyring {
 
     pub fn has_key(&self, id: &str) -> bool {
         self.keys.contains_key(id)
+    }
+
+    pub fn active_id(&self) -> &str {
+        &self.active
+    }
+    pub fn key_ids(&self) -> Vec<String> {
+        self.keys.keys().cloned().collect()
+    }
+
+    /// Retains every old read key. No pruning API exists because backups may still require them.
+    pub fn successor(&self) -> Result<Self, KeyringError> {
+        if self.keys.len() >= 32 {
+            return Err(KeyringError::Full);
+        }
+        let mut key = Zeroizing::new([0u8; 32]);
+        rand::rngs::OsRng
+            .try_fill_bytes(&mut *key)
+            .map_err(|_| KeyringError::Random)?;
+        let mut id = [0u8; 12];
+        rand::rngs::OsRng
+            .try_fill_bytes(&mut id)
+            .map_err(|_| KeyringError::Random)?;
+        let active = format!("k{}", hex::encode(id));
+        if self.keys.contains_key(&active) {
+            return Err(KeyringError::Random);
+        }
+        let mut keys = self.keys.clone();
+        keys.insert(active.clone(), key);
+        Ok(Self { active, keys })
+    }
+    pub fn is_successor_of(&self, previous: &Self) -> bool {
+        self.keys.len() == previous.keys.len() + 1
+            && !previous.keys.contains_key(&self.active)
+            && previous
+                .keys
+                .iter()
+                .all(|(id, key)| self.keys.get(id) == Some(key))
+    }
+    /// Writes a fresh private candidate. Caller must publish it and sync the directory before rekeying rows.
+    pub fn write_new(&self, path: &Path) -> Result<(), KeyringError> {
+        // Reserve the full bounded representation before inserting secrets: growing a String
+        // could otherwise free an earlier allocation without clearing its key material.
+        let mut text = Zeroizing::new(String::with_capacity(16384));
+        text.push_str(&format!(
+            "format = 1\nactive = \"{}\"\n[keys]\n",
+            self.active
+        ));
+        for (id, key) in &self.keys {
+            let encoded = Zeroizing::new(hex::encode(key.as_slice()));
+            text.push_str(id);
+            text.push_str(" = \"");
+            text.push_str(&encoded);
+            text.push_str("\"\n");
+        }
+        let mut options = OpenOptions::new();
+        options.write(true).create_new(true);
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::OpenOptionsExt;
+            options.mode(0o600);
+        }
+        let mut file = options.open(path)?;
+        file.write_all(text.as_bytes())?;
+        file.sync_all()?;
+        #[cfg(unix)]
+        if let Some(parent) = path.parent() {
+            std::fs::File::open(parent)?.sync_all()?;
+        }
+        Ok(())
     }
 
     fn aad(user: UserId, version: u8, key_id: &str) -> Vec<u8> {
@@ -331,5 +405,35 @@ mod tests {
             invitation_digest(&first.to_uppercase())
         );
         assert!(invitation_digest("wrong").is_none());
+    }
+
+    #[test]
+    fn successor_persists_all_old_keys_refuses_overwrite_and_stops_at_retention_limit() {
+        let root = tempfile::tempdir().unwrap();
+        let mut ring = Keyring::create_new(&root.path().join("original")).unwrap();
+        let old = ring.seal(user(1), &password()).unwrap();
+        for index in 1..32 {
+            let mut next = ring.successor().unwrap();
+            assert!(next.is_successor_of(&ring));
+            let active = next.active.clone();
+            next.active = ring.active.clone();
+            assert!(!next.is_successor_of(&ring));
+            next.active = active;
+            let path = root.path().join(format!("next-{index}"));
+            next.write_new(&path).unwrap();
+            assert!(next.write_new(&path).is_err());
+            ring = Keyring::load(&path).unwrap();
+            assert_eq!(
+                ring.open(user(1), &old).unwrap().expose(),
+                password().expose()
+            );
+        }
+        assert!(matches!(ring.successor(), Err(KeyringError::Full)));
+        assert!(
+            Keyring::load(&root.path().join("original"))
+                .unwrap()
+                .open(user(1), &old)
+                .is_ok()
+        );
     }
 }

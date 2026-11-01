@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 mod backup;
+mod keys;
 use rgg_application::accounts::{AccountRepository, LegacyPassword, Registration, SecretProtector};
 use rgg_credentials::{Keyring, invitation_digest, new_invitation};
 use rgg_domain::UserId;
@@ -38,7 +39,7 @@ async fn run() -> Result<Value, Error> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore> [options]")?;
+        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume> [options]")?;
     let allowed: &[&str] = match command.as_str() {
         "init" | "account-create" | "stats" => &["--data-dir"],
         "invite" => &["--data-dir", "--count", "--uses"],
@@ -46,6 +47,8 @@ async fn run() -> Result<Value, Error> {
         "backup-create" => &["--data-dir", "--output"],
         "backup-verify" => &["--backup"],
         "restore" => &["--backup", "--data-dir"],
+        "keys-rotate" => &["--data-dir", "--backup"],
+        "keys-status" | "keys-resume" => &["--data-dir"],
         _ => return Err("unknown command".into()),
     };
     let mut options = BTreeMap::new();
@@ -65,6 +68,14 @@ async fn run() -> Result<Value, Error> {
         .await;
     }
     let path = PathBuf::from(options.get("--data-dir").ok_or("--data-dir is required")?);
+    if command.starts_with("keys-") {
+        if !path.join("rgg.sqlite").is_file() || !path.join("keys.toml").is_file() {
+            return Err("key maintenance requires initialized data".into());
+        }
+        if command == "keys-rotate" && !options.contains_key("--backup") {
+            return Err("--backup is required".into());
+        }
+    }
     if command == "backup-create" {
         if !options.contains_key("--output") {
             return Err("--output is required".into());
@@ -92,6 +103,14 @@ async fn execute(
     store: &SqliteStore,
 ) -> Result<Value, Error> {
     let key_path = store.data_directory().join("keys.toml");
+    if command.starts_with("keys-") {
+        return keys::run(
+            command,
+            store,
+            options.get("--backup").map(std::path::Path::new),
+        )
+        .await;
+    }
     if command == "init" {
         let ring = if key_path.exists() {
             Keyring::load(&key_path)?

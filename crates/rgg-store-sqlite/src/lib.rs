@@ -10,6 +10,7 @@ mod database;
 #[cfg(test)]
 mod image_tests;
 mod images;
+pub mod key_maintenance;
 mod messaging;
 #[cfg(test)]
 mod messaging_tests;
