@@ -19,6 +19,7 @@ jobs:
       - run: python tools/gg32_vectors.py
       - run: python tests/legacy_inspection.py
       - run: python tests/client_package.py
+      - run: python tests/container_context.py
       - run: cargo metadata --locked --format-version 1 | python tools/dependency_inventory.py
       - run: cargo fmt --all -- --check
       - run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings

@@ -1,0 +1,18 @@
+# Prefer the tracked-only git archive created by tools/build_container.py.
+.git
+target
+data
+dist
+artifacts
+.private
+.secrets
+**/.env
+**/keys.toml
+**/*.sqlite*
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.key
+**/*.exe
+**/__pycache__
+rgg.toml
