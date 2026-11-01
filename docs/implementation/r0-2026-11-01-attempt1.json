@@ -1,0 +1,13 @@
+{
+  "format": 1,
+  "passed": false,
+  "r0_sample_qualified": false,
+  "error": "CalledProcessError: Command '['/tmp/rgg-docker-local-20261101/bin/docker', '--config', '/tmp/rgg-container-load-joyy9cyl/client', '--host', 'unix:///tmp/rgg-docker-local-20261101/docker29.sock', 'run', '--name', 'rgg-16d485098f6f4bc4-c0', '--label', 'org.retrogadu.test-run=rgg-16d485098f6f4bc4', '--network', 'none', '--memory', '256m', '--memory-swap', '256m', '--cpus', '1', '--pids-limit', '128', '--read-only', '--tmpfs', '/tmp:rw,nosuid,nodev,noexec,size=32m', '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges=true', '--rm', '-i', '--mount', 'type=volume,source=rgg-16d485098f6f4bc4-v0,target=/data', 'sha256:2c40b48b6fc2b8ca6840d0587af4e9d5762a6ad56bfaa4cd6dbaafdf63096618', 'python', '/src/tests/r0_workload.py', 'prepare', '--admin', '/usr/local/bin/rgg-admin', '--data', '/data/runtime', '--count', '120']' returned non-zero exit status 1.",
+  "evidence": {
+    "source_commit": "0b251ba42df7197b8fdc07a5855744a70c5c570f",
+    "runtime_image": "sha256:f593f3c113b1dece0fd60c05f3df47b621c2733cb29ab5624bd2e149d745e105",
+    "verification_image": "sha256:2c40b48b6fc2b8ca6840d0587af4e9d5762a6ad56bfaa4cd6dbaafdf63096618"
+  },
+  "command_stderr": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nTraceback (most recent call last):\n  File \"/src/tests/r0_workload.py\", line 248, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"/src/tests/r0_workload.py\", line 246, in main\n    if args.command=='prepare':prepare(args.admin,args.data,args.count)\n                               ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/src/tests/r0_workload.py\", line 233, in prepare\n    command('init')\n    ~~~~~~~^^^^^^^^\n  File \"/src/tests/r0_workload.py\", line 230, in command\n    process=subprocess.run([str(admin),name,'--data-dir',str(data),*args],input=json.dumps(payload) if payload else None,\n                           text=True,capture_output=True,check=True,timeout=15)\n  File \"/usr/local/lib/python3.13/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['/usr/local/bin/rgg-admin', 'init', '--data-dir', '/data/runtime']' returned non-zero exit status 1.\n",
+  "cleanup_verified": true
+}

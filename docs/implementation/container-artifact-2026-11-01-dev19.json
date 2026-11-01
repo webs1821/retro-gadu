@@ -1,0 +1,40 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.19",
+  "schema": 11,
+  "source_commit": "0b251ba42df7197b8fdc07a5855744a70c5c570f",
+  "cargo_lock_sha256": "12161ec157586290d7672460691fbd5c0d075b0236cd7e6aa197ffdd50fe984c",
+  "runtime_image": "sha256:f593f3c113b1dece0fd60c05f3df47b621c2733cb29ab5624bd2e149d745e105",
+  "verification_image": "sha256:2c40b48b6fc2b8ca6840d0587af4e9d5762a6ad56bfaa4cd6dbaafdf63096618",
+  "server_sha256": "74f509e569400dade1da1fb365520cad115aea989b83fb55516c32c5523e750b",
+  "source_archive_sha256": "8a91a28af7aa84ad2ce94cb612e7d03e493f0b3a83330c54a747bc236fc4b85b",
+  "artifact_file": "rgg-dev19-runtime.tar.gz",
+  "artifact_size": 61229424,
+  "artifact_sha256": "ed9c16e3a757d7597c6194e75bfc89215c01733ee555451c642953f775a5906b",
+  "fixture_sha256": {
+    "tests/fixtures/gg-retro-vault-vectors.json": "e657bbc0e7b72650907a47c119b5d6ab3f9555efea396ffbd75e80b98334e5ff",
+    "tests/fixtures/gg32.json": "8921bc2d87d16adada04680c09c76f86b7da738bc7b0949fefd196abc2d3216f"
+  },
+  "reports_sha256": {
+    "container-build-2026-11-01-dev19.json": "ff4b064d05e942ac86b3ad43f3ade0b45234b68b127e05fe6abc3764c8f75ecd",
+    "container-test-image-2026-11-01-dev19.json": "3f93fe62ff37122354adec560309c6d334904c725fcac4c6b19e59a889758dc7",
+    "r0-2026-11-01-dev19.json": "20f5a6c9417b93edeee529bae2a36d07f215c92262f531e043a2659e0acdd37a",
+    "r0-2026-11-01-harness-check.json": "e2a9a7151ea766ea64b257d4c18c5ed54947c8c85d2f97276afd85993cc1cbdc",
+    "r0-2026-11-01-attempt1.json": "368f75b9c3c5465156f18c489655b23f2b2b2252750081100ce2ef1097dac62d",
+    "r0-2026-11-01-attempt2.json": "71ad45438f56f6cd849d2a6b74312942b76922bd0fea4885daa7edb88838c32d",
+    "r0-2026-11-01-attempt3.json": "026b8dc6141aa06d6cf6d46de7b42f841a51babb5691420d50940801fbe5e5a1",
+    "container-suite-2026-11-01-dev19.json": "1aa0a2bc305275a66c4703bc5c3ab7ecbc1384a7e667dfbd6e468f60bb1ea93e"
+  },
+  "driver_sha256": {
+    "suite": "b1669fec69c7478ab153cbcf814204733a1844f97c65291dfac339177dff93ab",
+    "container_load": "8db118c2ff4cd9a40c1d38e0778791622d31c7c1fa6cf1adc968d10903d11941",
+    "workload": "8d172a538abafb2a0fc040deafb6c17daaa89ed50b23df7178862f00b690fbd9"
+  },
+  "checks_passed": true,
+  "r0_sample_qualified": true,
+  "soak_qualified": false,
+  "native_client_qualified": false,
+  "production_qualified": false,
+  "pushed": false,
+  "deployed": false
+}

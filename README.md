@@ -30,8 +30,9 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   zapisu i całego połączenia. Syntetyczny pomiar online/offline jest powtarzalny.
 - Prywatne metryki na osobnym, opcjonalnym porcie loopback: sesje, kolejka,
   przechowywane rekordy i bajty. Ograniczone zapytania i stały zestaw etykiet.
-- Przypięty lokalny obraz dev.18 z kompletem źródeł; sprawdzone 20 zestawów
-  kontroli, nieuprzywilejowany PID1, trwały wolumen, restart i backup/restore.
+- Przypięty lokalny obraz dev.19 z kompletem źródeł; sprawdzone 22 zestawy
+  kontroli i krótki profil R0 (100 sesji, 10 wiadomości/s, 1 CPU/256 MiB).
+  Starsza próba dev.18 obejmuje też trwały wolumen, restart i backup/restore.
 
 [Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
 zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
@@ -40,6 +41,7 @@ pracy m.in. granice uploadu kontaktów, kwalifikacja klienta i profil wdrożenio
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
 - [Kontener lokalny](docs/implementation/CONTAINERS.md), [raport obrazu dev.18](docs/implementation/VERIFICATION-2026-11-01-container.md)
+- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.19 i pomiar R0](docs/implementation/VERIFICATION-2026-11-01-r0.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
 - [Ograniczenia HTTP](docs/implementation/HTTP-LIMITS.md), [weryfikacja dev.18](docs/implementation/VERIFICATION-2026-11-01-dev18.md)
 - [Pakiet klienta](docs/implementation/CLIENT-PACKAGES.md), [weryfikacja dev.17](docs/implementation/VERIFICATION-2026-11-01-dev17.md)

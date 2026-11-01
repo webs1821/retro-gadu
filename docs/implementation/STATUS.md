@@ -323,3 +323,19 @@ ma osobne limity i uczestniczy we wspólnym uruchamianiu/zamykaniu usług.
 limitów przeszły. Schema nadal 11, 190 zależności, 8 wpisów pochodzenia. Nie
 rozszerzano kwalifikacji wcześniejszego obrazu dev.18 na nową binarkę.
 [Kontrakt](METRICS.md), [raport](VERIFICATION-2026-11-01-dev19.md).
+
+
+## 2026-11-01 — obraz dev.19 i zakończona krótka próbka R0
+
+22 zestawy regresji release przeszły. Pełna próba 100 sesji/10 wiadomości na
+sekundę przez 180 s, z rzeczywistym CPU1/RAM256MiB/swap0, spełniła wszystkie
+wcześniej ustalone progi. Sprawdzono 1800 payloadów, w tym 900 offline/FIFO,
+końcowy stan i integralność DB, shutdown i cleanup. ACK p95 3,992 ms, online
+p95 7,621 ms, RSS peak 15,91 MiB, CPU średnio 9,71% jednej vCPU.
+
+Zachowano także nieukończone przygotowania i ich wyjaśnienia. Poprawki były
+w sterowniku: właściciel pustego wolumenu, tempo logowania, odczyt kopii WAL.
+Kod serwera i progi nie wymagały zmian. Archiwum obrazu, manifest i raporty
+zapisano na komputerze; prywatny daemon wyłączono po sprawdzeniu cleanup.
+Długi soak, klient natywny i pełna kwalifikacja produkcyjna pozostają otwarte.
+[Raport](VERIFICATION-2026-11-01-r0.md), [scenariusz](R0-LOAD.md).

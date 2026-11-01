@@ -36,7 +36,7 @@ wyniku testów działającego gg-retro.
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane, także gniazda i czas HTTP; powtarzalna lokalna próba RSS/CPU, bez kwalifikacji produkcyjnej/długiego soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca; http_limits.py, local_endurance.py | nie dotyczy |
 | Prywatne metryki operatora | lokalne agregaty bazy na osobnym porcie gotowe; pełna telemetria opóźnień, błędów i buforów pozostaje do wykonania | operations_tests, testy cache/deadline, http_metrics.py: niewidoczność, kolejka, restart, izolacja HTTP i shutdown | nie dotyczy |
 | Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, backup/verify/restore, rotacja oraz pełny import przypiętego gg-retro gotowe lokalnie; brak próby na rzeczywistej kopii | accounts_cli.py, backups_cli.py, keys_cli.py, legacy_import.py: roundtrip, błędne dane, 8 przerwań procesu; migracja 9 → 10 | nie dotyczy |
-| Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | częściowe: obraz, krótkie pomiary, restart i restore gotowe lokalnie; R0, długi soak i pełna kwalifikacja nadal do wykonania | local_endurance.py, container_suite.py (20 zestawów), container_runtime.py; nieegzekwowany limit swapu w WSL jawnie opisany | — |
+| Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | częściowe: obrazy, krótka próbka R0, restart i restore gotowe lokalnie; długi soak i pełna kwalifikacja nadal do wykonania | dev.19: container_suite.py (22 zestawy), container_load.py (100 sesji/1800 wiadomości/180 s, 1 CPU/256 MiB/swap0); dev.18: container_runtime.py. Osobny cgroup ustawia swap0 po weryfikacji własności, bo Docker w WSL go pomija | — |
 
 ## Warunek rozważenia podmiany
 

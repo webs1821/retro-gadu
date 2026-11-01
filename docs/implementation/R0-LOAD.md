@@ -44,3 +44,24 @@ odczytać faktyczne pliki cgroup, nie same opcje CLI. Jeśli konieczne, harness
 może ustawić `memory.swap.max=0` wyłącznie w cgroup sprawdzonego, własnego
 tymczasowego kontenera. Zmiana i odczyt zwrotny trafiają do raportu. Bez
 potwierdzenia limitu wynik nie kwalifikuje R0.
+
+## Korekty przygotowania przed fazą pomiarową
+
+Pierwsza próba zakończyła się przed uruchomieniem serwera: pusty wolumen miał
+właściciela obrazu pomocniczego. Pierwsze podłączenie z obrazu runtime nadaje
+mu teraz owner 10001/mode 0700, potem helper tworzy nowy podkatalog danych.
+Druga próba została odrzucona przy bardzo szybkim logowaniu: serwer ma istniejący
+budżet nowych połączeń 64 na start, następnie 16/s/IP. Generator dodaje odstęp
+100 ms między logowaniami przed właściwym pomiarem. Oba nieukończone przygotowania
+i ich cleanup są zachowane w raportach. Progów oceny i kodu serwera nie zmieniono.
+
+Bieżący sterownik obciążenia jest przekazywany do obrazu w stdin (z własnym
+SHA256 w raporcie); nie montuje hostowych katalogów ani danych runtime.
+Kod serwera i oracle GG32 nadal pochodzą z przypiętego obrazu/commitu.
+
+Trzecia próba ukończyła nadawanie 1800 wiadomości i cały odbiór offline, ale
+końcowy weryfikator SQLite nie mógł utworzyć plików pomocniczych WAL/SHM na
+wolumenie zamontowanym tylko do odczytu. Nie zakwalifikowano całej próby.
+Weryfikator po exit 0 kopiuje teraz DB oraz istniejący WAL do ograniczonego
+tmpfs, pomija stary SHM i sprawdza tę kopię. Źródłowy wolumen nadal jest
+read-only. Nie używa immutable=1, które mogłoby pominąć zatwierdzony WAL.

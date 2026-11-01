@@ -47,7 +47,8 @@ def main():
                   seconds=round(time.monotonic()-started, 3), completed=completed,
                   uid=10001, memory_max=268435456, cpu_max='100000 100000', pids_max=128,
                   read_only_root=True, no_new_privileges=True, seccomp_filter=True,
-                  swap_limit_supported=(group / 'memory.swap.max').exists(),
+                  swap_limit_file_present=(group / 'memory.swap.max').exists(),
+                  swap_max=(group / 'memory.swap.max').read_text().strip(),
                   native_client_qualified=False, capacity_r0_qualified=False)
     print('CONTAINER_REPORT=' + json.dumps(report), flush=True)
 

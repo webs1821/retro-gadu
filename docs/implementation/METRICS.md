@@ -63,5 +63,7 @@ uruchamia wspólne zamknięcie usług; shutdown wyłącza Ready i kończy listen
 
 Na tym etapie nie ma histogramów opóźnień, liczników błędów protokołu ani
 metryk buforów transferów/RSS/CPU w endpointcie. Zewnętrzny lokalny pomiar
-procesu pozostaje w `tests/local_endurance.py`; R0 i długi soak są nadal otwarte.
-Nie uruchamiano Prometheusa ani nowego obrazu kontenera dev.19.
+procesu pozostaje w `tests/local_endurance.py` i `tests/container_load.py`.
+Krótka próba R0 na obrazie dev.19 jest opisana w
+[osobnym raporcie](VERIFICATION-2026-11-01-r0.md). Długi soak pozostaje otwarty.
+Nie uruchamiano Prometheusa.

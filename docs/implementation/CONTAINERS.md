@@ -60,3 +60,14 @@ Skrypt wymaga dwóch obrazów z tym samym SHA źródła i etykietą lokalnej bud
 tworzy oznaczone zasoby testowe, a po próbie usuwa wyłącznie swoje kontenery
 i wolumeny. `tests/container_suite.py` uruchamia się przez stdin w obrazie
 verification, z ograniczeniami wskazanymi w raporcie i tmpfs 128 MiB.
+
+
+## Kolejny obraz: dev.19
+
+Obraz ze źródła `0b251ba42df7197b8fdc07a5855744a70c5c570f` przeszedł 22 zestawy
+regresji i krótką próbkę R0. [Raport](VERIFICATION-2026-11-01-r0.md) i
+[manifest](container-artifact-2026-11-01-dev19.json) wiążą obraz, archiwum,
+źródła oraz sterowniki testowe. W R0 osobno sprawdzono i wymuszono swap=0
+w cgroup własnego kontenera. Nie zmieniano konfiguracji hosta ani Dockera
+systemowego; prywatny daemon po próbach jest zatrzymany. To nie kwalifikacja
+produkcyjna, długi soak ani próba natywnego GG6.

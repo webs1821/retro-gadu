@@ -155,6 +155,10 @@ async def run(args):
         assert initial['rgg_queued_payload_bytes'] == 0 and initial['rgg_sessions{phase="ready"}'] == 0
         for user in range(1, args.sessions+1):
             clients.append(await Wire.connect(args.host, args.gg_port, user, expected, errors))
+            # Stay below the server's existing 16 new connections/s source-IP budget.
+            # Ramp-up is outside the steady-state measurement; do not weaken admission.
+            await asyncio.sleep(.1)
+            if user%10==0:print('LOAD_EVENT='+json.dumps({'phase':'connecting','established':user}),flush=True)
         await wait_metric('rgg_sessions{phase="ready"}', args.sessions)
         await asyncio.sleep(1)
         start = time.monotonic()

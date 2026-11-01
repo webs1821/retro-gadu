@@ -1,5 +1,34 @@
 # Punkt wznowienia — 2026-11-01, dev.19
 
+## Zakończony obraz dev.19 i krótka próba R0
+
+Źródło obrazu 0b251ba42df7197b8fdc07a5855744a70c5c570f, runtime
+sha256:f593f3c113b1dece0fd60c05f3df47b621c2733cb29ab5624bd2e149d745e105,
+verification sha256:2c40b48b6fc2b8ca6840d0587af4e9d5762a6ad56bfaa4cd6dbaafdf63096618.
+22 zestawy regresji release przeszły (63.316 s). Pełny R0: 100 sesji,
+1800 wiadomości/180.001s (900 online + 900 offline z FIFO), ACK p95 3.992ms,
+online p95 7.621ms, RSS peak 16678912 B, CPU 9.7075% jednej vCPU. Wszystkie
+progi z R0-LOAD.md spełnione. Limity rzeczywiste: CPU1/RAM256MiB/swap0/PID128;
+swap ustawiony bezpośrednio w cgroup własnego zweryfikowanego kontenera.
+Po exit0 sprawdzono kopię DB+WAL: integrity/FK, zero sesji/payloadów, 1800
+TransportWrittenUnconfirmed. Cleanup potwierdzony, zero kontenerów/wolumenów.
+Prywatny daemon Docker29 ZATRZYMANY (session23702 zakończona exit0), brak zadań.
+Raporty wcześniejszych nieukończonych przygotowań i krótkiej kontroli zachowano.
+Sterowniki poprawiono bez zmiany runtime/progów: właściciel wolumenu z obrazu
+runtime; logowanie co100ms z limitem64 w serii i16 nowych połączeń/s/IP; read-only DB/WAL
+kopiowane po shutdown do tmpfs przed integrity_check (nie używać immutable=1).
+Pełny raport r0-2026-11-01-dev19.json, opis VERIFICATION-2026-11-01-r0.md.
+Runtime release SHA74f509e569400dade1da1fb365520cad115aea989b83fb55516c32c5523e750b.
+Źródła/vendor archive SHA8a91a28af7aa84ad2ce94cb612e7d03e493f0b3a83330c54a747bc236fc4b85b.
+Eksport rgg-dev19-runtime.tar.gz (61229424 B), SHA
+ed9c16e3a757d7597c6194e75bfc89215c01733ee555451c642953f775a5906b,
+w D:\Dokumenty\Documents\ChatGPT\Serwery\rgg-container-2026-11-01-dev19.
+Są tam manifest i wszystkie raporty; starsze artefakty dev18 pozostają.
+Nadal brak długiego soak, natywnego GG6, publicznego profilu i skanu OS.
+Nie uruchamiano Windows Sandbox (WindowsSandbox.exe nie ma na tym komputerze).
+
+## Stan implementacji
+
 Użytkownik wznowił prace i upoważnił do dalszej implementacji. Nadal wyłącznie
 lokalnie: testy i commity jako webs1821, bez push i wdrożenia rGG. Branch master,
 origin webs1821/retro-gadu nieużywany. Plan i recenzje pozostają niezmienione.
@@ -27,8 +56,8 @@ HTTP limits przeszły. Binarka WSL debug (bez test-hooks) SHA256
 93ce00f9303922c0030b3fb00d970cd78e7992f7148e811f3243d10e1a1368c5.
 Osiem wpisów pochodzenia (dodano Prometheus format jako reference-only).
 Brak pełnych histogramów/counterów protokołu i buforów; nie uruchamiano
-Prometheusa. Obraz kontenera pozostał dev.18; suite w repo ma teraz 21 pozycji,
-ale obraz dev.18 sprawdzano sterownikiem z commitu 7033971 (20 pozycji).
+Prometheusa. Obraz dev.19 przeszedł 22 zestawy i krótki R0, opisane powyżej.
+Obraz dev.18 sprawdzano sterownikiem z commitu 7033971 (20 pozycji).
 Kontrakt METRICS.md i raport VERIFICATION-2026-11-01-dev19.md.
 Dev.15 dodał pełny importer (commit 6b5b219):
 Pełny import sztucznego przypiętego gg-retro 0.8.3: wszystkie hasła weryfikowane

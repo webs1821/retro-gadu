@@ -30,7 +30,7 @@ Normalna binarka debug WSL po `cargo build --workspace --locked`, bez test-hooks
 
 Format jest zgodny ze sprawdzoną specyfikacją i parserem testowym; nie
 uruchamiano Prometheusa. Metryki są agregatami bazy, nie pełną telemetrią
-procesu/protokołu. Brak nowego obrazu dev.19 — wcześniejsze wyniki obrazu
-dev.18 pozostają przypisane do jego SHA i starego sterownika. Nowa pozycja
-http_metrics w sterowniku kontenera nie jest jeszcze testem obrazu dev.19.
+procesu/protokołu. Późniejszy obraz dev.19, 22 zestawy regresji i krótka próba
+R0 mają [osobny raport](VERIFICATION-2026-11-01-r0.md). Wcześniejsze wyniki
+obrazu dev.18 pozostają przypisane do jego SHA i starego sterownika.
 Nie było push, wdrożenia, testów na rzeczywistych danych ani zmian klienta GG.

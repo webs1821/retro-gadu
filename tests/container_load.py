@@ -62,6 +62,9 @@ def qualify(args,engine,tmp,evidence):
     assert helper['Config']['Labels']['org.opencontainers.image.revision']==revision
     assert all(image['Config']['User']=='10001:10001' and image['Config']['Labels'].get('org.retrogadu.local-test')=='true' for image in [runtime,helper])
     volume=engine.volume();mount=[(volume,'/data',False)]
+    # Docker copies /data's owner/mode from the runtime image on the first mount.
+    # The Python-only verification image deliberately has no initialized /data.
+    engine.run(args.runtime,['/usr/bin/test','-w','/data'],mount)
     engine.run(args.verification,['python','/src/tests/r0_workload.py','prepare','--admin','/usr/local/bin/rgg-admin','--data','/data/runtime','--count','120'],mount)
     config="data_dir='/data/runtime'\nhttp_bind='127.0.0.1:8088'\ngg_bind='127.0.0.1:8074'\nmetrics_bind='127.0.0.1:9090'\n[network]\nmax_connections=128\nper_ip=128\n"
     engine.run(args.verification,['python','-c',"from pathlib import Path;Path('/data/r0.toml').write_text("+repr(config)+")"],mount)
@@ -75,13 +78,18 @@ def qualify(args,engine,tmp,evidence):
     baseline=sample(pid,group)
     print('R0_EVENT='+json.dumps({'phase':'start','source_commit':revision,'limits':limits}),flush=True)
     client=engine.run_id+'-load';engine.containers.append(client)
-    command=engine.cli+['run','--rm','--name',client,'--label',engine.label+'='+engine.run_id,
-                        '--network','container:'+server,*LIMITS,args.verification,'python','-u','/src/tests/r0_workload.py','run','--seconds',str(args.seconds)]
+    workload_source=Path(__file__).with_name('r0_workload.py').read_bytes()
+    workload_sha256=hashlib.sha256(workload_source).hexdigest()
+    evidence['workload_driver_sha256']=workload_sha256
+    runner="import sys;exec(compile(sys.stdin.buffer.read(),'/src/tests/r0_workload.py','exec'),{'__name__':'__main__','__file__':'/src/tests/r0_workload.py'})"
+    command=engine.cli+['run','--rm','-i','--name',client,'--label',engine.label+'='+engine.run_id,
+                        '--network','container:'+server,*LIMITS,args.verification,'python','-u','-c',runner,'run','--seconds',str(args.seconds)]
     log=tmp/'load.log';errors=tmp/'load.stderr';samples=[baseline]
     evidence['resource_samples']=samples
     with log.open('w') as output,errors.open('w') as error_output:
-        process=subprocess.Popen(command,stdout=output,stderr=error_output,env=engine.env)
+        process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=output,stderr=error_output,env=engine.env)
         try:
+            process.stdin.write(workload_source);process.stdin.close()
             deadline=time.monotonic()+args.seconds+90
             last_notice=time.monotonic()
             while process.poll() is None:
@@ -117,14 +125,27 @@ def qualify(args,engine,tmp,evidence):
                rss=max(item['rss_peak'] for item in samples)<=192*MIB,cpu=cpu_fraction<=.90,
                swap=all(item['swap_current']==0 for item in samples),
                no_oom=all(final['memory_events'][key]==baseline['memory_events'][key] for key in ['oom','oom_kill']))
+    evidence.update(gates_before_database=gates.copy(),cpu_fraction=cpu_fraction,peak_rss_bytes=max(item['rss_peak'] for item in samples))
     engine.stop(server)
-    verify="""import sqlite3,json
-db=sqlite3.connect('file:/data/runtime/rgg.sqlite?mode=ro',uri=True)
+    verify="""import sqlite3,json,tempfile,shutil
+from pathlib import Path
+# Inspect a stable copy after exit 0. SQLite may need new WAL/SHM sidecars;
+# immutable=1 would risk ignoring committed WAL, while the source stays read-only.
+temporary=tempfile.TemporaryDirectory(prefix='rgg-inspect-')
+target=Path(temporary.name);source=Path('/data/runtime');total=0
+for name in ['rgg.sqlite','rgg.sqlite-wal']:
+ path=source/name
+ if not path.exists():
+  assert name.endswith('-wal');continue
+ assert path.is_file() and not path.is_symlink()
+ total+=path.stat().st_size;assert total<=16*1024*1024
+ shutil.copyfile(path,target/name)
+db=sqlite3.connect(str(target/'rgg.sqlite'))
 assert db.execute('PRAGMA integrity_check').fetchone()==('ok',)
 assert not db.execute('PRAGMA foreign_key_check').fetchall()
 assert db.execute('SELECT count(*) FROM account_sessions').fetchone()==(0,)
 assert db.execute('SELECT count(*) FROM messages WHERE body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL').fetchone()==(0,)
-counts=dict(db.execute('SELECT state,count(*) FROM deliveries GROUP BY state').fetchall());db.close()
+counts=dict(db.execute('SELECT state,count(*) FROM deliveries GROUP BY state').fetchall());db.close();temporary.cleanup()
 print(json.dumps(counts))
 """
     database=json.loads(engine.run(args.verification,['python','-c',verify],[(volume,'/data',True)]).stdout)
@@ -136,6 +157,7 @@ print(json.dumps(counts))
                 database=database,gates=gates,passed=all(gates.values()),
                 r0_sample_qualified=args.seconds>=180 and all(gates.values()),
                 soak_qualified=False,native_client_qualified=False,production_qualified=False,
+                workload_driver_sha256=workload_sha256,
                 driver_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     return report
 

@@ -1,0 +1,116 @@
+{
+  "format": 1,
+  "passed": false,
+  "r0_sample_qualified": false,
+  "error": "AssertionError: load driver failed:  WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nWARNING: IPv4 forwarding is disabled. Networking will not work.\nTraceback (most recent call last):\n  File \"/src/tests/r0_workload.py\", line 248, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"/src/tests/r0_workload.py\", line 247, in main\n    else:asyncio.run(run(args))\n         ~~~~~~~~~~~^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 196, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 119, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/src/tests/r0_workload.py\", line 157, in run\n    clients.append(await Wire.connect(args.host, args.gg_port, user, expected, errors))\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/src/tests/r0_workload.py\", line 62, in connect\n    kind, body = await asyncio.wait_for(frame(reader), 3)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/tasks.py\", line 514, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/src/tests/r0_workload.py\", line 25, in frame\n    kind, size = struct.unpack('<II', await reader.readexactly(8))\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/streams.py\", line 767, in readexactly\n    raise exceptions.IncompleteReadError(incomplete, n)\nasyncio.exceptions.IncompleteReadError: 0 bytes read on a total of 8 expected bytes\n",
+  "evidence": {
+    "source_commit": "0b251ba42df7197b8fdc07a5855744a70c5c570f",
+    "runtime_image": "sha256:f593f3c113b1dece0fd60c05f3df47b621c2733cb29ab5624bd2e149d745e105",
+    "verification_image": "sha256:2c40b48b6fc2b8ca6840d0587af4e9d5762a6ad56bfaa4cd6dbaafdf63096618",
+    "limits": {
+      "memory_max": 268435456,
+      "cpu_max": "100000 100000",
+      "pids_max": 128,
+      "swap_max": 0,
+      "swap_initial": "max",
+      "swap_set_directly": true,
+      "uid": 10001,
+      "read_only_root": true,
+      "cap_eff": 0,
+      "no_new_privileges": true,
+      "seccomp_filter": true
+    },
+    "resource_samples": [
+      {
+        "at": 806.44030135,
+        "rss": 9428992,
+        "rss_peak": 9428992,
+        "threads": 4,
+        "memory_current": 13004800,
+        "memory_peak": 17203200,
+        "swap_current": 0,
+        "pids_current": 4,
+        "cpu": {
+          "usage_usec": 36020,
+          "user_usec": 36020,
+          "system_usec": 0,
+          "nice_usec": 0,
+          "nr_periods": 2,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        }
+      },
+      {
+        "at": 806.44119989,
+        "rss": 9428992,
+        "rss_peak": 9428992,
+        "threads": 4,
+        "memory_current": 12820480,
+        "memory_peak": 17203200,
+        "swap_current": 0,
+        "pids_current": 4,
+        "cpu": {
+          "usage_usec": 36020,
+          "user_usec": 36020,
+          "system_usec": 0,
+          "nice_usec": 0,
+          "nr_periods": 2,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        }
+      },
+      {
+        "at": 807.442640239,
+        "rss": 11276288,
+        "rss_peak": 11276288,
+        "threads": 5,
+        "memory_current": 16478208,
+        "memory_peak": 17203200,
+        "swap_current": 0,
+        "pids_current": 5,
+        "cpu": {
+          "usage_usec": 157338,
+          "user_usec": 61187,
+          "system_usec": 96151,
+          "nice_usec": 0,
+          "nr_periods": 5,
+          "nr_throttled": 0,
+          "throttled_usec": 0,
+          "nr_bursts": 0,
+          "burst_usec": 0
+        },
+        "memory_events": {
+          "low": 0,
+          "high": 0,
+          "max": 0,
+          "oom": 0,
+          "oom_kill": 0,
+          "oom_group_kill": 0
+        }
+      }
+    ],
+    "load_log_tail": "",
+    "load_stderr_tail": "WARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\nWARNING: IPv4 forwarding is disabled. Networking will not work.\nTraceback (most recent call last):\n  File \"/src/tests/r0_workload.py\", line 248, in <module>\n    if __name__=='__main__':main()\n                            ~~~~^^\n  File \"/src/tests/r0_workload.py\", line 247, in main\n    else:asyncio.run(run(args))\n         ~~~~~~~~~~~^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 196, in run\n    return runner.run(main)\n           ~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/runners.py\", line 119, in run\n    return self._loop.run_until_complete(task)\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/base_events.py\", line 726, in run_until_complete\n    return future.result()\n           ~~~~~~~~~~~~~^^\n  File \"/src/tests/r0_workload.py\", line 157, in run\n    clients.append(await Wire.connect(args.host, args.gg_port, user, expected, errors))\n                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/src/tests/r0_workload.py\", line 62, in connect\n    kind, body = await asyncio.wait_for(frame(reader), 3)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/tasks.py\", line 514, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/src/tests/r0_workload.py\", line 25, in frame\n    kind, size = struct.unpack('<II', await reader.readexactly(8))\n                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/asyncio/streams.py\", line 767, in readexactly\n    raise exceptions.IncompleteReadError(incomplete, n)\nasyncio.exceptions.IncompleteReadError: 0 bytes read on a total of 8 expected bytes\n"
+  },
+  "cleanup_verified": true
+}
