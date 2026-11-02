@@ -607,3 +607,19 @@ Potwierdzono opisy przy loginie i zmianie statusu, CP1250, niewidoczność,
 złe hasło,3offline po awarii,2online, Ready i FIFO. Nie kwalifikuje GUI GG6,
 katalogu/obrazków libgadu ani automatycznego reconnect. Obraz/R0 nadal30.
 [Raport](VERIFICATION-2026-11-02-dev31.md). Brak push/deploy.
+
+## 2026-11-02 — niezależna libgadu: katalog i kontakty
+
+Rozszerzony tester przeszedł własny nowy zestaw oraz poprzedni przepływ logowania
+i wiadomości. API WRITE/READ/SEARCH sprawdza profil, CP1250/polskie filtry, wiek
+z jednym wynikiem bez pustego wiersza, ActiveOnly/niewidoczność, trwałość
+i usunięcie publikacji. Kontakty PUT/GET:0/24/2046/2048B, podział na pakiety,
+izolacja kont, restart i wyczyszczenie. Dokładnych wielokrotności2047bez
+terminatora oraz stronicowania nie kwalifikowano tą biblioteką.
+
+Trzy raporty libgadu-{extended-probe,extended-core,directory}-2026-11-02.json
+wiążą nowy probe15f0b4296a43e410f8ae936cf487175f2cbc76be59802847c12698e7f454e8ac
+z niezmienioną biblioteką i binarkami dev31. Biblioteki nie przebudowywano
+ponownie; sprawdzono hash statycznego archiwum z wcześniejszego buildreportu.
+Testy zakończone, sieć tylko izolowanyloopback. Runtime/schema/deps bez zmian;
+nie powtarzano Rust/R0 dla zmiany wyłącznie testera. Brak push/deploy.

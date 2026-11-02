@@ -47,7 +47,14 @@ niewidoczność, obustronną rozmowę oraz trzy wiadomości offline po SIGKILL/r
 Przed zakończeniem synchronizacji prywatności kolejka pozostaje niedostarczona.
 Sprawdzane są treść, FIFO, klasy wiadomości, ACK, zamknięcie po SIGTERM i baza.
 
+Osobny `tests/libgadu_directory.py` przyjmuje te same argumenty (z nowym plikiem
+raportu). Sprawdza zapis, odczyt, wyszukiwanie, usunięcie i trwałość profilu,
+polskie znaki, filtr wieku i dostępności oraz prywatność niewidocznego użytkownika.
+Import/eksport kontaktów obejmuje 0, 24, 2046 i 2048 bajtów CP1250, izolację list
+i restart. Dokładna wielokrotność 2047 bez terminatora pozostaje niejednoznaczna
+w niezmienionej bibliotece; ten test nie oznacza jej kwalifikacji.
+
 Nie jest to wykonanie oryginalnego GUI GG6 ani test automatycznego reconnect.
-Nie obejmuje jeszcze katalogu, obrazków, konferencji, archiwów kontaktów czy czasu
-powrotu w API libgadu. Test jest uruchamiany jawnie, poza zwykłą CI; jego regresja
+Nie obejmuje jeszcze obrazków, konferencji, stronicowania katalogu czy czasu
+powrotu w API libgadu. Testy są uruchamiane jawnie, poza zwykłą CI; regresja
 opisów jest również w standardowym `gg6_presence_contacts.py` i testach Rust.

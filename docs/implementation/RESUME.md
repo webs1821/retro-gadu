@@ -15,6 +15,20 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
 
+NAJNOWSZY KROK PO3294590: rozszerzony libgadu probe + tests/libgadu_directory.py.
+Oba scenariusze (core+directory)PASS w/tmp/rgg-libgadu170-directory.
+Nowyprobe15f0b4296a43e410f8ae936cf487175f2cbc76be59802847c12698e7f454e8ac,
+libstatycznaniezmienionaz/tmp/rgg-libgadu170-final, buildreporthashzweryfikowany.
+Raportyrepo libgadu-extended-probe/extended-core/directory-2026-11-02.json.
+WRITE/READ(odpowiedź3)/SEARCH,CP1250,polskie filtry, wiek1row/noPhantom,ActiveOnly
+niewidoczność,persistence/delete;contacts0/24/2046/2048B,split,isolation/restart/clear.
+Nie testowano libgadu2047multiplesbezterminatora/paging/images/conferences.
+Dokumentacja i provenance zaktualizowane. Runtime/binary31bez zmian, brakpush/deploy.
+Potrzebny lokalnycommit tego dodatkowego etapu jeśli jeszcze niewykonany.
+Następny krok może rozszerzyć libgadu o obrazy/konferencje; wszystkieprocesy
+testowe zakończone, żadnych pytańoczekujących.
+
+
 BIEŻĄCY dev31 gotowy: wspólnygg6::decode_description toleruje brakNUL do70B,
 NUL wymaga0lub4bajtówczasu; bez zgadywania czasu z końca tekstu. LOGIN60/STATUS
 używają helpera, statusnieparsujuż2x. Zachowane limity/schema13/190deps.

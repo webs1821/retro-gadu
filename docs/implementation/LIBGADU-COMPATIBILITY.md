@@ -30,8 +30,16 @@ w obu formach, odrzucenie 71 bajtów oraz błędnych długości czasu, dalszą p
 innych klientów i poprawny czas powrotu. Korpus mutacyjny ma teraz 44 przypadki.
 Historyczne raporty wcześniejszych kampanii pozostają niezmienione.
 
-Katalog, obrazki i archiwum kontaktów mają testy rGG, lecz nie są jeszcze objęte
-niezależnym klientem libgadu. Jej stara funkcja czasu powrotu dopisuje cztery bajty
+Kolejny zestaw niezależnej libgadu potwierdził katalog WRITE/READ/SEARCH, polskie
+filtry, pojedynczy wynik wieku bez pustego wiersza, ActiveOnly i niewidoczność,
+usunięcie publikacji oraz trwałość profilu. Kontakty 0/24/2046/2048 B przechodzą
+przez API PUT/GET, w tym podział na pakiety, izolację kont i restart.
+Dowód: `libgadu-directory-2026-11-02.json`; nowy probe i powtórzenie podstawowego
+przepływu są w `libgadu-extended-probe-2026-11-02.json` oraz
+`libgadu-extended-core-2026-11-02.json`. Runtime pozostał niezmieniony (dev.31).
+
+Obrazki, konferencje, stronicowanie i pełne bloki kontaktów bez terminatora
+pozostają poza zakresem tych testów libgadu. Jej stara funkcja czasu powrotu dopisuje cztery bajty
 bez separatora; bez jednoznacznego formatu nie próbujemy odgadywać, gdzie kończy
 się tekst. Test klienta GUI GG6 nadal pozostaje odrębną otwartą bramką.
 

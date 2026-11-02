@@ -58,8 +58,53 @@ static void event(const struct gg_event *e) {
         }
         break;
     case GG_EVENT_DISCONNECT: puts("{\"event\":\"disconnect\"}"); break;
+    case GG_EVENT_USERLIST:
+        printf("{\"event\":\"userlist\",\"type\":%d,\"text\":\"", e->event.userlist.type);
+        hex((const unsigned char *)e->event.userlist.reply); puts("\"}"); break;
+    case GG_EVENT_PUBDIR50_READ:
+    case GG_EVENT_PUBDIR50_WRITE:
+    case GG_EVENT_PUBDIR50_SEARCH_REPLY: {
+        gg_pubdir50_t result = e->event.pubdir50;
+        int count = gg_pubdir50_count(result); require(count >= 0 && count <= 20, "directory count");
+        printf("{\"event\":\"directory\",\"type\":%d,\"seq\":%u,\"count\":%d,\"next\":%u,\"rows\":[",
+               gg_pubdir50_type(result), gg_pubdir50_seq(result), count, gg_pubdir50_next(result));
+        const char *fields[] = {GG_PUBDIR50_UIN, GG_PUBDIR50_NICKNAME, GG_PUBDIR50_FIRSTNAME,
+                                GG_PUBDIR50_CITY, GG_PUBDIR50_BIRTHYEAR, GG_PUBDIR50_STATUS};
+        for (int row = 0; row < count; ++row) {
+            if (row) putchar(',');
+            putchar('{');
+            for (size_t field = 0; field < sizeof(fields) / sizeof(fields[0]); ++field) {
+                if (field) putchar(',');
+                printf("\"%s\":\"", fields[field]);
+                hex((const unsigned char *)gg_pubdir50_get(result, row, fields[field])); putchar('"');
+            }
+            putchar('}');
+        }
+        puts("]}"); break;
+    }
     default: printf("{\"event\":\"other\",\"type\":%d}\n", e->type); break;
     }
+}
+
+static void directory(struct gg_session *session, const char *command, unsigned seq, const char *argument) {
+    require(seq > 0 && seq < 10000, "directory sequence");
+    int type = !strcmp(command, "profile") || !strcmp(command, "unpublish") ? GG_PUBDIR50_WRITE :
+               !strcmp(command, "read") ? GG_PUBDIR50_READ : GG_PUBDIR50_SEARCH;
+    gg_pubdir50_t request = gg_pubdir50_new(type); require(request != NULL, "directory allocation");
+    require(gg_pubdir50_seq_set(request, seq) == 0, "directory sequence");
+    if (!strcmp(command, "profile") || !strcmp(command, "search")) {
+        unsigned char nickname[2049]; decode(argument, nickname);
+        require(gg_pubdir50_add(request, GG_PUBDIR50_NICKNAME, (const char *)nickname) == 0, "nickname");
+    }
+    if (!strcmp(command, "profile")) {
+        require(gg_pubdir50_add(request, GG_PUBDIR50_FIRSTNAME, "Jan") == 0, "first name");
+        require(gg_pubdir50_add(request, GG_PUBDIR50_CITY, "\xa3\xf3\x64\x9f") == 0, "city");
+        require(gg_pubdir50_add(request, GG_PUBDIR50_BIRTHYEAR, "1987") == 0, "birth year");
+    }
+    if (!strcmp(command, "age")) require(gg_pubdir50_add(request, GG_PUBDIR50_BIRTHYEAR, "1980 1990") == 0, "age");
+    if (!strcmp(command, "active")) require(gg_pubdir50_add(request, GG_PUBDIR50_ACTIVE, "1") == 0, "active");
+    require(gg_pubdir50(session, request) != 0, "directory send");
+    gg_pubdir50_free(request);
 }
 int main(int argc, char **argv) {
     require(argc == 3 || (argc == 4 && (!strcmp(argv[3], "wrong-password") || !strcmp(argv[3], "description"))), "arguments");
@@ -110,6 +155,17 @@ int main(int argc, char **argv) {
                 unsigned char text[2049]; decode(argument, text);
                 require(target == GG_STATUS_AVAIL_DESCR || target == GG_STATUS_INVISIBLE, "status allowlist");
                 require(gg_change_status_descr(session, (int)target, (const char *)text) == 0, "status");
+            } else if ((!strcmp(command, "profile") || !strcmp(command, "search")) && fields == 3) {
+                directory(session, command, target, argument);
+            } else if ((!strcmp(command, "read") || !strcmp(command, "age") || !strcmp(command, "active") || !strcmp(command, "unpublish")) && fields == 2) {
+                directory(session, command, target, "");
+            } else if (!strcmp(command, "get") && fields == 1) {
+                require(gg_userlist_request(session, GG_USERLIST_GET, NULL) == 0, "get contacts");
+            } else if (!strcmp(command, "put") && fields == 3) {
+                unsigned char text[2049]; decode(argument, text);
+                require(gg_userlist_request(session, GG_USERLIST_PUT, (const char *)text) == 0, "put contacts");
+            } else if (!strcmp(command, "clear-list") && fields == 1) {
+                require(gg_userlist_request(session, GG_USERLIST_PUT, "") == 0, "clear contacts");
             } else require(0, "unknown command");
             printf("{\"event\":\"command\",\"name\":\"%s\"}\n", command);
         }
