@@ -667,3 +667,11 @@ oba odbiory offline i narastająca historia: PASS w27,064s. Nie kwalifikuje R0
 ani soak. [Raport](soak-driver-smoke-2026-11-02.json) zawiera stdout i hashe;
 kontenerowy sterownik z nowymi bramkami wymaga osobnej próby przed pełnym soak.
 Kod serwera, schema14 i binaria dev32 nie zmieniły się.
+
+## 2026-11-02 — odświeżenie inwentarza po zmianach wersji
+
+Kontrola metadanych wykryła stary hash Cargo.lock w dependencies.json po
+zmianach wersji workspace. Odświeżono inwentarz pełnym cargo metadata; wszystkie
+190 rekordów bibliotek są identyczne. Weryfikator inwentarza przechodzi.
+[Dowód](inventory-2026-11-02-dev32.json). Pierwsze obrazy ze źródła eb94baa
+zbudowano, ale nie kwalifikowano; końcowy obraz wymaga aktualnego inwentarza.
