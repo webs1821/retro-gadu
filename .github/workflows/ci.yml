@@ -32,6 +32,7 @@ jobs:
       - run: python tests/backups_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/keys_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/password_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/password_reset_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_sessions.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/session_contracts.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_concurrent_replay.py --admin target/debug/rgg-admin --server target/debug/rgg-server
@@ -68,6 +69,7 @@ jobs:
       - run: python tests/keys_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: python tests/password_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
+      - run: python tests/password_reset_cli.py --admin target/debug/rgg-admin --server target/debug/rgg-server --faults
       - run: cargo build --workspace --locked
       - run: cargo install cargo-audit --version 0.22.2 --locked
       - run: cargo audit

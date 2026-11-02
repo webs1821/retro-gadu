@@ -136,7 +136,7 @@ def migration(server,admin,baseline,root,empty):
         backup=root/'old-backup';create(lab,backup);saved=hashes(backup)
         lab.binary,lab.admin=server,admin
         lab.start(passwords=True)
-        assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(13,)]
+        assert lab.sql('SELECT max(version) FROM _sqlx_migrations')==[(14,)]
         assert lab.sql('SELECT * FROM admin_audit')==original
         assert change(lab)[0]==200
         assert lab.sql('SELECT id,actor,credential_version FROM admin_audit WHERE id>2')==[(3,'local_web_with_current_password',4)]
@@ -164,5 +164,5 @@ def main():
         for empty in [False,True]:
             with tempfile.TemporaryDirectory(prefix='rgg-password-migration-') as tmp:
                 migration(args.server.resolve(),args.admin.resolve(),args.baseline_dir.resolve(),Path(tmp),empty)
-                print('PASS: real schema 11→13, old backup restore and audit high-water mark (empty='+str(empty)+')',flush=True)
+                print('PASS: real schema 11→14, old backup restore and audit high-water mark (empty='+str(empty)+')',flush=True)
 if __name__=='__main__':main()

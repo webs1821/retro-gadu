@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.31**, schemat SQLite **13**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.32**, schemat SQLite **14**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -23,7 +23,8 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   zamknięcie starej sesji i zachowanie wiadomości, kontaktów oraz profilu.
 - Lokalne CLI: konta, rezerwacje usuniętych numerów, kompletne kopie i restore,
   rotacja kluczy z kopią i wznowieniem, zgodność starych kodów zaproszeń
-  i uwierzytelniona zmiana hasła z ograniczonym audytem.
+  i uwierzytelniona zmiana hasła z ograniczonym audytem. Administrator może też
+  zresetować zapomniane hasło offline, z obowiązkową kopią i odrębnym audytem.
 - Import przypiętej wersji gg-retro 0.8.3 do nowego katalogu: kontrola sekretów,
   ponowne szyfrowanie, zachowanie danych i liczników, transakcja oraz blokada
   startu po nieukończonym imporcie. Testowano wyłącznie sztuczną bazę.
@@ -69,6 +70,7 @@ go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementati
 - [Ograniczenia HTTP](docs/implementation/HTTP-LIMITS.md), [weryfikacja dev.18](docs/implementation/VERIFICATION-2026-11-01-dev18.md)
 - [Pakiet klienta](docs/implementation/CLIENT-PACKAGES.md), [weryfikacja dev.17](docs/implementation/VERIFICATION-2026-11-01-dev17.md)
 - [Zmiana hasła](docs/implementation/PASSWORD-CHANGE.md), [weryfikacja dev.16](docs/implementation/VERIFICATION-2026-11-01-dev16.md)
+- [Reset zapomnianego hasła](docs/implementation/PASSWORD-RESET.md), [weryfikacja dev.32](docs/implementation/VERIFICATION-2026-11-02-dev32.md)
 - [Import gg-retro](docs/implementation/IMPORT-GG-RETRO.md), [weryfikacja dev.15](docs/implementation/VERIFICATION-2026-11-01-dev15.md)
 - [Kopie i odtwarzanie](docs/implementation/BACKUPS.md), [rotacja kluczy](docs/implementation/KEY-ROTATION.md)
 - [Sesje i kolejka](docs/implementation/SESSIONS-AND-DELIVERY.md), [obecność i kontakty](docs/implementation/PRESENCE-AND-CONTACTS.md)

@@ -15,10 +15,32 @@ fn storage(_: sqlx::Error) -> AccountError {
 pub struct PasswordAudit {
     pub id: i64,
     pub actor: String,
+    pub action: String,
     pub user: u32,
     pub previous_version: i64,
     pub credential_version: i64,
     pub occurred_at: i64,
+}
+
+pub(crate) enum PasswordAuditOrigin {
+    LocalChange,
+    WebChange,
+    LocalRecovery,
+}
+impl PasswordAuditOrigin {
+    fn actor(&self) -> &'static str {
+        match self {
+            Self::LocalChange => "local_cli_with_current_password",
+            Self::WebChange => "local_web_with_current_password",
+            Self::LocalRecovery => "local_cli_recovery",
+        }
+    }
+    fn action(&self) -> &'static str {
+        match self {
+            Self::LocalChange | Self::WebChange => "password_changed",
+            Self::LocalRecovery => "password_reset",
+        }
+    }
 }
 
 pub(crate) async fn write_password_tx(
@@ -26,7 +48,7 @@ pub(crate) async fn write_password_tx(
     user: UserId,
     previous: i64,
     new: &SealedSecret,
-    actor: &'static str,
+    origin: PasswordAuditOrigin,
     now: i64,
 ) -> Result<i64, AccountError> {
     let version = previous
@@ -50,8 +72,8 @@ pub(crate) async fn write_password_tx(
     if changed != 1 {
         return Err(AccountError::StaleCredential);
     }
-    sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES(?,'password_changed',?,?,?,?)")
-        .bind(actor).bind(i64::from(user.get())).bind(previous).bind(version).bind(now).execute(&mut **tx).await.map_err(storage)?;
+    sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES(?,?,?,?,?,?)")
+        .bind(origin.actor()).bind(origin.action()).bind(i64::from(user.get())).bind(previous).bind(version).bind(now).execute(&mut **tx).await.map_err(storage)?;
     sqlx::query("DELETE FROM admin_audit WHERE occurred_at<?")
         .bind(now.saturating_sub(2592000))
         .execute(&mut **tx)
@@ -106,7 +128,7 @@ impl SqliteStore {
             user,
             previous,
             &new,
-            "local_cli_with_current_password",
+            PasswordAuditOrigin::LocalChange,
             now,
         )
         .await?;
@@ -122,13 +144,14 @@ impl SqliteStore {
         Ok(version)
     }
     pub async fn password_audit(&self) -> Result<Vec<PasswordAudit>, AccountError> {
-        let rows=sqlx::query("SELECT id,actor,target_uin,previous_version,credential_version,occurred_at FROM admin_audit WHERE occurred_at>=unixepoch()-2592000 ORDER BY id DESC LIMIT 100")
+        let rows=sqlx::query("SELECT id,actor,action,target_uin,previous_version,credential_version,occurred_at FROM admin_audit WHERE occurred_at>=unixepoch()-2592000 ORDER BY id DESC LIMIT 100")
             .fetch_all(&self.pool).await.map_err(storage)?;
         rows.into_iter()
             .map(|r| {
                 Ok(PasswordAudit {
                     id: r.try_get("id").map_err(storage)?,
                     actor: r.try_get("actor").map_err(storage)?,
+                    action: r.try_get("action").map_err(storage)?,
                     user: r
                         .try_get::<i64, _>("target_uin")
                         .map_err(storage)?
@@ -183,6 +206,189 @@ mod tests {
         fn seal(&self, _: UserId, _: &LegacyPassword) -> Result<SealedSecret, SecretError> {
             Ok(self.1.clone())
         }
+    }
+    #[tokio::test]
+    async fn recovery_fences_credentials_preserves_nonce_history_and_resets_budget() {
+        let (_root, store, ring, u) = setup().await;
+        let original = store.login_credential(u).await.unwrap();
+        let generation: i64 =
+            sqlx::query_scalar("SELECT session_generation FROM accounts WHERE uin=1")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap();
+        sqlx::query("INSERT INTO password_change_budget(uin,window_started,attempts) VALUES(1,unixepoch(),5)").execute(&store.writer).await.unwrap();
+        let new = password("NewLocalTest8!");
+        assert_eq!(
+            store.reset_password_offline(u, &new, &ring).await.unwrap(),
+            2
+        );
+        let changed = store.login_credential(u).await.unwrap();
+        assert!(ring.open(u, &changed.secret).unwrap().matches(&new));
+        assert_ne!(original.secret.nonce, changed.secret.nonce);
+        assert_eq!(
+            sqlx::query_scalar::<_, i64>("SELECT session_generation FROM accounts WHERE uin=1")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap(),
+            generation + 1
+        );
+        assert_eq!(
+            sqlx::query_scalar::<_, i64>("SELECT count(*) FROM password_change_budget")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap(),
+            0
+        );
+        assert_eq!(
+            sqlx::query_scalar::<_, i64>("SELECT count(*) FROM secret_nonces")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap(),
+            2
+        );
+        assert_eq!(
+            store
+                .attach_session_if_current(u, 1, [1; 16], 1)
+                .await
+                .unwrap_err(),
+            MessagingError::Stale
+        );
+        let audit = store.password_audit().await.unwrap();
+        assert_eq!(audit.len(), 1);
+        assert_eq!(audit[0].actor, "local_cli_recovery");
+        assert_eq!(audit[0].action, "password_reset");
+        store.close().await;
+    }
+    #[tokio::test]
+    async fn recovery_rolls_back_wrong_keys_nonce_reuse_and_generation_changes() {
+        let (root, store, ring, u) = setup().await;
+        let original = store.login_credential(u).await.unwrap();
+        let generation: i64 =
+            sqlx::query_scalar("SELECT session_generation FROM accounts WHERE uin=1")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap();
+        let wrong = Keyring::create_new(&root.path().join("wrong.toml")).unwrap();
+        let new = password("NewLocalTest8!");
+        assert!(store.reset_password_offline(u, &new, &wrong).await.is_err());
+        assert_eq!(
+            store
+                .reset_password_offline(u, &new, &Reuse(&ring, original.secret.clone()))
+                .await
+                .unwrap_err(),
+            AccountError::Secret(SecretError::NonceReuse)
+        );
+        assert_eq!(
+            store
+                .reset_password_offline(u, &password("LocalTest9!"), &ring)
+                .await
+                .unwrap_err(),
+            AccountError::UnchangedPassword
+        );
+        let unchanged = store.login_credential(u).await.unwrap();
+        assert_eq!(unchanged.secret.ciphertext, original.secret.ciphertext);
+        assert_eq!(unchanged.credential_version, 1);
+        assert_eq!(
+            sqlx::query_scalar::<_, i64>("SELECT session_generation FROM accounts WHERE uin=1")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap(),
+            generation
+        );
+        assert_eq!(
+            sqlx::query_scalar::<_, i64>("SELECT count(*) FROM secret_nonces")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap(),
+            1
+        );
+        assert!(store.password_audit().await.unwrap().is_empty());
+        store.close().await;
+    }
+    #[tokio::test]
+    async fn recovery_refuses_live_retired_missing_stale_and_overflow() {
+        let (_root, store, ring, u) = setup().await;
+        let new = password("NewLocalTest8!");
+        let session = store
+            .attach_session_if_current(u, 1, [1; 16], 1)
+            .await
+            .unwrap();
+        assert_eq!(
+            store
+                .reset_password_offline(u, &new, &ring)
+                .await
+                .unwrap_err(),
+            AccountError::ActiveSession
+        );
+        store.detach_session(&session, 1).await.unwrap();
+        assert_eq!(
+            store
+                .reset_password_offline(UserId::new(999).unwrap(), &new, &ring)
+                .await
+                .unwrap_err(),
+            AccountError::Inactive
+        );
+        sqlx::query("UPDATE accounts SET active=0")
+            .execute(&store.writer)
+            .await
+            .unwrap();
+        assert_eq!(
+            store
+                .reset_password_offline(u, &new, &ring)
+                .await
+                .unwrap_err(),
+            AccountError::Inactive
+        );
+        for statement in [
+            "UPDATE accounts SET active=1,credential_version=9223372036854775807",
+            "UPDATE accounts SET credential_version=1,session_generation=9223372036854775807",
+        ] {
+            sqlx::query(statement).execute(&store.writer).await.unwrap();
+            assert_eq!(
+                store
+                    .reset_password_offline(u, &new, &ring)
+                    .await
+                    .unwrap_err(),
+                AccountError::StaleCredential
+            );
+        }
+        sqlx::query("UPDATE accounts SET session_generation=1")
+            .execute(&store.writer)
+            .await
+            .unwrap();
+        sqlx::query("UPDATE runtime_state SET process_epoch='foreign-process'")
+            .execute(&store.writer)
+            .await
+            .unwrap();
+        assert_eq!(
+            store
+                .reset_password_offline(u, &new, &ring)
+                .await
+                .unwrap_err(),
+            AccountError::StaleCredential
+        );
+        assert_eq!(
+            sqlx::query_scalar::<_, i64>("SELECT count(*) FROM secret_nonces")
+                .fetch_one(&store.pool)
+                .await
+                .unwrap(),
+            1
+        );
+        assert!(store.password_audit().await.unwrap().is_empty());
+        store.close().await;
+    }
+    #[tokio::test]
+    async fn audit_rejects_mislabelled_recovery_and_authenticated_change() {
+        let (_root, store, _ring, _u) = setup().await;
+        for (actor, action) in [
+            ("local_cli_recovery", "password_changed"),
+            ("local_cli_with_current_password", "password_reset"),
+            ("local_web_with_current_password", "password_reset"),
+        ] {
+            assert!(sqlx::query("INSERT INTO admin_audit(actor,action,target_uin,previous_version,credential_version,occurred_at) VALUES(?,?,1,1,2,unixepoch())").bind(actor).bind(action).execute(&store.writer).await.is_err());
+        }
+        assert!(store.password_audit().await.unwrap().is_empty());
+        store.close().await;
     }
     #[tokio::test]
     async fn authenticates_full_password_and_rolls_back_nonce_failure() {

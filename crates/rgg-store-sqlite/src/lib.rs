@@ -20,6 +20,7 @@ mod operations;
 #[cfg(test)]
 mod operations_tests;
 pub mod password_maintenance;
+mod password_reset;
 mod password_web;
 #[cfg(test)]
 mod password_web_tests;
@@ -47,7 +48,7 @@ use sqlx::{
 };
 use std::{path::Path, sync::Arc, time::Duration};
 
-pub const SCHEMA_VERSION: i64 = 13;
+pub const SCHEMA_VERSION: i64 = 14;
 
 // The bundled engine must include the WAL-reset fix. Check the linked runtime,
 // not the version of a system sqlite3/Python command used by external diagnostics.

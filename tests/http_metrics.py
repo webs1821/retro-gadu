@@ -53,7 +53,7 @@ def metrics(lab):
         count=values[base+'_count{operation="'+operation+'"}']
         assert buckets==sorted(buckets) and buckets[-1]==count
         assert sum(value for key,value in values.items() if key.startswith('rgg_operations_total{operation="'+operation+'",'))==count
-    assert values['rgg_database_schema_version']==13
+    assert values['rgg_database_schema_version']==14
     assert abs(values['rgg_snapshot_timestamp_seconds']-time.time())<3
     return values
 

@@ -41,10 +41,11 @@ async fn run() -> Result<Value, Error> {
     let mut args = std::env::args().skip(1);
     let command = args
         .next()
-        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume|import-check|import-apply|password-change|password-audit> [options]")?;
+        .ok_or("use: rgg-admin <init|invite|account-create|retire|stats|backup-create|backup-verify|restore|keys-status|keys-rotate|keys-resume|import-check|import-apply|password-change|password-reset|password-audit> [options]")?;
     let allowed: &[&str] = match command.as_str() {
         "init" | "account-create" | "stats" | "password-audit" => &["--data-dir"],
         "password-change" => &["--data-dir", "--uin"],
+        "password-reset" => &["--data-dir", "--uin", "--backup"],
         "invite" => &["--data-dir", "--count", "--uses"],
         "retire" => &["--data-dir", "--uin"],
         "backup-create" => &["--data-dir", "--output"],
@@ -92,8 +93,11 @@ async fn run() -> Result<Value, Error> {
         if !path.join("rgg.sqlite").is_file() || !path.join("keys.toml").is_file() {
             return Err("password maintenance requires initialized data".into());
         }
-        if command == "password-change" {
+        if command == "password-change" || command == "password-reset" {
             let _: UserId = UserId::new(options.get("--uin").ok_or("--uin is required")?.parse()?)?;
+        }
+        if command == "password-reset" && !options.contains_key("--backup") {
+            return Err("--backup is required".into());
         }
     }
     if command.starts_with("keys-") {
@@ -155,6 +159,14 @@ async fn execute(
         return Ok(json!({"initialized": true}));
     }
     match command {
+        "password-reset" => {
+            password::reset(
+                store,
+                UserId::new(options.get("--uin").ok_or("--uin is required")?.parse()?)?,
+                std::path::Path::new(options.get("--backup").ok_or("--backup is required")?),
+            )
+            .await
+        }
         "password-change" => {
             password::change(
                 store,

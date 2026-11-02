@@ -1044,7 +1044,7 @@ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
 
 [[package]]
 name = "rgg-admin"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "base64",
  "encoding_rs",
@@ -1063,7 +1063,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-application"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "async-trait",
  "rgg-domain",
@@ -1077,7 +1077,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-credentials"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "base64",
  "chacha20poly1305",
@@ -1095,14 +1095,14 @@ dependencies = [
 
 [[package]]
 name = "rgg-domain"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "thiserror",
 ]
 
 [[package]]
 name = "rgg-http"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "async-trait",
  "axum",
@@ -1122,7 +1122,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-protocol"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "bytes",
  "encoding_rs",
@@ -1134,7 +1134,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-server"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "axum",
  "rgg-application",
@@ -1156,7 +1156,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-store-sqlite"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "async-trait",
  "futures-util",
@@ -1176,7 +1176,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-transfers"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "crc",
  "rgg-application",
@@ -1185,7 +1185,7 @@ dependencies = [
 
 [[package]]
 name = "rgg-transport"
-version = "0.1.0-dev.31"
+version = "0.1.0-dev.32"
 dependencies = [
  "bytes",
  "futures-util",

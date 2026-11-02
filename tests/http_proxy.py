@@ -212,7 +212,7 @@ def forms_and_sessions(lab, proxy, invite):
     for path, filename in ASSETS.items():
         assert proxy.call(path)[2] == (ROOT/'crates/rgg-http/src'/filename).read_bytes()
     assert proxy.call('/metrics')[0] == 404
-    assert metrics(lab)['rgg_database_schema_version'] == 13
+    assert metrics(lab)['rgg_database_schema_version'] == 14
     assert request(endpoint(lab), '/metrics', headers={'Host': proxy.authority})[0] == 403
     assert request(lab, '/health/ready')[0] == 200
     assert request(lab, '/appsvc/appmsg3.asp', headers={'Host': 'legacy.invalid'})[2].startswith(b'0 0 127.0.0.1:')

@@ -1,6 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
-use crate::{SqliteStore, database as sqlx, password_maintenance::write_password_tx};
+use crate::{
+    SqliteStore, database as sqlx,
+    password_maintenance::{PasswordAuditOrigin, write_password_tx},
+};
 use async_trait::async_trait;
 use rgg_application::{
     accounts::AccountError,
@@ -83,7 +86,7 @@ impl PasswordRepository for SqliteStore {
             change.user(),
             change.expected_version(),
             change.secret(),
-            "local_web_with_current_password",
+            PasswordAuditOrigin::WebChange,
             now,
         )
         .await?;

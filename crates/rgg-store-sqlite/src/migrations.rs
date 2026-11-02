@@ -108,6 +108,13 @@ impl MigrationSource<'static> for EmbeddedMigrations {
                     include_str!("../migrations/0013_payload_cleanup.sql").into_sql_str(),
                     false,
                 ),
+                Migration::new(
+                    14,
+                    "offline password reset".into(),
+                    MigrationType::Simple,
+                    include_str!("../migrations/0014_password_reset.sql").into_sql_str(),
+                    false,
+                ),
             ])
         })
     }

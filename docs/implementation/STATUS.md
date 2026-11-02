@@ -639,3 +639,17 @@ linkuje tę samą bibliotekę. Poprzednie core/directory też przeszły. Pięć 
 libgadu-media*2026-11-02.json wrepo; źródła/hash/binarki sprawdzone.
 Wersja31/schema13/190deps bez zmian; nie powtarzanoRust/R0. Wszystkieprocesy
 testowe zakończone, izolowanyloopback. Brakpush/deploy.
+
+## 2026-11-02 — lokalny reset administratora, dev.32
+
+Dodano `password-reset` i pomocnika terminalowego. Wymagane: zatrzymany serwer,
+oryginalne klucze, potwierdzenie numeru i nowy katalog pełnej kopii. Transakcja
+zmienia sekret, wersję i generację, czyści limit prób tego konta i zapisuje
+osobny audyt. Migracja 14 zachowuje wpisy oraz licznik ID po retencji.
+Kontakty, profil, prywatność i oczekujące wiadomości pozostają zachowane.
+
+128 testów Rust, formatowanie, Clippy, 13 zestawów procesu/TCP/HTTP oraz trzy
+kontrolowane awarie resetu przeszły. Sprawdzono migrację rzeczywistej bazy
+dev.31 i odtworzenie kopii z oboma hasłami. Początkowy problem fixture SQLite
+Pythona zachowano w raporcie. Finalny build bez test-hooks.
+[Opis](PASSWORD-RESET.md), [wyniki i ograniczenia](VERIFICATION-2026-11-02-dev32.md).
