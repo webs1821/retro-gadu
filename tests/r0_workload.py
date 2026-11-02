@@ -153,6 +153,11 @@ async def run(args):
         initial = await snapshot()
         assert initial['rgg_accounts{state="active"}'] == args.sessions + args.offline
         assert initial['rgg_queued_payload_bytes'] == 0 and initial['rgg_sessions{phase="ready"}'] == 0
+        history = int(initial['rgg_delivery_records{state="written_unconfirmed"}'])
+        assert getattr(args, 'allow_history', False) or history == 0, 'single R0 requires fresh history'
+        assert all(initial['rgg_delivery_records{state="'+state+'"}']==0 for state in ['pending','leased','expired','privacy_rejected','rejected'])
+        sequence_base = getattr(args, 'sequence_base', 0)
+        assert 0 <= sequence_base <= 100000 and history + args.rate * args.seconds < 100000
         for user in range(1, args.sessions+1):
             clients.append(await Wire.connect(args.host, args.gg_port, user, expected, errors))
             # Stay below the server's existing 16 new connections/s source-IP budget.
@@ -173,7 +178,7 @@ async def run(args):
             source = clients[index % args.sessions]
             offline = bool(index % 2)
             recipient = args.sessions + 1 + (index//2) % args.offline if offline else source.user % args.sessions + 1
-            sequence = index+1
+            sequence = sequence_base+index+1
             text = ('rgg-load-%010d:' % sequence).encode().ljust(128,b'x')
             expected[sequence] = dict(sender=source.user,recipient=recipient,text=text,offline=offline)
             task = asyncio.create_task(source.send(sequence, deadline)); task.add_done_callback(task_done); sends.append(task)
@@ -206,12 +211,13 @@ async def run(args):
             wanted = [seq for seq,item in expected.items() if item['recipient']==client.user]
             assert client.received == wanted, 'offline FIFO mismatch'
         await wait_metric('rgg_queued_payload_bytes',0)
-        await wait_metric('rgg_delivery_records{state="written_unconfirmed"}',total)
+        await wait_metric('rgg_delivery_records{state="written_unconfirmed"}',history+total)
         assert not errors, errors[:3]
         acks = [item['ack']-item['sent'] for item in expected.values()]
         deliveries = [item['received']-item['sent'] for item in expected.values() if not item['offline']]
         lag = [item['schedule_lag'] for item in expected.values()]
         report = dict(format=1,passed=True,sessions=args.sessions,offline_accounts=args.offline,rate=args.rate,
+                      initial_terminal_records=history,sequence_base=sequence_base,
                       duration_seconds=round(end-start,3),scheduled=total,accepted=len(acks),
                       online_verified=total-offline_count,offline_verified=offline_count,all_payloads_exact=True,offline_fifo=True,
                       ack_p50_ms=quantile(acks,.5),ack_p95_ms=quantile(acks,.95),ack_max_ms=quantile(acks,1),
@@ -227,6 +233,40 @@ async def run(args):
             if not task.done():task.cancel()
         await asyncio.gather(*sends,return_exceptions=True)
         await asyncio.gather(*(client.close() for client in clients+offline_clients),return_exceptions=True)
+
+
+async def run_cycles(args):
+    """Same server/database, unique sequences; complete replay and quiescence between cycles."""
+    from types import SimpleNamespace
+    assert 2 <= args.cycles <= 4
+    assert args.cycles * args.seconds * args.rate < 100000
+    reports, quiet = [], []
+    loop = asyncio.get_running_loop()
+    for cycle in range(args.cycles):
+        options = vars(args).copy()
+        options.update(allow_history=cycle > 0, sequence_base=cycle * args.seconds * args.rate)
+        report = await run(SimpleNamespace(**options))
+        assert report['initial_terminal_records'] == cycle * args.seconds * args.rate
+        reports.append(report)
+        deadline = time.monotonic() + 8
+        while True:
+            metrics = await loop.run_in_executor(None, metric_snapshot, args.host, args.metrics_port)
+            if metrics['rgg_sessions{phase="ready"}']==0 and metrics['rgg_sessions{phase="synchronizing"}']==0:
+                break
+            assert time.monotonic()<deadline, 'sessions did not drain between cycles'
+            await asyncio.sleep(.1)
+        assert metrics['rgg_queued_payload_bytes']==0
+        assert metrics['rgg_delivery_records{state="pending"}']==0 and metrics['rgg_delivery_records{state="leased"}']==0
+        began = time.monotonic()
+        print('LOAD_EVENT='+json.dumps({'phase':'quiet_start','cycle':cycle+1,'at':began}),flush=True)
+        await asyncio.sleep(5)
+        quiet.append({'cycle':cycle+1,'start':began,'end':time.monotonic()})
+    result = dict(format=1,passed=True,cycles=reports,quiescent_intervals=quiet,
+                  steady_state_seconds=args.cycles*args.seconds,
+                  total_verified=sum(item['accepted'] for item in reports),
+                  same_server_required=True,unique_sequences=True)
+    print('SOAK_REPORT='+json.dumps(result),flush=True)
+    return result
 
 def prepare(admin, data, count):
     assert 3 <= count <= 120 and not data.exists(), 'new synthetic data directory required'
@@ -246,7 +286,8 @@ def main():
     p=sub.add_parser('prepare');p.add_argument('--admin',type=Path,required=True);p.add_argument('--data',type=Path,required=True);p.add_argument('--count',type=int,required=True)
     p=sub.add_parser('run');p.add_argument('--host',default='127.0.0.1');p.add_argument('--gg-port',type=int,default=8074);p.add_argument('--metrics-port',type=int,default=9090)
     p.add_argument('--sessions',type=int,default=100);p.add_argument('--offline',type=int,default=20);p.add_argument('--seconds',type=int,default=180);p.add_argument('--rate',type=int,default=10)
+    p.add_argument('--cycles',type=int,choices=range(1,5),default=1)
     args=parser.parse_args()
     if args.command=='prepare':prepare(args.admin,args.data,args.count)
-    else:asyncio.run(run(args))
+    else:asyncio.run(run(args) if args.cycles==1 else run_cycles(args))
 if __name__=='__main__':main()

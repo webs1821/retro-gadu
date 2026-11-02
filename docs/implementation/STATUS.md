@@ -653,3 +653,17 @@ kontrolowane awarie resetu przeszły. Sprawdzono migrację rzeczywistej bazy
 dev.31 i odtworzenie kopii z oboma hasłami. Początkowy problem fixture SQLite
 Pythona zachowano w raporcie. Finalny build bez test-hooks.
 [Opis](PASSWORD-RESET.md), [wyniki i ograniczenia](VERIFICATION-2026-11-02-dev32.md).
+
+## 2026-11-02 — sterownik godzinnego soak, przygotowanie
+
+Zapisano kryteria przed pełną próbą w [SOAK.md](SOAK.md): cztery cykle900s,
+ten sam proces i baza,100sesji/10wiadomości/s,36000 sprawdzonych kopii,
+bramki R0 i porównanie RSS/deskryptorów/wątków bez sesji. Generator rozlicza
+początkową historię i używa różnych sekwencji między cyklami. Kontrola po
+SIGTERM korzysta z osobnego wolumenu roboczego, bez ograniczenia tmpfs32MiB.
+
+Krótki test klienta: dwa cykle5s,6sesji,20wiadomości, ten sam proces/baza,
+oba odbiory offline i narastająca historia: PASS w27,064s. Nie kwalifikuje R0
+ani soak. [Raport](soak-driver-smoke-2026-11-02.json) zawiera stdout i hashe;
+kontenerowy sterownik z nowymi bramkami wymaga osobnej próby przed pełnym soak.
+Kod serwera, schema14 i binaria dev32 nie zmieniły się.

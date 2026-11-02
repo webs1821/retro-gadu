@@ -20,7 +20,7 @@ UIN, oryginalnymi kluczami, atomową zmianą sekretu/wersji/generacji/limitu/aud
 Dokumentacja: PASSWORD-RESET.md; pełne dowody: password-reset-2026-11-02-dev32.json
 i VERIFICATION-2026-11-02-dev32.md. 128 Rust, fmt, Clippy all-features, 13 grup
 regresji, migracja dev31 oraz awarie resetu/zmian haseł: PASS. Bez nowych bibliotek.
-Przygotowano lokalny commit; sprawdzić git log/status, nie zakładać braku commitu.
+Lokalny commit resetu: `1ea6e30`.
 
 Ostatni debug32, bez test-hooks, `/tmp/rgg-target/debug`:
 - rgg-server: `e5fa5b389e9ea1f6060161a3854663f057e63809e8681b7078cce2e7a3e3ac84`
@@ -59,10 +59,14 @@ rozpakowanie ich do /tmp32MiB wcześniej powodowało ENOSPC.
 
 ## Następny krok
 
-Przygotować dłuższy, z góry określony test stabilności (soak), najpierw krótko
-sprawdzić jego sterownik. Nie nazywać próby debug/krótkiej pełną kwalifikacją R0.
-Obecny r0_workload ma limit1200s i polega na świeżej historii; cykle na tej samej
-bazie wymagają poprawnego rozliczenia początkowych liczników. Oryginalny GG6,
+Sterownik soak przygotowany: tests/r0_workload.py (run_cycles), r0_smoke.py
+i container_load.py (--cycles1..4). Progi przed próbą w SOAK.md. Krótka próba
+dwóch cykli5s/6sesji/20wiadomości PASS w27,064s; repo JSON. Pełny soak
+i kontenerowe bramki jeszcze niewykonane. Następny krok: commit sterownika,
+zbudowanie obrazu dev32, suite33grupy + runtime, krótka próba kontenera
+(10s×2), następnie pełne900s×4 z progami RSS/FD/wątków. Nie nazywać próby debug/krótkiej pełną kwalifikacją R0.
+r0_workload rozlicza początkową historię i unikalną bazę sekwencji kolejnych
+cykli, poza cyklami nadal wymaga świeżej historii. Limit1200s/cykl,4cykle. Oryginalny GG6,
 długi soak, pełny przegląd bezpieczeństwa i kwalifikacja wdrożeniowa nadal otwarte.
 Nie podejmować wdrożenia na podstawie samego wyniku testów syntetycznych.
 

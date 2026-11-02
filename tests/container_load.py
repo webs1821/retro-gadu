@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import re
+import statistics
 import subprocess
 import tempfile
 import time
@@ -49,7 +50,8 @@ def cgroup(engine, server):
 
 def sample(pid,group):
     status=dict(line.split(':',1) for line in Path('/proc/%d/status'%pid).read_text().splitlines() if ':' in line)
-    return dict(at=time.monotonic(),rss=int(status['VmRSS'].split()[0])*1024,
+    start_ticks=int(Path('/proc/%d/stat'%pid).read_text().rsplit(')',1)[1].split()[19])
+    return dict(at=time.monotonic(),pid=pid,start_ticks=start_ticks,fds=len(list(Path('/proc/%d/fd'%pid).iterdir())),rss=int(status['VmRSS'].split()[0])*1024,
                 rss_peak=int(status['VmHWM'].split()[0])*1024,threads=int(status['Threads']),
                 memory_current=int((group/'memory.current').read_text()),memory_peak=int((group/'memory.peak').read_text()),
                 swap_current=int((group/'memory.swap.current').read_text()),pids_current=int((group/'pids.current').read_text()),
@@ -83,14 +85,14 @@ def qualify(args,engine,tmp,evidence):
     evidence['workload_driver_sha256']=workload_sha256
     runner="import sys;exec(compile(sys.stdin.buffer.read(),'/src/tests/r0_workload.py','exec'),{'__name__':'__main__','__file__':'/src/tests/r0_workload.py'})"
     command=engine.cli+['run','--rm','-i','--name',client,'--label',engine.label+'='+engine.run_id,
-                        '--network','container:'+server,*LIMITS,args.verification,'python','-u','-c',runner,'run','--seconds',str(args.seconds)]
+                        '--network','container:'+server,*LIMITS,args.verification,'python','-u','-c',runner,'run','--seconds',str(args.seconds),'--cycles',str(args.cycles)]
     log=tmp/'load.log';errors=tmp/'load.stderr';samples=[baseline]
     evidence['resource_samples']=samples
     with log.open('w') as output,errors.open('w') as error_output:
         process=subprocess.Popen(command,stdin=subprocess.PIPE,stdout=output,stderr=error_output,env=engine.env)
         try:
             process.stdin.write(workload_source);process.stdin.close()
-            deadline=time.monotonic()+args.seconds+90
+            deadline=time.monotonic()+args.cycles*(args.seconds+60)+30
             last_notice=time.monotonic()
             while process.poll() is None:
                 assert time.monotonic()<deadline,'load process deadline exceeded'
@@ -109,54 +111,83 @@ def qualify(args,engine,tmp,evidence):
             evidence['load_stderr_tail']=errors.read_text()[-5000:]
     samples.append(sample(pid,group))
     reports=[json.loads(line.split('=',1)[1]) for line in log.read_text().splitlines() if line.startswith('LOAD_REPORT=')]
-    assert len(reports)==1
-    workload=reports[0]
-    evidence['workload']=workload
-    phase=[item for item in samples if workload['measure_start']<=item['at']<=workload['measure_end']]
-    assert len(phase)>2 and phase[-1]['at']-phase[0]['at']>=args.seconds-3,'insufficient resource coverage or inconsistent clocks'
-    cpu_seconds=(phase[-1]['cpu']['usage_usec']-phase[0]['cpu']['usage_usec'])/1000000
-    cpu_fraction=cpu_seconds/(phase[-1]['at']-phase[0]['at'])
+    assert len(reports)==args.cycles
+    evidence['workload_cycles']=reports
+    phases=[];cpu_fractions=[]
+    for index,workload in enumerate(reports):
+        assert workload['initial_terminal_records']==index*args.seconds*10
+        assert workload['sequence_base']==index*args.seconds*10
+        phase=[item for item in samples if workload['measure_start']<=item['at']<=workload['measure_end']]
+        assert len(phase)>2 and phase[-1]['at']-phase[0]['at']>=args.seconds-3,'insufficient resource coverage or inconsistent clocks'
+        phases.append(phase)
+        cpu_seconds=(phase[-1]['cpu']['usage_usec']-phase[0]['cpu']['usage_usec'])/1000000
+        cpu_fractions.append(cpu_seconds/(phase[-1]['at']-phase[0]['at']))
+    cpu_fraction=max(cpu_fractions)
     final=samples[-1]
-    gates=dict(all_messages=workload['accepted']==workload['scheduled']==args.seconds*10,
-               exact_payloads=workload['all_payloads_exact'] and workload['offline_fifo'],
-               session_samples=len(workload['metrics_samples'])>=args.seconds//2 and all(item['ready_sessions']==100 for item in workload['metrics_samples']),
-               rate=workload['achieved_rate']>=9.9,schedule=workload['schedule_lag_max_ms']<=250,
-               ack=workload['ack_p95_ms']<=250 and workload['ack_max_ms']<1000,online=workload['online_p95_ms']<=500,
+    gates=dict(all_messages=all(w['accepted']==w['scheduled']==args.seconds*10 for w in reports),
+               exact_payloads=all(w['all_payloads_exact'] and w['offline_fifo'] for w in reports),
+               session_samples=all(len(w['metrics_samples'])>=args.seconds//2 and all(item['ready_sessions']==100 for item in w['metrics_samples']) for w in reports),
+               rate=all(w['achieved_rate']>=9.9 for w in reports),schedule=all(w['schedule_lag_max_ms']<=250 for w in reports),
+               ack=all(w['ack_p95_ms']<=250 and w['ack_max_ms']<1000 for w in reports),online=all(w['online_p95_ms']<=500 for w in reports),
                rss=max(item['rss_peak'] for item in samples)<=192*MIB,cpu=cpu_fraction<=.90,
                swap=all(item['swap_current']==0 for item in samples),
+               same_process=all((item['pid'],item['start_ticks'])==(baseline['pid'],baseline['start_ticks']) for item in samples),
                no_oom=all(final['memory_events'][key]==baseline['memory_events'][key] for key in ['oom','oom_kill']))
+    quiet=[]
+    if args.cycles>1:
+        summaries=[json.loads(line.split('=',1)[1]) for line in log.read_text().splitlines() if line.startswith('SOAK_REPORT=')]
+        assert len(summaries)==1
+        summary=summaries[0]
+        assert summary['cycles']==reports and summary['total_verified']==args.cycles*args.seconds*10
+        assert len(summary['quiescent_intervals'])==args.cycles
+        for interval in summary['quiescent_intervals']:
+            observed=[item for item in samples if interval['end']-3<=item['at']<=interval['end']]
+            assert len(observed)>=2 and interval['end']-interval['start']>=5, 'insufficient quiescent samples'
+            quiet.append(dict(cycle=interval['cycle'],sample_count=len(observed),start=interval['start'],end=interval['end'],
+                              rss_median=statistics.median(item['rss'] for item in observed),
+                              fds_median=statistics.median(item['fds'] for item in observed),
+                              threads_median=statistics.median(item['threads'] for item in observed)))
+        gates.update(rss_growth=quiet[-1]['rss_median']-quiet[0]['rss_median']<=16*MIB,
+                     fd_growth=quiet[-1]['fds_median']-quiet[0]['fds_median']<=4,
+                     thread_growth=quiet[-1]['threads_median']-quiet[0]['threads_median']<=4)
+        evidence['quiescent_samples']=quiet
     evidence.update(gates_before_database=gates.copy(),cpu_fraction=cpu_fraction,peak_rss_bytes=max(item['rss_peak'] for item in samples))
     engine.stop(server)
+    inspection=engine.volume()
+    engine.run(args.runtime,['/usr/bin/test','-w','/data'],[(inspection,'/data',False)])
     verify="""import sqlite3,json,tempfile,shutil
 from pathlib import Path
 # Inspect a stable copy after exit 0. SQLite may need new WAL/SHM sidecars;
 # immutable=1 would risk ignoring committed WAL, while the source stays read-only.
-temporary=tempfile.TemporaryDirectory(prefix='rgg-inspect-')
-target=Path(temporary.name);source=Path('/data/runtime');total=0
+temporary=tempfile.TemporaryDirectory(prefix='rgg-inspect-',dir='/data')
+target=Path(temporary.name);source=Path('/source/runtime');total=0
 for name in ['rgg.sqlite','rgg.sqlite-wal']:
  path=source/name
  if not path.exists():
   assert name.endswith('-wal');continue
  assert path.is_file() and not path.is_symlink()
- total+=path.stat().st_size;assert total<=16*1024*1024
+ total+=path.stat().st_size;assert total<=64*1024*1024
  shutil.copyfile(path,target/name)
 db=sqlite3.connect(str(target/'rgg.sqlite'))
 assert db.execute('PRAGMA integrity_check').fetchone()==('ok',)
 assert not db.execute('PRAGMA foreign_key_check').fetchall()
 assert db.execute('SELECT count(*) FROM account_sessions').fetchone()==(0,)
+assert db.execute('SELECT count(*) FROM delivery_attempts WHERE completed_at IS NULL').fetchone()==(0,)
 assert db.execute('SELECT count(*) FROM messages WHERE body IS NOT NULL OR styles IS NOT NULL OR conference IS NOT NULL').fetchone()==(0,)
 counts=dict(db.execute('SELECT state,count(*) FROM deliveries GROUP BY state').fetchall());db.close();temporary.cleanup()
 print(json.dumps(counts))
 """
-    database=json.loads(engine.run(args.verification,['python','-c',verify],[(volume,'/data',True)]).stdout)
-    gates['database']=database=={'TransportWrittenUnconfirmed':args.seconds*10}
+    database=json.loads(engine.run(args.verification,['python','-c',verify],[(volume,'/source',True),(inspection,'/data',False)]).stdout)
+    gates['database']=database=={'TransportWrittenUnconfirmed':args.cycles*args.seconds*10}
     report=dict(format=1,source_commit=revision,version=runtime['Config']['Labels']['org.opencontainers.image.version'],
-                runtime_image=args.runtime,verification_image=args.verification,limits=limits,workload=workload,
-                resource_samples=samples,cpu_fraction=round(cpu_fraction,6),cpu_observation_seconds=round(phase[-1]['at']-phase[0]['at'],3),
+                runtime_image=args.runtime,verification_image=args.verification,limits=limits,
+                workload=reports[0] if args.cycles==1 else None,workload_cycles=reports,quiescent_samples=quiet,
+                resource_samples=samples,cpu_fraction=round(cpu_fraction,6),cpu_fractions=cpu_fractions,
+                cpu_observation_seconds=[round(phase[-1]['at']-phase[0]['at'],3) for phase in phases],
                 peak_rss_bytes=max(item['rss_peak'] for item in samples),memory_peak_bytes=max(item['memory_peak'] for item in samples),
                 database=database,gates=gates,passed=all(gates.values()),
                 r0_sample_qualified=args.seconds>=180 and all(gates.values()),
-                soak_qualified=False,native_client_qualified=False,production_qualified=False,
+                soak_qualified=args.cycles==4 and args.seconds>=900 and all(gates.values()),native_client_qualified=False,production_qualified=False,
                 workload_driver_sha256=workload_sha256,
                 driver_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
     return report
@@ -166,6 +197,7 @@ def main():
     p.add_argument('--docker',type=Path,required=True);p.add_argument('--socket',type=Path,required=True)
     p.add_argument('--runtime',required=True);p.add_argument('--verification',required=True)
     p.add_argument('--seconds',type=int,default=180);p.add_argument('--report',type=Path,required=True)
+    p.add_argument('--cycles',type=int,choices=range(1,5),default=1)
     args=p.parse_args()
     assert os.name=='posix' and args.socket.is_absolute() and args.socket.is_socket() and not args.report.exists()
     assert 10<=args.seconds<=1200
@@ -175,7 +207,7 @@ def main():
         tmp=Path(temporary);client=tmp/'client';client.mkdir();engine=Engine(args,client)
         try:report=qualify(args,engine,tmp,evidence)
         except BaseException as error:
-            failure=error;report=dict(format=1,passed=False,r0_sample_qualified=False,error=type(error).__name__+': '+str(error),evidence=evidence)
+            failure=error;report=dict(format=1,passed=False,r0_sample_qualified=False,soak_qualified=False,error=type(error).__name__+': '+str(error),evidence=evidence)
             if isinstance(error,subprocess.CalledProcessError):report['command_stderr']=(error.stderr or '')[-5000:]
         finally:
             try:
@@ -184,9 +216,9 @@ def main():
                 assert not engine.call(['volume','ls','--filter','label='+engine.label+'='+engine.run_id,'--format','{{.Name}}']).stdout.strip()
                 report['cleanup_verified']=True
             except BaseException as error:
-                failure=failure or error;report.update(passed=False,r0_sample_qualified=False,cleanup_verified=False,cleanup_error=str(error))
+                failure=failure or error;report.update(passed=False,r0_sample_qualified=False,soak_qualified=False,cleanup_verified=False,cleanup_error=str(error))
         with args.report.open('x') as output:json.dump(report,output,indent=2);output.write('\n')
-    print(json.dumps({key:report.get(key) for key in ['passed','r0_sample_qualified','cleanup_verified','peak_rss_bytes','cpu_fraction','gates']}),flush=True)
+    print(json.dumps({key:report.get(key) for key in ['passed','r0_sample_qualified','soak_qualified','cleanup_verified','peak_rss_bytes','cpu_fraction','gates']}),flush=True)
     if failure:raise failure
     if not report['passed']:raise SystemExit('R0 gates failed; inspect report')
 if __name__=='__main__':main()
