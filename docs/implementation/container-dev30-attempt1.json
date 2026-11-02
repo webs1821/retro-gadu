@@ -1,0 +1,302 @@
+{
+  "format": 1,
+  "qualified": false,
+  "source_commit": "90aed8d2dab49790a9f59ebd105596f2d5d20ae4",
+  "cause": "verification source extraction shares 32 MiB tmpfs with SQLite fixture and transient WAL/checkpoint storage",
+  "limit_changed": false,
+  "files": {
+    "runtime-dev30-build.json": {
+      "sha256": "a827bfde7a880fa1dc1f8e5e7513d93ec9dcd1f5f38c854754842a02a794b99f",
+      "content": {
+        "format": 1,
+        "built": true,
+        "source_commit": "90aed8d2dab49790a9f59ebd105596f2d5d20ae4",
+        "version": "0.1.0-dev.30",
+        "target": "runtime",
+        "image": "rgg-local:90aed8d2dab4-runtime",
+        "image_id": "sha256:5990b4b936ba07d51d94120b64c71681eca27de1702dd9be248c1956b9b06ea5",
+        "architecture": "amd64",
+        "engine_version": "29.9.2",
+        "image_size": 120133224,
+        "source_archive": "git archive of the recorded commit; vendored Cargo sources included in runtime",
+        "pushed": false,
+        "deployed": false,
+        "runtime_qualified": false
+      }
+    },
+    "verification-dev30-build.json": {
+      "sha256": "9946beeeea2db80630eddac76a0092243a1816fb63f242f88f42aeb1b5bf51f9",
+      "content": {
+        "format": 1,
+        "built": true,
+        "source_commit": "90aed8d2dab49790a9f59ebd105596f2d5d20ae4",
+        "version": "0.1.0-dev.30",
+        "target": "verification",
+        "image": "rgg-local:90aed8d2dab4-verification",
+        "image_id": "sha256:caed86782486771fe6cebc9e9516df6a9251f09bb25a57831a4a06e156d95a3c",
+        "architecture": "amd64",
+        "engine_version": "29.9.2",
+        "image_size": 165917116,
+        "source_archive": "git archive of the recorded commit; vendored Cargo sources included in runtime",
+        "pushed": false,
+        "deployed": false,
+        "runtime_qualified": false
+      }
+    },
+    "tmpfs-dev30-diagnostic.json": {
+      "sha256": "d51b8560fec9b34acae94aa47350f279a5ce34d6889cf751298689be3cbca626",
+      "content": [
+        {
+          "extract_source": true,
+          "before": {
+            "used_bytes": 5414912,
+            "free_bytes": 28139520,
+            "file_bytes": 4573782,
+            "largest": [
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev24.json",
+                "bytes": 505004,
+                "allocated": 507904
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev26.json",
+                "bytes": 500580,
+                "allocated": 503808
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev22-failed.json",
+                "bytes": 452671,
+                "allocated": 454656
+              },
+              {
+                "path": "source/docs/implementation/client-upload-cpu-2026-11-01-dev25.json",
+                "bytes": 448533,
+                "allocated": 450560
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-attempt3.json",
+                "bytes": 178658,
+                "allocated": 180224
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev19.json",
+                "bytes": 158038,
+                "allocated": 159744
+              },
+              {
+                "path": "source/PLAN_IMPLEMENTACJI.md",
+                "bytes": 89512,
+                "allocated": 90112
+              },
+              {
+                "path": "source/docs/reviews/PLAN-v0.2.md",
+                "bytes": 88814,
+                "allocated": 90112
+              }
+            ]
+          },
+          "initialized": {
+            "used_bytes": 5611520,
+            "free_bytes": 27942912,
+            "file_bytes": 4766444,
+            "largest": [
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev24.json",
+                "bytes": 505004,
+                "allocated": 507904
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev26.json",
+                "bytes": 500580,
+                "allocated": 503808
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev22-failed.json",
+                "bytes": 452671,
+                "allocated": 454656
+              },
+              {
+                "path": "source/docs/implementation/client-upload-cpu-2026-11-01-dev25.json",
+                "bytes": 448533,
+                "allocated": 450560
+              },
+              {
+                "path": "data/rgg.sqlite",
+                "bytes": 192512,
+                "allocated": 192512
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-attempt3.json",
+                "bytes": 178658,
+                "allocated": 180224
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev19.json",
+                "bytes": 158038,
+                "allocated": 159744
+              },
+              {
+                "path": "source/PLAN_IMPLEMENTACJI.md",
+                "bytes": 89512,
+                "allocated": 90112
+              }
+            ]
+          },
+          "seeded": {
+            "used_bytes": 33554432,
+            "free_bytes": 0,
+            "file_bytes": 32705812,
+            "largest": [
+              {
+                "path": "data/rgg.sqlite-wal",
+                "bytes": 14152232,
+                "allocated": 14155776
+              },
+              {
+                "path": "data/rgg.sqlite",
+                "bytes": 13946880,
+                "allocated": 13946880
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev24.json",
+                "bytes": 505004,
+                "allocated": 507904
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev26.json",
+                "bytes": 500580,
+                "allocated": 503808
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev22-failed.json",
+                "bytes": 452671,
+                "allocated": 454656
+              },
+              {
+                "path": "source/docs/implementation/client-upload-cpu-2026-11-01-dev25.json",
+                "bytes": 448533,
+                "allocated": 450560
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-attempt3.json",
+                "bytes": 178658,
+                "allocated": 180224
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev19.json",
+                "bytes": 158038,
+                "allocated": 159744
+              }
+            ]
+          },
+          "error": "OSError: [Errno 28] No space left on device",
+          "at_failure": {
+            "used_bytes": 33554432,
+            "free_bytes": 0,
+            "file_bytes": 32705812,
+            "largest": [
+              {
+                "path": "data/rgg.sqlite-wal",
+                "bytes": 14152232,
+                "allocated": 14155776
+              },
+              {
+                "path": "data/rgg.sqlite",
+                "bytes": 13946880,
+                "allocated": 13946880
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev24.json",
+                "bytes": 505004,
+                "allocated": 507904
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev26.json",
+                "bytes": 500580,
+                "allocated": 503808
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev22-failed.json",
+                "bytes": 452671,
+                "allocated": 454656
+              },
+              {
+                "path": "source/docs/implementation/client-upload-cpu-2026-11-01-dev25.json",
+                "bytes": 448533,
+                "allocated": 450560
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-attempt3.json",
+                "bytes": 178658,
+                "allocated": 180224
+              },
+              {
+                "path": "source/docs/implementation/r0-2026-11-01-dev19.json",
+                "bytes": 158038,
+                "allocated": 159744
+              }
+            ]
+          }
+        },
+        {
+          "extract_source": false,
+          "before": {
+            "used_bytes": 0,
+            "free_bytes": 33554432,
+            "file_bytes": 0,
+            "largest": []
+          },
+          "initialized": {
+            "used_bytes": 196608,
+            "free_bytes": 33357824,
+            "file_bytes": 192662,
+            "largest": [
+              {
+                "path": "data/rgg.sqlite",
+                "bytes": 192512,
+                "allocated": 192512
+              },
+              {
+                "path": "data/keys.toml",
+                "bytes": 150,
+                "allocated": 4096
+              },
+              {
+                "path": "data/rgg.lock",
+                "bytes": 0,
+                "allocated": 0
+              }
+            ]
+          },
+          "seeded": {
+            "used_bytes": 14225408,
+            "free_bytes": 19329024,
+            "file_bytes": 14221462,
+            "largest": [
+              {
+                "path": "data/rgg.sqlite",
+                "bytes": 14221312,
+                "allocated": 14221312
+              },
+              {
+                "path": "data/keys.toml",
+                "bytes": 150,
+                "allocated": 4096
+              },
+              {
+                "path": "data/rgg.lock",
+                "bytes": 0,
+                "allocated": 0
+              }
+            ]
+          },
+          "config_written": true
+        }
+      ]
+    },
+    "suite-dev30-failure.log": {
+      "sha256": "194ef3ebbec22b92c4334cb796eb9a057be1ccafca2580fb3598d165a6ad22b3",
+      "content": "OK: 12 provenance records, 10 crate boundaries, 13 migrations, source notices\nPASS: pinned schema, counts and semantic gaps; read-only files and redacted output\nPASS: unsupported schema/history, sidecars, symlink, permissions and size refused\nPASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\nPASS: CLI init/register/invites, three-use limit, custom/automatic UIN, persistent retirement, encrypted credentials, lost-key refusal, server/admin mutual exclusion\nPASS: complete snapshot and authenticated restored text/images/profile/contacts/invites\nPASS: existing/live destinations and corrupt/incomplete/wrong-key backups refused\nPASS: rekey all accounts, retain keys, unchanged passwords/versions, older backup restore\nPASS: refuse active server, incomplete/unrelated pending keyring, corrupt account\nPASS: new/old GG6 login, retained messages/images/profile/contacts, audit and independent backups\nPASS: bad credentials/input, active server, pending rotation and missing data/key refused\nPASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\nSESSION_STATE_REPORT={\"cases\": [{\"phase\": \"unauthenticated\", \"command\": \"text\"}, {\"phase\": \"unauthenticated\", \"command\": \"conference\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-offer\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-request\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-start\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-own\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-write\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-search\"}, {\"phase\": \"unauthenticated\", \"command\": \"archive-get\"}, {\"phase\": \"unauthenticated\", \"command\": \"archive-put\"}, {\"phase\": \"unauthenticated\", \"command\": \"contact-add\"}, {\"phase\": \"unauthenticated\", \"command\": \"contact-remove\"}, {\"phase\": \"unauthenticated\", \"command\": \"ping\"}, {\"phase\": \"unauthenticated\", \"command\": \"status\"}, {\"phase\": \"unauthenticated\", \"command\": \"empty-notify\"}, {\"phase\": \"initial\", \"command\": \"text\"}, {\"phase\": \"initial\", \"command\": \"conference\"}, {\"phase\": \"initial\", \"command\": \"image-offer\"}, {\"phase\": \"initial\", \"command\": \"image-request\"}, {\"phase\": \"initial\", \"command\": \"image-start\"}, {\"phase\": \"initial\", \"command\": \"directory-own\"}, {\"phase\": \"initial\", \"command\": \"directory-write\"}, {\"phase\": \"initial\", \"command\": \"directory-search\"}, {\"phase\": \"initial\", \"command\": \"archive-get\"}, {\"phase\": \"initial\", \"command\": \"archive-put\"}, {\"phase\": \"initial\", \"command\": \"contact-add\"}, {\"phase\": \"initial\", \"command\": \"contact-remove\"}, {\"phase\": \"initial\", \"command\": \"repeat-login\"}, {\"phase\": \"resynchronizing\", \"command\": \"text\"}, {\"phase\": \"resynchronizing\", \"command\": \"conference\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-offer\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-request\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-start\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-own\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-write\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-search\"}, {\"phase\": \"resynchronizing\", \"command\": \"archive-get\"}, {\"phase\": \"resynchronizing\", \"command\": \"archive-put\"}, {\"phase\": \"resynchronizing\", \"command\": \"contact-add\"}, {\"phase\": \"resynchronizing\", \"command\": \"contact-remove\"}, {\"phase\": \"resynchronizing\", \"command\": \"repeat-login\"}, {\"phase\": \"resynchronizing\", \"command\": \"empty-during-staging\"}], \"count\": 42, \"state_preserved\": true, \"legal_sync_and_message_after_checks\": true}\nPASS: pings remain legal during synchronization but cannot extend its deadline\nPASS: concurrent replay {\"passed\": true, \"history\": 3000, \"offline\": 3000, \"receivers\": 20, \"seconds\": 10.559, \"capacity_qualified\": false}\n\nWARNING: Your kernel does not support swap limit capabilities or the cgroup is not mounted. Memory limited without swap.\ntest_config_bounds_and_no_binary_fetch (__main__.FormatTests.test_config_bounds_and_no_binary_fetch) ... ok\ntest_malformed_pe_and_patch_preconditions (__main__.FormatTests.test_malformed_pe_and_patch_preconditions) ... ok\ntest_no_manifest_on_interrupted_publication_and_no_overwrite (__main__.FormatTests.test_no_manifest_on_interrupted_publication_and_no_overwrite) ... ok\ntest_solid_installer_roundtrip_and_rejection (__main__.FormatTests.test_solid_installer_roundtrip_and_rejection) ... ok\ntest_string_tables_c_strings_suffixes_and_boundaries (__main__.FormatTests.test_string_tables_c_strings_suffixes_and_boundaries) ... ok\n\n----------------------------------------------------------------------\nRan 5 tests in 0.213s\n\nOK\nOSError: [Errno 28] No space left on device\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/tmp/rgg-image-source-un5wua_5/tests/gg6_history_retention.py\", line 152, in <module>\n    main()\n    ~~~~^^\n  File \"/tmp/rgg-image-source-un5wua_5/tests/gg6_history_retention.py\", line 110, in main\n    config.write_text(\"data_dir='data'\\nhttp_bind='127.0.0.1:0'\\ngg_bind='127.0.0.1:0'\\nmetrics_bind='127.0.0.1:0'\\n[network]\\nmax_connections=32\\nper_ip=32\\n\", encoding='utf-8')\n    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/pathlib/_local.py\", line 555, in write_text\n    return PathBase.write_text(self, data, encoding, errors, newline)\n           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/pathlib/_abc.py\", line 651, in write_text\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\n         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nOSError: [Errno 28] No space left on device\nTraceback (most recent call last):\n  File \"<stdin>\", line 57, in <module>\n  File \"<stdin>\", line 42, in main\n  File \"/usr/local/lib/python3.13/subprocess.py\", line 578, in run\n    raise CalledProcessError(retcode, process.args,\n                             output=stdout, stderr=stderr)\nsubprocess.CalledProcessError: Command '['/usr/local/bin/python', '/tmp/rgg-image-source-un5wua_5/tests/gg6_history_retention.py', '--server', '/usr/local/bin/rgg-server', '--admin', '/usr/local/bin/rgg-admin']' returned non-zero exit status 1.\n"
+    }
+  }
+}

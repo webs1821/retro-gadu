@@ -564,3 +564,16 @@ obca nazwa/CA odmówione, formularze i GG, pobieranie/patcher, limity/IP aliasy,
 [Kontrakt](WEB-PROXY.md), [weryfikacja](VERIFICATION-2026-11-02-dev30.md).
 Przyszły container_suite32grupy wymagaCLIopenssl wverification, runtimebeznowych
 narzędzi. Brak nowego obrazu/R0/nginx/natywnegoGG/push/deploy; obraz nadal26.
+
+
+## 2026-11-02 — dev.30: oddzielenie źródeł w obrazie weryfikacyjnym
+
+Pierwszy obraz z90aed8d zbudował się poprawnie, ale suite zatrzymał się w fixture
+100tys historii przed startem serwera. Diagnostyka dokładnego obrazu: rozpakowane
+źródła zajmowały5414912B tmpfs; baza+WAL wypełniły33554432B. Bez ekstrakcji
+źródeł ten sam fixture kończył się bazą14221312B, usuniętymWAL i19329024B wolnego.
+Wszystkie dowody zachowane wcontainer-dev30-attempt1.json; obraz niekwalifikowany.
+
+Źródła weryfikacyjne są teraz wypakowane przy budowaniu do readonly/src; suite
+nie zajmuje nimi/tmp. Limity256MiB/1CPU/tmp32MiB oraz kod serwera i bazy bez zmian.
+Następna próba wymaga nowego obrazu z commitu tej zmiany. Jeszcze brak wyniku.

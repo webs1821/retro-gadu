@@ -15,6 +15,32 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
 
+AKTYWNA KWALIFIKACJA OBRAZU30 (nie kończyć pracy po przeczytaniu):
+Dev30commit90aed8d2dab49790a9f59ebd105596f2d5d20ae4zakończony; prywatnyDocker
+DZIAŁA wsession13886, root/tmp/rgg-docker-local-20261101(data29,run30,piddaemon30.pid,
+socketdocker30.sock,logdaemon-dev30.log). Brakbridge/firewall/publicports/systemservice.
+Starterworkspace/rgg-container-start30.py; preflightsprawdziłroot0700uid0/basestate.
+Buildsession19921zakończony0: runtime5990b4b936ba07d51d94120b64c71681eca27de1702dd9be248c1956b9b06ea5,
+verificationcaed86782486771fe6cebc9e9516df6a9251f09bb25a57831a4a06e156d95a3c.
+Rawroot/runtime-dev30-build.json,verification-dev30-build.json +logs zachowane.
+Suite session38675FAILED atgg6_history_retention configwrite ENOSPC before server.
+Root suite-dev30-failure.log andtmpfs-dev30-diagnostic.json, archived repo
+container-dev30-attempt1.json. Failedcontainerscleaned byEnginefinally.
+Sourceextract consumes5414912Btmpfs; seedDB13946880+WAL14152232 leavesfree0.
+Sameimage withoutsourceextract seedDB14221312/WALgone,free19329024,configwritePASS.
+Driverworkspace/rgg-container-space30.py. NOT a reappearance of unclosedfixture:
+connection closing still present, temporary space forcheckpoint now insufficient.
+HARNESSONLYfix deploy/Dockerfile verification tar extractsnonvendoredsource toRO/src
+atbuild insteadCOPYtests/tools. tests/container_suite.py uses /src directly,
+assertsRO andnovendor/.cargo; reportsread_only_test_sources etc. NoRuntimecode,
+version/schema/deps/limitschanged. Needcommitfix,buildnewsource/images withnew
+-final reportnames,qualify32groups/runtime,thenR0/export. Preparedworkspace
+rgg-container-build30.py/qualify30.py/r030.py/export30.py currentlypointold90source
+andnonfinalreportnames; createadaptednewdrivers, neveroverwriteoldreports/tags.
+R0notstarted. Exportnotstarted. NeedstopownDockerafterexport, keepcaches/images.
+RepoDOCS/RESUMEchangehereonlycheckpointofworkinprogress; reflectsfailedfirstimage.
+
+
 Dev29 ukończony w b412748. Dev30 zaimplementowany i zweryfikowany lokalnie:
 web_access.rs: WebProxy typedSerdeTryFrom canonicalHTTPSorigin+oneLoopbackProxyIP;
 WebEndpoint::new(bound,Option<WebProxy>) nadal loopback/nonzeroport. Website

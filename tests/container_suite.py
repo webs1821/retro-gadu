@@ -7,8 +7,6 @@ import os
 from pathlib import Path
 import subprocess
 import sys
-import tarfile
-import tempfile
 import time
 
 
@@ -32,21 +30,20 @@ def main():
         'gg6_images', 'legacy_invitations', 'legacy_import']]
     started = time.monotonic()
     completed = []
-    with tempfile.TemporaryDirectory(prefix='rgg-image-source-') as tmp:
-        root = Path(tmp)
-        with tarfile.open(source, 'r:gz') as archive:
-            members = [member for member in archive if member.name.removeprefix('./').split('/')[0] not in ('vendor', '.cargo')]
-            archive.extractall(root, members=members, filter='data')
-        revision = (root / 'SOURCE-COMMIT').read_text().strip()
-        for relative, options in checks:
-            subprocess.run([sys.executable, str(root / relative), *options], cwd=root, check=True, timeout=180)
-            completed.append(relative)
+    root = Path('/src')
+    assert os.statvfs(root).f_flag & os.ST_RDONLY
+    assert not (root / 'vendor').exists() and not (root / '.cargo').exists()
+    revision = (root / 'SOURCE-COMMIT').read_text().strip()
+    for relative, options in checks:
+        subprocess.run([sys.executable, str(root / relative), *options], cwd=root, check=True, timeout=180)
+        completed.append(relative)
     report = dict(format=1, passed=True, source_commit=revision,
                   binary_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                   source_archive_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                   seconds=round(time.monotonic()-started, 3), completed=completed,
                   uid=10001, memory_max=268435456, cpu_max='100000 100000', pids_max=128,
                   read_only_root=True, no_new_privileges=True, seccomp_filter=True,
+                  read_only_test_sources=True, test_source_directory='/src', temporary_data_directory='/tmp',
                   swap_limit_file_present=(group / 'memory.swap.max').exists(),
                   swap_max=(group / 'memory.swap.max').read_text().strip(),
                   native_client_qualified=False, capacity_r0_qualified=False)

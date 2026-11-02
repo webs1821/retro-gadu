@@ -43,8 +43,11 @@ ARG VERSION
 LABEL org.opencontainers.image.revision="${SOURCE_COMMIT}" org.opencontainers.image.version="${VERSION}"
 COPY --from=runtime /usr/local/bin/rgg-server /usr/local/bin/rgg-admin /usr/local/bin/
 COPY --from=runtime /usr/share/rgg /usr/share/rgg
-COPY tests /src/tests
-COPY tools /src/tools
+# Keep verification sources on the read-only image layer, not in the 32 MiB data tmpfs.
+# The full vendored archive remains available separately for source distribution.
+RUN mkdir -p /src \
+    && tar --extract --gzip --file=/usr/share/rgg/source.tar.gz --directory=/src \
+           --exclude='./vendor' --exclude='./.cargo'
 ENV PYTHONDONTWRITEBYTECODE=1
 USER 10001:10001
 WORKDIR /src
