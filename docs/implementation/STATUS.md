@@ -577,3 +577,17 @@ Wszystkie dowody zachowane wcontainer-dev30-attempt1.json; obraz niekwalifikowan
 Źródła weryfikacyjne są teraz wypakowane przy budowaniu do readonly/src; suite
 nie zajmuje nimi/tmp. Limity256MiB/1CPU/tmp32MiB oraz kod serwera i bazy bez zmian.
 Następna próba wymaga nowego obrazu z commitu tej zmiany. Jeszcze brak wyniku.
+
+## 2026-11-02 — kwalifikacja obrazu dev.30
+
+Dokładny obraz źródła 94730ef przeszedł 32 grupy release, restart/wolumen/restore
+oraz R0 600 s: 100 Ready, 6000 wiadomości, 1 CPU/256 MiB/swap0. Wszystkie
+payloady i FIFO poprawne; ACK p95 5,217 ms, online p95 9,910 ms, CPU 11,84%,
+RSS maks.19136512 B. Poprawka rozmieszczenia źródeł usunęła wcześniejszy ENOSPC
+fixture bez zwiększania limitów. Pierwsza próba i diagnoza są zachowane.
+
+Eksport 62104705 B ze sprawdzonym gzip/config/revision oraz sześć raportów
+i manifest hashy zapisano w workspace/rgg-container-2026-11-02-dev30; raporty
+są także w repo. Kontenery i wolumeny posprzątano, prywatny daemon zatrzymano.
+To nie długi soak ani kwalifikacja natywnego GG/publicznego wdrożenia.
+[Raport i sumy](VERIFICATION-2026-11-02-r0-dev30.md). Brak push/deploy.

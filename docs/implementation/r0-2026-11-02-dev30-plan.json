@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "planned_at_utc": "2026-11-02T20:14:11.582617+00:00",
+  "source_commit": "94730efddb6c39b9d6e47b3d50b1f1114994ea9e",
+  "runtime_image": "sha256:79bfa28fec6565f9638b75cd0295e71a76a083fcbfaba2ea7defb9e45c13d2ce",
+  "verification_image": "sha256:3396ab839fee98b30cb37e6d7a3747973a84dd5716df3eb5695fad75440f19a6",
+  "duration_seconds": 600,
+  "ready_sessions": 100,
+  "offline_accounts": 20,
+  "messages_per_second": 10,
+  "expected_accepted": 6000,
+  "expected_online": 3000,
+  "expected_offline": 3000,
+  "cpu": 1,
+  "memory_max": 268435456,
+  "swap_max": 0,
+  "pids_max": 128,
+  "thresholds": "Unchanged R0-LOAD.md; longer measurement window selected before run",
+  "thresholds_sha256": "7ff1e89a6ee245e2c88dde92e799c93d38f875f62a46a705667ef8aef9ac8081",
+  "soak_qualified": false,
+  "production_qualified": false,
+  "driver_sha256": {
+    "tests/container_load.py": "8db118c2ff4cd9a40c1d38e0778791622d31c7c1fa6cf1adc968d10903d11941",
+    "tests/container_runtime.py": "2fa6c7aa21deffdb2b68a605bc73d729113cb694022066da860f6d999052559e",
+    "tests/r0_workload.py": "9b1a543f305257a72a7ed991f2d99ebb0d84b7c32c1ee09c2276faf083dfc541",
+    "tests/gg6_sessions.py": "b91eb20b7539a462660dddc624a08f8b288cc5d9ba34db131b41e721a624b79a",
+    "tests/http_metrics.py": "e3310539596dff4e9a55aac4ff8522d38eeaada4eec792e93ad44071557a36a6"
+  }
+}

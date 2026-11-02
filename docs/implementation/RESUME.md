@@ -15,31 +15,34 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
 
-AKTYWNA KWALIFIKACJA OBRAZU30 (nie kończyć pracy po przeczytaniu):
-Dev30commit90aed8d2dab49790a9f59ebd105596f2d5d20ae4zakończony; prywatnyDocker
-DZIAŁA wsession13886, root/tmp/rgg-docker-local-20261101(data29,run30,piddaemon30.pid,
-socketdocker30.sock,logdaemon-dev30.log). Brakbridge/firewall/publicports/systemservice.
-Starterworkspace/rgg-container-start30.py; preflightsprawdziłroot0700uid0/basestate.
-Buildsession19921zakończony0: runtime5990b4b936ba07d51d94120b64c71681eca27de1702dd9be248c1956b9b06ea5,
-verificationcaed86782486771fe6cebc9e9516df6a9251f09bb25a57831a4a06e156d95a3c.
-Rawroot/runtime-dev30-build.json,verification-dev30-build.json +logs zachowane.
-Suite session38675FAILED atgg6_history_retention configwrite ENOSPC before server.
-Root suite-dev30-failure.log andtmpfs-dev30-diagnostic.json, archived repo
-container-dev30-attempt1.json. Failedcontainerscleaned byEnginefinally.
-Sourceextract consumes5414912Btmpfs; seedDB13946880+WAL14152232 leavesfree0.
-Sameimage withoutsourceextract seedDB14221312/WALgone,free19329024,configwritePASS.
-Driverworkspace/rgg-container-space30.py. NOT a reappearance of unclosedfixture:
-connection closing still present, temporary space forcheckpoint now insufficient.
-HARNESSONLYfix deploy/Dockerfile verification tar extractsnonvendoredsource toRO/src
-atbuild insteadCOPYtests/tools. tests/container_suite.py uses /src directly,
-assertsRO andnovendor/.cargo; reportsread_only_test_sources etc. NoRuntimecode,
-version/schema/deps/limitschanged. Needcommitfix,buildnewsource/images withnew
--final reportnames,qualify32groups/runtime,thenR0/export. Preparedworkspace
-rgg-container-build30.py/qualify30.py/r030.py/export30.py currentlypointold90source
-andnonfinalreportnames; createadaptednewdrivers, neveroverwriteoldreports/tags.
-R0notstarted. Exportnotstarted. NeedstopownDockerafterexport, keepcaches/images.
-RepoDOCS/RESUMEchangehereonlycheckpointofworkinprogress; reflectsfailedfirstimage.
+BIEŻĄCY STAN: dev30 runtime90aed8d oraz poprawka harness94730ef zakończone.
+Obraz źródła94730ef przeszedł32grupy release123.254s, restart/volume/restore oraz
+R0600s/100Ready/6000msg przy1CPU/256MiB/swap0. Wszystkie bramkiPASS.
+Raport VERIFICATION-2026-11-02-r0-dev30.md;6JSON+artifactmanifest zapisane wrepo
+iworkspace/rgg-container-2026-11-02-dev30. Archiwum62104705B SHA
+2fd69c37b1c65cb9024ff5f131e45d7f91b59e04f3293a4367c22488b42fc2b7.
+Runtime79bfa28fec6565f9638b75cd0295e71a76a083fcbfaba2ea7defb9e45c13d2ce,
+verification3396ab839fee98b30cb37e6d7a3747973a84dd5716df3eb5695fad75440f19a6.
+R0RSS19136512,CPU.1184,ACKp955.217ms/onlinep959.91ms,all6000verified.
+Kontenery/wolumeny usunięte; daemon30 PID/cmdline sprawdzony i zatrzymany.
+Cachedata29/images/root0700/tmp/rgg-docker-local-20261101 zachowane.
+Brak aktywnych procesów kontenera i oczekujących pytań; kontynuować lokalnie.
+Pierwszy obraz90aed8d niekwalifikowany: źródła na32MiBtmpfs doprowadziły doENOSPC
+fixture. container-dev30-attempt1.json zachowuje diagnozę.94730ef przenosi źródła
+verification doRO/src naetapiebuild; bez zmian runtime/schema/version/limitów.
 
+Kolejny krok: niezależny klient libgadu, tylko lokalne syntetyczne dane.
+Workspace/rgg-libgadu-1.7.0-release zawiera kompletne wydanie z oficjalnego URL
+https://github.com/wojtekka/libgadu/releases/download/1.7.0/libgadu-1.7.0.tar.gz
+SHA13b0c4c1471f40022db3fd7d141d5d0b42dd67f0a9ca82db877c39b60e14071a,382784B.
+Events.c wysyłaLOGIN60; configure/generatedheaders/buildpliki obecne; LGPL2.1.
+Dotąd źródła tylko odczytane, jeszcze NIE skompilowano/uruchomiono biblioteki.
+1.11.4/1.8.2 wysyłająLOGIN70/80, tag1.6.1 niekompletny (tylko9plików); archiwa
+zachowane poza repo jako dane, nie używać ich do niezależnego GG6testu.
+Nie instalować starej biblioteki systemowo, nie zmieniać natywnego GG ani DNS.
+
+Poniżej historyczne notatki etapów; informacje o braku obrazu30 są nieaktualne
+po zakończeniu opisanej wyżej kwalifikacji.
 
 Dev29 ukończony w b412748. Dev30 zaimplementowany i zweryfikowany lokalnie:
 web_access.rs: WebProxy typedSerdeTryFrom canonicalHTTPSorigin+oneLoopbackProxyIP;

@@ -44,7 +44,7 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   Sprzątanie payloadów i aktywnej kolejki wykorzystuje indeksy, dzięki czemu
   pełna historia nie powoduje rozłączeń w nowej regresji 100000 wpisów/200 offline.
   [Retencja, migracja i zakres testu](docs/implementation/HISTORY-RETENTION.md).
-- Przypięty lokalny obraz dev.26 z kompletem źródeł:27 zestawów kontroli,
+- Przypięty lokalny obraz dev.30 z kompletem źródeł:32 zestawów kontroli,
   trwały wolumen, restart i backup/restore. Dłuższy R0 przeszedł:100 sesji,
   6000 wiadomości przez600s,1CPU/256MiB/swap0. Zachowano wcześniejszą nieudaną
   próbę dev.22, która ujawniła problem kolejki.
@@ -58,7 +58,7 @@ go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementati
 - [Szczegółowy plan](PLAN_IMPLEMENTACJI.md), [recenzje](docs/reviews/ROZLICZENIE_UWAG.md)
 - [Dziennik implementacji](docs/implementation/STATUS.md), [punkt wznowienia](docs/implementation/RESUME.md)
 - [Kontener lokalny](docs/implementation/CONTAINERS.md), [raport obrazu dev.18](docs/implementation/VERIFICATION-2026-11-01-container.md)
-- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.26 i dłuższy pomiar](docs/implementation/VERIFICATION-2026-11-01-r0-dev26.md)
+- [Profil R0](docs/implementation/R0-LOAD.md), [obraz dev.30 i pomiar R0](docs/implementation/VERIFICATION-2026-11-02-r0-dev30.md)
 - [Prywatne metryki](docs/implementation/METRICS.md), [weryfikacja dev.19](docs/implementation/VERIFICATION-2026-11-01-dev19.md)
 - [Liczniki i histogramy](docs/implementation/RUNTIME-METRICS.md), [weryfikacja dev.22](docs/implementation/VERIFICATION-2026-11-01-dev22.md)
 - [Kolejka zapisów SQLite i odtworzony błąd](docs/implementation/SQLITE-WRITER.md)
@@ -256,7 +256,7 @@ Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.
 
-Prywatne metryki dev.27 obejmują także [CPU i RSS procesu](docs/implementation/PROCESS-METRICS.md), z jawną dostępnością i wiekiem próbki. Ostatni kwalifikowany obraz pozostaje dev.26.
+Prywatne metryki dev.27 obejmują także [CPU i RSS procesu](docs/implementation/PROCESS-METRICS.md), z jawną dostępnością i wiekiem próbki. Ostatni kwalifikowany lokalnie obraz to dev.30.
 
 [Deterministyczne testy mutacyjne parserów](docs/implementation/PROTOCOL-MUTATION.md) obejmują41 wzorców, wszystkie ich prefiksy i zmiany bitów oraz powtarzalne kampanie ze stałymi seedami.
 
