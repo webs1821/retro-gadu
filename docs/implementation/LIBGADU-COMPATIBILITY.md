@@ -52,8 +52,17 @@ zakończyła się błędnym oczekiwaniem testu liczby ofert: klucz zawiera messa
 więc dwa wysłania tworzą dwie oferty. Poprawiono tylko test; pierwszy wynik zachowano.
 Przepływy core i katalogu powtórzono na rozszerzonym testerze i przeszły.
 
-Stronicowanie i pełne bloki kontaktów bez terminatora pozostają poza zakresem
-tych testów libgadu. Jej stara funkcja czasu powrotu dopisuje cztery bajty
+Stronicowanie rozszerzono w dev.33: `libgadu_paging.py` publikuje41 profili
+przez API libgadu i odbiera strony20/20/1 przez `gg_pubdir50_next` oraz
+`GG_PUBDIR50_START`. Kursory23/43/0, brak duplikatów/pustych wpisów, polskie
+pola i powtórzenie po restarcie są potwierdzone. W43 logowaniach przechwycono
+LOGIN60/0x20 oraz deklarację image_size255. Nowy probe przeszedł również
+ponowienie core/katalogu/mediów; biblioteka pozostaje niezmieniona.
+Dowody: `libgadu-paging-2026-11-02-dev33.json` i towarzyszące raporty
+`libgadu-paging-{probe,core,directory,media}-2026-11-02-dev33.json`.
+
+Pełne bloki kontaktów bez terminatora pozostają poza zakresem tych testów
+libgadu. Jej stara funkcja czasu powrotu dopisuje cztery bajty
 bez separatora; bez jednoznacznego formatu nie próbujemy odgadywać, gdzie kończy
 się tekst. Test klienta GUI GG6 nadal pozostaje odrębną otwartą bramką.
 

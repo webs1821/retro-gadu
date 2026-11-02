@@ -688,3 +688,14 @@ katalogu0755 w dev32. Dev33 wymaga katalogu tylko właściciela, sprawdza pliki
 bazy/lock i nie zmienia danych po odmowie.131Rust,10regresji i audyt RustSec
 0/0 PASS. [Kontrakt](DATA-DIRECTORY.md), [dowody](VERIFICATION-2026-11-02-dev33.md).
 Pełny soak zostaje przeniesiony na obraz z tą poprawką; dotąd nie startował.
+
+## 2026-11-02 — stronicowanie przez niezależną libgadu
+
+Rozszerzono własny tester MIT o GG_PUBDIR50_START.41profili opublikowanych
+przez API, strony20/20/1 i kursory23/43/0 potwierdzone także po restarcie.
+W43połączeniach przechwycono LOGIN60/0x20/image_size255. Nie ma duplikatów
+ani pustych wpisów. Ponowione core/katalog/media również PASS,38plików
+biblioteki bez zmian. ProbeSHA7e6bb1591a7dcb3aa22ac0ee951fedb81c0c0c3cde91874fde74834449e73479.
+Raporty libgadu-paging-*-2026-11-02-dev33.json. Runtime33 bez zmian.
+W tle trwa odrębny godzinny soak obrazu33 ze źródła98354cf; ten wpis nie
+ogłasza jego ukończenia. Natywne GUI GG6 nadal niekwalifikowane.

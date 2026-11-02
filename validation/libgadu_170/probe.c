@@ -124,6 +124,16 @@ static void directory(struct gg_session *session, const char *command, unsigned 
         require(gg_pubdir50_add(request, GG_PUBDIR50_BIRTHYEAR, "1987") == 0, "birth year");
     }
     if (!strcmp(command, "age")) require(gg_pubdir50_add(request, GG_PUBDIR50_BIRTHYEAR, "1980 1990") == 0, "age");
+    if (!strcmp(command, "page")) {
+        require(*argument != 0, "page cursor");
+        for (const char *p = argument; *p; ++p) require(*p >= '0' && *p <= '9', "page cursor digits");
+        char *end;
+        unsigned long cursor = strtoul(argument, &end, 10);
+        require(!*end && cursor <= 64, "synthetic page cursor");
+        char start[16]; snprintf(start, sizeof(start), "%lu", cursor);
+        require(gg_pubdir50_add(request, GG_PUBDIR50_START, start) == 0, "page start");
+        require(gg_pubdir50_add(request, GG_PUBDIR50_BIRTHYEAR, "1980 1990") == 0, "page age");
+    }
     if (!strcmp(command, "active")) require(gg_pubdir50_add(request, GG_PUBDIR50_ACTIVE, "1") == 0, "active");
     require(gg_pubdir50(session, request) != 0, "directory send");
     gg_pubdir50_free(request);
@@ -134,7 +144,7 @@ int main(int argc, char **argv) {
     int described = argc == 4 && !strcmp(argv[3], "description");
     char *end;
     long port = strtol(argv[1], &end, 10); require(!*end && port > 0 && port <= 65535, "port");
-    long uin = strtol(argv[2], &end, 10); require(!*end && uin >= 1 && uin <= 3, "synthetic UIN");
+    long uin = strtol(argv[2], &end, 10); require(!*end && uin >= 1 && uin <= 64, "synthetic UIN");
     alarm(90); signal(SIGPIPE, SIG_IGN); setvbuf(stdout, NULL, _IONBF, 0);
     /* No DNS/discovery/TLS/proxy/DCC; the driver also isolates networking. */
     gg_proxy_enabled = 0; gg_dcc_ip = inet_addr("127.0.0.1"); gg_dcc_port = 0;
@@ -202,7 +212,7 @@ int main(int argc, char **argv) {
                 unsigned char text[2049]; decode(argument, text);
                 require(target == GG_STATUS_AVAIL_DESCR || target == GG_STATUS_INVISIBLE, "status allowlist");
                 require(gg_change_status_descr(session, (int)target, (const char *)text) == 0, "status");
-            } else if ((!strcmp(command, "profile") || !strcmp(command, "search")) && fields == 3) {
+            } else if ((!strcmp(command, "profile") || !strcmp(command, "search") || !strcmp(command, "page")) && fields == 3) {
                 directory(session, command, target, argument);
             } else if ((!strcmp(command, "read") || !strcmp(command, "age") || !strcmp(command, "active") || !strcmp(command, "unpublish")) && fields == 2) {
                 directory(session, command, target, "");

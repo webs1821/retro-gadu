@@ -9,7 +9,9 @@ from gg6_sessions import Lab, until
 
 class WireRelay:
     """Bounded transparent relay; record login metadata, never its challenge response."""
-    def __init__(self):
+    def __init__(self,max_connections=12):
+        assert 1<=max_connections<=64
+        self.max_connections=max_connections
         self.listener=socket.socket(); self.listener.bind(('127.0.0.1',0)); self.listener.listen(4)
         self.port=self.listener.getsockname()[1]; self.target=None; self.records=[]
         self.stop=threading.Event(); self.failure=None
@@ -26,7 +28,7 @@ class WireRelay:
                 for source in readable:
                     if source is self.listener:
                         a,address=self.listener.accept()
-                        assert address[0]=='127.0.0.1' and len(pairs)<8 and len(self.records)<12
+                        assert address[0]=='127.0.0.1' and len(pairs)<8 and len(self.records)<self.max_connections
                         b=socket.create_connection(self.target,timeout=1)
                         a.settimeout(1); b.settimeout(1); pairs[a]=b; pairs[b]=a
                         record={'packets':[],'bytes':0}; self.records.append(record); inputs[a]=[bytearray(),record]
@@ -43,6 +45,7 @@ class WireRelay:
                                     if not record['packets']:
                                         assert kind==0x15 and size in (31,35), (kind,size)
                                         record.update(login_type=kind,login_length=size,uin=int.from_bytes(pending[8:12],'little'),protocol_version=int.from_bytes(pending[20:24],'little'))
+                                        record['image_size_kib']=pending[37]
                                         if size>31:
                                             record['description_hex']=bytes(pending[39:8+size]).hex()
                                             assert record['description_hex']=='aff3b3e6'
@@ -96,6 +99,7 @@ class Probe:
             self.process.stdin.close()
             try:self.process.wait(timeout=3)
             except subprocess.TimeoutExpired:self.process.kill(); self.process.wait(timeout=3)
+        if not self.process.stdin.closed:self.process.stdin.close()
         self.process.stdout.close(); self.log.close()
 
 

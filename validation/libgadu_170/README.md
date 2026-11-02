@@ -38,7 +38,7 @@ unshare -Urn sh -c 'ip link set lo up && exec "$@"' rgg-libgadu \
 ```
 
 Osobna przestrzeń użytkownika/sieci zawiera tylko loopback. Sam tester ma stały
-adres 127.0.0.1, syntetyczne UIN 1–3 i hasła, brak DNS/discovery/TLS/DCC, limit
+adres 127.0.0.1, syntetyczne UIN 1–64 i hasła, brak DNS/discovery/TLS/DCC, limit
 90 sekund. Nie odczytuje kont prawdziwego użytkownika. Raport zawiera metadane
 logowania, lecz nie zapisuje odpowiedzi challenge/hash hasła z pakietu LOGIN60.
 
@@ -62,7 +62,14 @@ wynik jest porównywany bajtowo, a CRC niezależnie przez Python zlib. Test obej
 obcego odbiorcę, ofertę offline po restarcie, brak nadawcy i późniejszy odbiór od
 niewidocznego nadawcy. Nie testuje dekodowania/renderowania pliku graficznego.
 
+`tests/libgadu_paging.py` publikuje przez API 41 profili (UIN3–43) i odczytuje
+je jako UIN2, korzystając z `gg_pubdir50_next` i `GG_PUBDIR50_START`. Sprawdza
+strony20/20/1, kursory23/43/0, komplet numerów bez duplikatów i pustych wierszy,
+polskie pola oraz powtórzenie po restarcie. Relay nadal dopuszcza najwyżej
+cztery pary gniazd jednocześnie; ten test ma jawny limit48 połączeń łącznie.
+Raport zapisuje również rzeczywiste image_size z LOGIN60, system i kodowanie.
+
 Nie jest to wykonanie oryginalnego GUI GG6 ani test automatycznego reconnect.
-Nie obejmuje jeszcze stronicowania katalogu, całej macierzy błędnych obrazków czy czasu
+Nie obejmuje jeszcze całej macierzy błędnych obrazków czy czasu
 powrotu w API libgadu. Testy są uruchamiane jawnie, poza zwykłą CI; regresja
 opisów jest również w standardowym `gg6_presence_contacts.py` i testach Rust.

@@ -1,5 +1,38 @@
 # Punkt wznowienia — 2026-11-02, dev.33
 
+
+## AKTYWNA PRÓBA — sprawdzić przed dalszymi działaniami
+
+Godzinny soak dev33 STARTOWAŁ, sesja exec19774, wrapper workspace
+rgg-container-soak33.py. Raport po zakończeniu:
+/tmp/rgg-docker-local-20261101/soak-dev33.json, bieżący logsoak-dev33.log,
+plan przedstartowysoak-dev33-plan.json.4×900s/100sesji/36000wiadomości.
+Początek około21:44UTC02.11, zakończenie około22:47UTC. Nie zakładać sukcesu.
+Trwa pod prywatnymDocker32 (sesja80822); po wyniku sprawdzić cleanup i zatrzymać
+daemon rgg-container-stop32.py. Nie ruszać hostowej/produkcyjnej infrastruktury.
+W razie żądania przerwy przerwać wyłącznie tę próbę, zachować wynik częściowy,
+posprzątać własne zasoby i zatrzymać prywatny daemon. Nie czekać godzinę wbrew użytkownikowi.
+
+Źródło98354cf99f83315aecc13e8977a4d5fec9d9b26b. Obrazy:
+runtime sha256:68fa16274ca92f14af82814cd3fba377517a9c46e2c3d5f334186aa2f8b3d466,
+verification sha256:d8dd67379d912c09ce98a29e14c6715e6f446a55acf22b311fd0a7c1bcb25054.
+34releasegrupy146.145s +runtime/restart/backuprestore PASS, raporty
+runtime-dev33-build.json,verification-dev33-build.json,suite-dev33.json,
+runtime-dev33-qualification.json wprywatnymDockerroot. Nie skopiowanejeszczedorepo.
+Sterowniksoak niezmieniony, hashzgodny zkrótkimi32próbami; nieponawianoichbezpowodu.
+
+W międzyczasie zakończono niezależne stronicowanielibgadu. Nowy probe i4testy
+PASS, /tmp/rgg-libgadu170-paging. Raportyprzeniesionodorepo, dokumentacja/provenance
+zaktualizowane. Tylkotestybez zmianruntime. Potrzebnylokalnycommitjeśli brakuje.
+Nowepliki tests/libgadu_paging.py, zakressyntheticUIN1..64; relaylimitalokacji
+pozostajerównoczesny4, teststronicowania48łącznie(default12). Probe.close zamyka
+stdin takżejużzakończonegoprocesu; LOGIN60capturezapisujeimage_size255.
+41profiliwyłącznieprzezAPI, strony20/20/1, kursory23/43/0; własnaDB, restart.
+Nowszyprobesha7e6bb1591a7dcb3aa22ac0ee951fedb81c0c0c3cde91874fde74834449e73479.
+
+Poniższe sekcje są wcześniejszym checkpointem; wykonanie33commit/build/suite
+jest już zakończone. Usernadalprosiokontynuację, niekończyćtylkoprzezkompakcję.
+
 ## Upoważnienie i granice
 
 Użytkownik wznowił ciągły rozwój lokalny do przerwania przez niego. Nie pushować,
