@@ -515,3 +515,14 @@ Budżet i sumy źródeł zapisane przed próbą; finalne raporty potwierdzają b
 oraz naruszeń sprawdzanych kontraktów w tym zakresie. Zachowano pierwszy preflight
 zatrzymany przez Clippy. To nie fuzzing sterowany pokryciem i nie kwalifikacja GG,
 stanów sesji czy produkcji. [Zakres i wyniki](PROTOCOL-MUTATION.md).
+
+
+## 2026-11-02 — dev.27: macierz komend i stanów sesji
+
+42 rzeczywiste próby TCP przed loginem, przed Ready oraz podczas ponownej
+synchronizacji przeszły. Zachowane blokady, profile, archiwum, kolejka i oferty;
+brak stagingu po zamknięciu, inna sesja i późniejsze poprawne operacje działają.
+Pingi nie przedłużają bezwzględnego deadline synchronizacji. Raport z hashami
+zapisano w session-contracts-2026-11-02.json. Test dodany do CI/container_suite
+(przyszły obraz29grup). Runtime/schema/dependencies bez zmian.
+[Zakres](SESSION-CONTRACTS.md). Ostatni kwalifikowany obraz nadal dev.26.

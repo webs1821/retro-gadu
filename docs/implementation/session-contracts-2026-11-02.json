@@ -1,0 +1,200 @@
+{
+  "format": 1,
+  "passed": true,
+  "server_sha256": "089c2d0346289e57407b109cd1bcc38ee4c0110348f62a7f6f00c17c9e346555",
+  "admin_sha256": "ccc8c5b6e1fa92e959fd84ee04246e442fd41892087bd546b0e96e89c2748022",
+  "driver_sha256": "f04535490f427668e96976fe76cde3a0ff198ef74be46e52444715bff6324e7b",
+  "checks": [
+    {
+      "test": "matrix",
+      "seconds": 2.281,
+      "result": {
+        "cases": [
+          {
+            "phase": "unauthenticated",
+            "command": "text"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "conference"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "image-offer"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "image-request"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "image-start"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "directory-own"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "directory-write"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "directory-search"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "archive-get"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "archive-put"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "contact-add"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "contact-remove"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "ping"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "status"
+          },
+          {
+            "phase": "unauthenticated",
+            "command": "empty-notify"
+          },
+          {
+            "phase": "initial",
+            "command": "text"
+          },
+          {
+            "phase": "initial",
+            "command": "conference"
+          },
+          {
+            "phase": "initial",
+            "command": "image-offer"
+          },
+          {
+            "phase": "initial",
+            "command": "image-request"
+          },
+          {
+            "phase": "initial",
+            "command": "image-start"
+          },
+          {
+            "phase": "initial",
+            "command": "directory-own"
+          },
+          {
+            "phase": "initial",
+            "command": "directory-write"
+          },
+          {
+            "phase": "initial",
+            "command": "directory-search"
+          },
+          {
+            "phase": "initial",
+            "command": "archive-get"
+          },
+          {
+            "phase": "initial",
+            "command": "archive-put"
+          },
+          {
+            "phase": "initial",
+            "command": "contact-add"
+          },
+          {
+            "phase": "initial",
+            "command": "contact-remove"
+          },
+          {
+            "phase": "initial",
+            "command": "repeat-login"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "text"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "conference"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "image-offer"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "image-request"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "image-start"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "directory-own"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "directory-write"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "directory-search"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "archive-get"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "archive-put"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "contact-add"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "contact-remove"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "repeat-login"
+          },
+          {
+            "phase": "resynchronizing",
+            "command": "empty-during-staging"
+          }
+        ],
+        "count": 42,
+        "state_preserved": true,
+        "legal_sync_and_message_after_checks": true
+      }
+    },
+    {
+      "test": "initial_deadline",
+      "seconds": 1.069,
+      "result": {
+        "pongs": 10,
+        "closed_after_seconds": 1.004,
+        "unrelated_session_works": true
+      }
+    }
+  ],
+  "native_client_qualified": false,
+  "pushed": false,
+  "deployed": false
+}

@@ -15,6 +15,15 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
 
+Testy mutacyjne są zapisane w fc796b925a5ff89c6dfb464d9bf77bd0d305c726.
+Kolejny osobny krok testowy: tests/session_contracts.py,42 komendy w złych stanach
+(15 przed auth,13 przed Ready,14 resynchronizacja). Wcześniejsze blokady/profil/
+archiwum i kolejka pozostają bez zmian; inne sesje i poprawne późniejsze operacje
+są sprawne. Ping nie przedłuża deadline1s. Raport session-contracts-2026-11-02.json
+PASS, hash sterownika i binarek sprawdzony. SESSION-CONTRACTS.md opisuje ograniczenia.
+CI/container_suite zawiera ten test (przyszłe suite29grup). Rust nadal111testów,
+runtime/dev27/schema13/dependencies bez zmian. Testy zakończone, brak procesów.
+
 Commit2a58f395c86c3f27cc65ff7a506e3fd992a1ce63 kończy implementację dev27.
 Następny osobny commit testowy dodaje crates/rgg-protocol/tests/adversarial.rs
 oraz fixtures/wire-corpus.json:41 własnych wzorców,11545 prefiksów,92032 bit-flipy,
