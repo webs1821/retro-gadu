@@ -537,3 +537,16 @@ restart),15 odmów konfiguracji, dotychczasowe discovery i5 dodatkowych regresji
 przeszły.190 bibliotek i schema13 bez zmian. Przyszły container_suite30grup.
 [Kontrakt](ADVERTISED-ENDPOINT.md), [weryfikacja](VERIFICATION-2026-11-02-dev28.md).
 Debug28 gotowy lokalnie; baseline27 zachowany. Obraz nadal26, brak push/deploy.
+
+
+## 2026-11-02 — dev.29: stany i bufory obrazków
+
+Prywatny eksport ma 27 rodzin/maks126 szeregów, poniżej16KiB. Migawka
+koordynatora używa try_lock, bez I/O/alokacji i bez zmian stanu/deadline.
+Osobne rezerwacje, zajętość/pojemność danych+nazw, cztery stany i najstarszy
+wiek; brak pomiaru oznaczony jawnie.119 Rust,fmt,Clippy i8 grup TCP/HTTP PASS.
+Deadline30,458s mimo140 migawek/pingów/późnego fragmentu, restart/ponowne pobranie,
+limity i rozłączenia sprawne. Zachowano pierwszą próbę z błędem asercji quota.
+190 bibliotek/schema13 bez zmian. Przyszły container_suite31grup; obraz nadal26.
+[Kontrakt](IMAGE-METRICS.md), [weryfikacja](VERIFICATION-2026-11-02-dev29.md).
+Brak push/deploy i zmian działającego GG.

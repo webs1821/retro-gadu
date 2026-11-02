@@ -36,7 +36,12 @@ def metrics(lab):
             if family!=name:assert types[family]=='histogram'
             values[key]=float(value)
     process_keys=['rgg_process_sample_age_seconds','rgg_process_cpu_seconds_total','rgg_process_resident_memory_bytes']
-    assert len(types)==21 and len(values)==114+sum(key in values for key in process_keys),(types,values)
+    image_available=values['rgg_image_measurements_available']
+    assert image_available in (0,1)
+    image_keys=['rgg_image_transfers{state="'+state+'"}' for state in ['requested','collecting','ready','missing']]
+    image_keys+=['rgg_image_reserved_bytes','rgg_image_buffered_bytes','rgg_image_buffer_capacity_bytes','rgg_image_oldest_transfer_age_seconds']
+    assert all((key in values)==bool(image_available) for key in image_keys)
+    assert len(types)==27 and len(values)==115+8*image_available+sum(key in values for key in process_keys),(types,values)
     assert all(math.isfinite(value) for value in values.values())
     for resource,key in [('cpu',process_keys[1]),('resident_memory',process_keys[2])]:
         available=values['rgg_process_measurements_available{resource="'+resource+'"}']

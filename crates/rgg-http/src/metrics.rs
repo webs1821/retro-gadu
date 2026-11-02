@@ -10,6 +10,7 @@ use axum::{
     response::{IntoResponse, Response},
     routing::get,
 };
+use rgg_application::images::{ImageObservations, ImageSnapshot};
 use rgg_application::operations::{OperationalRepository, OperationalSnapshot};
 use rgg_application::telemetry::RuntimeTelemetry;
 use std::{
@@ -27,6 +28,7 @@ use tokio::time::Instant;
 struct Metrics {
     repository: Arc<dyn OperationalRepository>,
     telemetry: Arc<RuntimeTelemetry>,
+    images: Option<Arc<dyn ImageObservations>>,
     ready: Arc<AtomicBool>,
     authority: String,
     origin: String,
@@ -37,6 +39,7 @@ struct Metrics {
 pub fn router(
     repository: Arc<dyn OperationalRepository>,
     telemetry: Arc<RuntimeTelemetry>,
+    images: Option<Arc<dyn ImageObservations>>,
     health: &HttpState,
     address: SocketAddr,
 ) -> Result<Router, &'static str> {
@@ -46,6 +49,7 @@ pub fn router(
     let state = Arc::new(Metrics {
         repository,
         telemetry,
+        images,
         ready: health.ready.clone(),
         authority: address.to_string(),
         origin: format!("http://{address}"),
@@ -147,6 +151,10 @@ async fn scrape(State(state): State<Arc<Metrics>>) -> Response {
                 sample,
                 state.started.elapsed().as_secs_f64(),
                 state.telemetry.snapshot(),
+                state
+                    .images
+                    .as_ref()
+                    .and_then(|images| images.image_snapshot()),
             ),
         )
             .into_response(),
@@ -167,6 +175,7 @@ fn render(
     s: OperationalSnapshot,
     uptime: f64,
     runtime: rgg_application::telemetry::Snapshot,
+    images: Option<ImageSnapshot>,
 ) -> String {
     let mut out = String::with_capacity(16384);
     out.push_str("# HELP rgg_build_info Running binary version.\n# TYPE rgg_build_info gauge\n");
@@ -252,6 +261,7 @@ fn render(
         s.unexpired_image_grants,
     );
     crate::metrics_runtime::append(&mut out, runtime);
+    crate::metrics_images::append(&mut out, images, std::time::Instant::now());
     out
 }
 
@@ -260,6 +270,67 @@ mod tests {
     use super::*;
     use rgg_application::ports::StorageUnavailable;
     use std::sync::atomic::AtomicUsize;
+    #[test]
+    fn all_families_at_extreme_values_fit_the_response_budget() {
+        use rgg_application::{
+            operations::DeliveryRecords,
+            telemetry::{
+                Admission, ConnectionEnd, Histogram, Operation, Outcome, ProcessSample, Snapshot,
+            },
+        };
+        let now = std::time::Instant::now();
+        let s = OperationalSnapshot {
+            schema_version: u64::MAX,
+            sampled_at: i64::MAX,
+            active_accounts: u64::MAX,
+            disabled_accounts: u64::MAX,
+            retired_numbers: u64::MAX,
+            ready_sessions: u64::MAX,
+            synchronizing_sessions: u64::MAX,
+            deliveries: DeliveryRecords {
+                pending: u64::MAX,
+                leased: u64::MAX,
+                written_unconfirmed: u64::MAX,
+                expired: u64::MAX,
+                privacy_rejected: u64::MAX,
+                rejected: u64::MAX,
+            },
+            queued_payload_bytes: u64::MAX,
+            oldest_queue_age_seconds: u64::MAX,
+            contact_archive_bytes: u64::MAX,
+            unexpired_image_grants: u64::MAX,
+        };
+        let runtime = Snapshot {
+            process: Some(ProcessSample {
+                observed_at: now,
+                cpu_time: Some(Duration::MAX),
+                resident_bytes: Some(u64::MAX),
+            }),
+            active_connections: u64::MAX,
+            admissions: [u64::MAX; Admission::ALL.len()],
+            endings: [u64::MAX; ConnectionEnd::ALL.len()],
+            outcomes: [[u64::MAX; Outcome::ALL.len()]; Operation::ALL.len()],
+            latency: [Histogram {
+                buckets: [u64::MAX; 10],
+                sum_nanos: u128::MAX,
+            }; 3],
+        };
+        let images = ImageSnapshot {
+            transfers: [u64::MAX; 4],
+            reserved_bytes: u64::MAX,
+            buffered_bytes: u64::MAX,
+            buffer_capacity_bytes: u64::MAX,
+            oldest_started: Some(now),
+        };
+        let out = render(s, Duration::MAX.as_secs_f64(), runtime, Some(images));
+        assert!(out.len() < 16384, "{}", out.len());
+        assert_eq!(out.matches("# TYPE ").count(), 27);
+        assert_eq!(
+            out.lines().filter(|line| !line.starts_with('#')).count(),
+            126
+        );
+        assert!(out.is_ascii() && !out.contains("NaN") && !out.contains(" Inf"));
+    }
     struct Repository {
         calls: AtomicUsize,
         fail: AtomicBool,
@@ -288,6 +359,7 @@ mod tests {
         let state = Arc::new(Metrics {
             repository: repository.clone(),
             telemetry: Arc::new(RuntimeTelemetry::default()),
+            images: None,
             ready: Arc::new(AtomicBool::new(false)),
             authority: "127.0.0.1:9090".into(),
             origin: "http://127.0.0.1:9090".into(),

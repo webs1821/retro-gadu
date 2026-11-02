@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-02, dev.28
+# Punkt wznowienia — 2026-11-02, dev.29
 
 ## Zakres
 
@@ -14,6 +14,28 @@ Brak AGENTS.md w repo i przodkach. PLAN_IMPLEMENTACJI.md jest niezmienny:
 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
+
+Dev28 ukończony w16373ff. Dev29: ImageObservations/ImageSnapshot port application,
+Images::image_snapshot try_lock + skan<=32 bez alokacji/I/O/mutacji. Obserwuje ten
+sam Arc koordynatora co GG. HTTP metrics::router ma dodatkowy Option<Arc<dyn
+ImageObservations>>; None gdy brak GG.6 nowych rodzin/9serii, całość27/maks126,
+<16KiB. Unavailable0 + pominięcie8serii przy busy/poison/noGG. Stan, rezerwacje,
+len/capacity danych+nazwy i monotoniczny najstarszy wiek; bez outgoingkopii.
+119Rust,fmt,Clippy,normalbuild i8grup TCP/HTTP PASS. image_metrics.py ~33s zawiera
+prawdziwydeadline30,458s/140migawek, restart, quota4, oba disconnect, noGG.
+Pierwszy report image-metrics-2026-11-02-dev29.json zachowuje błędne oczekiwanie
+testu quota6+missing (runtime poprawnie4/noresponse). Poprawiono wyłącznie test,
+final report -final.json powiązany hashem z pierwszym; runtime/binarki ponownie
+sprawdzone, wcześniejsze udaneRust/buildniepowtarzane. Wszystkie sourceSHAsprawdzone.
+Binarne debug29: server55e176f6c0e47a97f0f7a8d0061f94ed51dcb466df9e0dd611932d407ff4d26a,
+admina4d48c5441016ced693458c32817118e0783c7aefced41293a199fae62872ac5.
+Schema13/190deps/11provenance/10crate bez zmian. CI/container_suite31grup.
+Obraz/R0 nadal26; wszystkie testy zakończone. Workspace runner
+rgg-image-metrics29.py i -final.py; raportów nie nadpisywać.
+Następny zapowiedziany krok: konfiguracja WWW za proxy HTTPS testowanym lokalnie,
+ze ścisłym canonical origin/Host/CSRF/cookie, jawnie zaufanym proxy i źródłemIP.
+Nie wdrażać ani nie otwierać publicznych nasłuchów. Implementacja tego kroku
+jeszcze nierozpoczęta; trzeba przejrzeć istniejący website/config i testy.
 
 Macierz stanów sesji utrwalona w67eaf97ea153165bd5b812fac372793fe121130a.
 Dev28 dodaje opcjonalne gg_advertise: walidowany rgg_http::AdvertisedEndpoint,
@@ -128,7 +150,7 @@ Raporty i dokumentacja kwalifikacji26 są utrwalane osobnym commitem po51c078c.
 ## Kolejne prace
 
 Kontynuować autonomiczny rozwój lokalny do przerwania przez użytkownika.
-Sprawdzić pozostałe braki PARITY i planu; poza metrykami buforów są m.in.
+Sprawdzić pozostałe braki PARITY i planu; pozostały m.in.
 profil publicznej domeny, natywny GG, rzeczywisty import i długi soak.
 Nie zmieniać zakresu lokalnego ani uruchamiać istniejącego GG/instalatora
 na jego bieżącym profilu. Nie uruchamiać subagentów bez nowej podstawy.

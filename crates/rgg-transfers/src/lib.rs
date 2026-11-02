@@ -34,6 +34,7 @@ enum State {
 }
 struct Transfer {
     route: ImageRoute,
+    started: Instant,
     deadline: Instant,
     state: State,
 }
@@ -82,6 +83,7 @@ impl Images {
         }
         items.push(Transfer {
             route,
+            started: now,
             deadline: now + DEADLINE,
             state: State::Requested { sent: false },
         });
@@ -216,6 +218,35 @@ impl Images {
         })
     }
 }
+impl ImageObservations for Images {
+    fn image_snapshot(&self) -> Option<ImageSnapshot> {
+        // Scraping must never queue behind assembly/CRC or affect transfer deadlines.
+        let items = self.items.try_lock().ok()?;
+        let mut sample = ImageSnapshot::default();
+        for item in items.iter() {
+            let (state, buffers) = match &item.state {
+                State::Requested { .. } => (0, None),
+                State::Collecting { filename, data, .. } => (1, Some((filename, data))),
+                State::Ready { filename, data, .. } => (2, Some((filename, data))),
+                State::Missing => (3, None),
+            };
+            sample.transfers[state] += 1;
+            if state != 3 {
+                sample.reserved_bytes += u64::from(item.route.image.size);
+                sample.oldest_started = Some(
+                    sample
+                        .oldest_started
+                        .map_or(item.started, |old| old.min(item.started)),
+                );
+            }
+            if let Some((filename, data)) = buffers {
+                sample.buffered_bytes += (filename.len() + data.len()) as u64;
+                sample.buffer_capacity_bytes += (filename.capacity() + data.capacity()) as u64;
+            }
+        }
+        Some(sample)
+    }
+}
 impl ImageTransfers for Images {
     fn request(&self, route: ImageRoute) -> Result<(), MessagingError> {
         self.request_at(route, Instant::now())
@@ -250,6 +281,7 @@ impl ImageTransfers for Images {
 #[cfg(test)]
 mod tests {
     use super::*;
+    mod observations;
     fn key(n: u32) -> SessionKey {
         SessionKey {
             user: UserId::new(n).unwrap(),

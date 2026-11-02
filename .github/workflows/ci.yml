@@ -51,6 +51,7 @@ jobs:
       - run: python tests/http_metrics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/runtime_metrics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/process_metrics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: python tests/image_metrics.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/r0_smoke.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_conferences.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/gg6_images.py --admin target/debug/rgg-admin --server target/debug/rgg-server

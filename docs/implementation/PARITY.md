@@ -1,7 +1,7 @@
 # Zgodność funkcjonalna rGG z gg-retro
 
 Punkt odniesienia: `webs1821/gg-retro` **0.8.3**, commit
-`ed9640cc247764754b5e47891053eb07a53f76d5`. Aktualizacja: 2026-11-01.
+`ed9640cc247764754b5e47891053eb07a53f76d5`. Aktualizacja: 2026-11-02.
 
 Statusy: **gotowe lokalnie** = kod i wskazane testy; **częściowe** = brak całego
 przepływu; **brak** = do implementacji. „Natywny” oznacza test konkretnej wersji
@@ -34,7 +34,7 @@ wyniku testów działającego gg-retro.
 | Konfigurowana domena i legacy HTTP discovery | częściowe: lokalne discovery GG6 i opcjonalny oddzielny IPv4:port pośrednika; publiczny profil WWW/TLS pozostaje do wykonania | HTTP/1.0, domyślny listener i jawne gg_advertise, brak wpływu Host; discovery_proxy.py: lokalny relay, online/offline i restart | nie sprawdzono |
 | Pobieranie klienta/instalatora, manifest hashy, patcher | katalog WWW/JSON, pakiet CLI i patcher EXE w przeglądarce gotowe lokalnie dla przypiętego GG6.1; bez kwalifikacji wykonania | http_downloads.py, client_package.py: 3 hosty i 464 zasoby Windows; client_downloads.py; client_browser.py: pełna zgodność JS/Python; http_patcher.py i rzeczywiste pobranie w IAB | zasoby/pliki odczytane jako dane; aplikacji GG nie uruchamiano |
 | Limity połączeń, żądań, pamięci i kolejki | limity zaimplementowane, także gniazda i czas HTTP; powtarzalna lokalna próba RSS/CPU, bez kwalifikacji produkcyjnej/długiego soak | limity kont/odbiorcy/globalne, TCP per IP, deadline, oversize, wolny odbiorca; http_limits.py, local_endurance.py | nie dotyczy |
-| Prywatne metryki operatora | gotowe lokalnie: agregaty bazy, liczniki zdarzeń i histogramy login/accept/delivery na osobnym porcie; dev.27 dodaje CPU/RSS i dostępność próbek; metryki buforów pozostają do wykonania | operations_tests, telemetry tests, http_metrics.py, runtime_metrics.py, process_metrics.py: błędne logowania/ramki, limity, slow reader, restart, cancel i spójność histogramów | nie dotyczy |
+| Prywatne metryki operatora | gotowe lokalnie: agregaty bazy, liczniki zdarzeń i histogramy login/accept/delivery na osobnym porcie; dev.27 dodaje CPU/RSS i dostępność próbek; dev.29 dodaje stany, rezerwacje, zajętość/pojemność buforów obrazków i wiek transferu | operations_tests, telemetry tests, http_metrics.py, runtime_metrics.py, process_metrics.py, image_metrics.py: bufory i deadline, błędne logowania/ramki, limity, slow reader, restart, cancel i spójność histogramów | nie dotyczy |
 | Administrator, rotacja kluczy, backup/restore, importer | częściowe: offline CLI, backup/verify/restore, rotacja oraz pełny import przypiętego gg-retro gotowe lokalnie; brak próby na rzeczywistej kopii | accounts_cli.py, backups_cli.py, keys_cli.py, legacy_import.py: roundtrip, błędne dane, 8 przerwań procesu; migracja 9 → 10 | nie dotyczy |
 | Lokalny obraz kontenera, pomiary, soak i kwalifikacja bezpieczeństwa | częściowe: obrazy, krótka próbka R0, restart i restore gotowe lokalnie; długi soak i pełna kwalifikacja nadal do wykonania | dev.26: container_suite.py (27 zestawów), container_runtime.py (restart/restore), container_load.py (100 sesji/6000 wiadomości/600 s, 1 CPU/256 MiB/swap0) przeszły; zachowano nieudaną próbę dev.22 i starsze archiwa. Osobny cgroup ustawia swap0 po weryfikacji własności, bo Docker w WSL go pomija | — |
 

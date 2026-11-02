@@ -6,7 +6,7 @@ project = "Prometheus exposition format and metric naming"
 upstream_url = "https://prometheus.io/docs/instrumenting/exposition_formats/"
 kind = "reference-only"
 upstream_authors = ["Autorzy Prometheus"]
-local_paths = ["crates/rgg-http/src/metrics.rs", "crates/rgg-http/src/metrics_runtime.rs", "docs/implementation/METRICS.md", "docs/implementation/RUNTIME-METRICS.md", "tests/http_metrics.py", "tests/runtime_metrics.py"]
+local_paths = ["crates/rgg-http/src/metrics.rs", "crates/rgg-http/src/metrics_runtime.rs", "crates/rgg-http/src/metrics_images.rs", "docs/implementation/IMAGE-METRICS.md", "tests/image_metrics.py", "docs/implementation/METRICS.md", "docs/implementation/RUNTIME-METRICS.md", "tests/http_metrics.py", "tests/runtime_metrics.py"]
 symbols = ["0.0.4", "rgg_delivery_records", "rgg_operations_total", "rgg_operation_duration_seconds"]
 changes = "Własny formatter dla tekstowego protokołu 0.0.4 na podstawie faktów specyfikacji: HELP/TYPE, LF, MIME i stałe etykiety. Gauge dla stanów zmniejszających się przez retencję, counters oraz kumulacyjne histogramy z +Inf=count i sumą w sekundach. Nie skopiowano kodu eksportera ani tekstu dokumentacji."
 verification = "Testy rzeczywistego HTTP sprawdzają MIME, składnię, stałą liczbę szeregów, brak danych użytkowników i semantykę kolejki; nie uruchamiano Prometheusa."

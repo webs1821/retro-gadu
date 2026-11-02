@@ -32,8 +32,9 @@ ale zachowuje wiek. Przed pierwszą próbą brak także wieku. Na innych systema
 niż Linux wartości CPU/RSS są jawnie niedostępne. Rzeczywisty odczyt zero jest
 wartością poprawną i różni się od braku odczytu.
 
-Cały prywatny endpoint ma 21 rodzin i maksymalnie 117 szeregów, nadal poniżej
-16 KiB. Nie dodano PID, ścieżek ani danych kont do etykiet. Nie zmieniono
+W dev.27 cały prywatny endpoint miał 21 rodzin i maksymalnie 117 szeregów.
+Dev.29 dodaje [bufory obrazków](IMAGE-METRICS.md): 27 rodzin/maks126 szeregów,
+nadal poniżej 16 KiB. Nie dodano PID, ścieżek ani danych kont do etykiet. Nie zmieniono
 reguł dostępu, cache/deadline bazy ani publicznego `/api/stats`.
 
 Do udziału CPU w czasie służy pochodna licznika, np.

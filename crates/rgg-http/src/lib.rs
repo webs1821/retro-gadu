@@ -4,6 +4,7 @@ pub mod downloads;
 mod legacy;
 pub use legacy::AdvertisedEndpoint;
 pub mod metrics;
+mod metrics_images;
 mod metrics_runtime;
 mod password_change;
 pub mod patcher;

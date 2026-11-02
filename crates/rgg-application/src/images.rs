@@ -125,6 +125,21 @@ pub struct ImageAction {
     pub to_sender: bool,
     pub control: ImageControl,
 }
+pub const TRANSFER_STATES: [&str; 4] = ["requested", "collecting", "ready", "missing"];
+/// A bounded, read-only view of coordinator-owned buffers, not total process memory.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ImageSnapshot {
+    pub transfers: [u64; 4],
+    pub reserved_bytes: u64,
+    pub buffered_bytes: u64,
+    pub buffer_capacity_bytes: u64,
+    pub oldest_started: Option<std::time::Instant>,
+}
+pub trait ImageObservations: Send + Sync {
+    /// None means unavailable (including lock contention), never an invented empty state.
+    /// Must not allocate, wait for a busy lock, expire transfers or advance their state.
+    fn image_snapshot(&self) -> Option<ImageSnapshot>;
+}
 /// Synchronous bounded coordinator. The caller holds the publication gate during each call
 /// and revalidates the route before every socket write. No disk or network I/O in this port.
 pub trait ImageTransfers: Send + Sync {

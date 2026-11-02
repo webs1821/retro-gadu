@@ -82,6 +82,7 @@ async fn run() -> Result<(), Error> {
         .map(Arc::new);
     let store = Arc::new(SqliteStore::open(&config.data_dir).await?);
     let telemetry = Arc::new(rgg_application::telemetry::RuntimeTelemetry::default());
+    let images = Arc::new(rgg_transfers::Images::default());
     let prepared = async {
         let mut registration = None;
         let mut passwords = None;
@@ -123,7 +124,7 @@ async fn run() -> Result<(), Error> {
                 hub,
                 authentication: Authenticator::new(store.clone(), ring)?,
                 limits: config.network.clone(),
-                images: Arc::new(rgg_transfers::Images::default()),
+                images: images.clone(),
             });
             Some((tokio::net::TcpListener::bind(bind).await?, context))
         } else {
@@ -181,8 +182,15 @@ async fn run() -> Result<(), Error> {
     let metrics = metrics
         .map(|listener| -> Result<_, Error> {
             let address = listener.local_addr()?;
-            let router =
-                rgg_http::metrics::router(store.clone(), telemetry.clone(), &state, address)?;
+            let observations: Option<Arc<dyn rgg_application::images::ImageObservations>> =
+                gg.as_ref().map(|_| images.clone() as Arc<_>);
+            let router = rgg_http::metrics::router(
+                store.clone(),
+                telemetry.clone(),
+                observations,
+                &state,
+                address,
+            )?;
             Ok((listener, router, address))
         })
         .transpose()?;

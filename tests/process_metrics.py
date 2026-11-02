@@ -43,7 +43,7 @@ def flow(lab):
     for _ in range(10):client.ping()
     until(lambda:ready(lab)[CPU]>first[CPU])
     second=ready(lab);compare_kernel(lab,second)
-    assert len(second)==117
+    assert len(second)==118+8*second['rgg_image_measurements_available']
     client.ping()
     started=time.monotonic();lab.stop()
     assert time.monotonic()-started<5

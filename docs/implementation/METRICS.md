@@ -1,6 +1,6 @@
 # Prywatne metryki operacyjne
 
-Wprowadzono w dev.19, rozszerzono w dev.22 i dev.27. Funkcja jest domyślnie wyłączona. Opcjonalne pole
+Wprowadzono w dev.19, rozszerzono w dev.22, dev.27 i dev.29. Funkcja jest domyślnie wyłączona. Opcjonalne pole
 `metrics_bind = "127.0.0.1:9090"` na najwyższym poziomie konfiguracji włącza
 osobny listener. Akceptowane są wyłącznie adresy loopback, także IPv6;
 nie można współdzielić tego samego endpointu z HTTP/GG. Port 0 wybiera port
@@ -22,7 +22,8 @@ i [konwencji nazw](https://prometheus.io/docs/practices/naming/), sprawdzonych
 LF, `text/plain; version=0.0.4; charset=utf-8`, stałe HELP/TYPE. Poniższy zakres
 obejmuje podstawowe 12 rodzin/19 gauge. Dev.22 dodaje liczniki i histogramy
 [runtime](RUNTIME-METRICS.md): 17 rodzin/112 szeregów. Dev.27 dodaje
-[CPU/RSS procesu](PROCESS-METRICS.md): łącznie21 rodzin/maks117 szeregów, poniżej16KiB.
+[CPU/RSS procesu](PROCESS-METRICS.md): wówczas 21 rodzin/maks117 szeregów. Dev.29 dodaje
+[bufory obrazków](IMAGE-METRICS.md): łącznie 27 rodzin/maks126 szeregów, poniżej16KiB.
 Brak etykiet pochodzących od użytkowników.
 
 | Rodzina | Znaczenie |
@@ -66,7 +67,8 @@ uruchamia wspólne zamknięcie usług; shutdown wyłącza Ready i kończy listen
 
 Dev.22 obejmuje histogramy logowania/przyjmowania/dostarczania i skończony
 zestaw wyników runtime. Dev.27 dodaje CPU/RSS, wiek i dostępność próbek.
-Nadal brak metryk buforów transferów w endpointcie.
+Dev.29 dodaje stan, rezerwacje, zajętość i pojemność buforów obrazków oraz wiek
+transferu. Brak blokady koordynatora oznacza brak pomiaru, nie zerowe bufory.
 Zewnętrzny lokalny pomiar
 procesu pozostaje w `tests/local_endurance.py` i `tests/container_load.py`.
 Krótka próba R0 na obrazie dev.19 jest opisana w

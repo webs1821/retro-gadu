@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.28**, schemat SQLite **13**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.29**, schemat SQLite **13**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -35,7 +35,8 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   zapisu i całego połączenia. Syntetyczny pomiar online/offline jest powtarzalny.
 - Prywatne metryki na osobnym, opcjonalnym porcie loopback: sesje, kolejka,
   przechowywane rekordy i bajty, liczniki wyników oraz histogramy czasu logowania,
-  przyjęcia i dostarczania. Ograniczone zapytania i stały zestaw etykiet.
+  przyjęcia i dostarczania, CPU/RSS oraz stany i bufory obrazków. Ograniczone
+  zapytania i stały zestaw etykiet.
 - SQLite ma jedną kolejkę zapisów i trzy połączenia tylko do odczytu, aby
   równocześni odbiorcy nie blokowali się wzajemnie podczas opróżniania kolejek.
   Wbudowane SQLite3.51.3 zawiera poprawkę WAL-reset; otwarcie magazynu sprawdza
@@ -72,6 +73,8 @@ go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementati
 - [Katalog publiczny](docs/implementation/PUBLIC-DIRECTORY.md), [konferencje](docs/implementation/CONFERENCES.md), [obrazki](docs/implementation/IMAGES.md)
 - [Discovery](docs/implementation/HTTP-DISCOVERY.md), [rejestracja WWW](docs/implementation/WEB-REGISTRATION.md), [stare zaproszenia](docs/implementation/LEGACY-INVITATIONS.md)
 - [Liczniki](docs/implementation/PUBLIC-STATISTICS.md), [pobieranie](docs/implementation/DOWNLOADS.md), [pochodzenie kodu](THIRD_PARTY.toml)
+
+- [Metryki buforów obrazków](docs/implementation/IMAGE-METRICS.md), [weryfikacja dev.29](docs/implementation/VERIFICATION-2026-11-02-dev29.md)
 
 ## Uruchomienie lokalne
 
