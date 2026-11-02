@@ -1,0 +1,25 @@
+{
+  "source_commit": "98354cf99f83315aecc13e8977a4d5fec9d9b26b",
+  "runtime_image": "sha256:68fa16274ca92f14af82814cd3fba377517a9c46e2c3d5f334186aa2f8b3d466",
+  "verification_image": "sha256:d8dd67379d912c09ce98a29e14c6715e6f446a55acf22b311fd0a7c1bcb25054",
+  "seconds_per_cycle": 900,
+  "cycles": 4,
+  "sessions": 100,
+  "offline_accounts": 20,
+  "rate": 10,
+  "total_messages": 36000,
+  "planned_steady_seconds": 3600,
+  "limits": {
+    "cpu": 1,
+    "memory": 268435456,
+    "swap": 0,
+    "pids": 128
+  },
+  "hashes": {
+    "tests/container_load.py": "1eb17ba9f69a5472136096dcf1299eb849c7adfd83eabdf7479068f07655c46f",
+    "tests/r0_workload.py": "4d2651436858b2c1cdbf4336aba9c3981752b53a309f65cc8991ac744465b4ad",
+    "docs/implementation/SOAK.md": "fd9c14c76f11330b0bb39524448e2a7be28e3d5d1c2fc24c52a6839ea9160b6f"
+  },
+  "created_at_unix": 1793655829.3294446,
+  "unchanged_driver_smoke_reference": "dev32: 10s x1 and x2, all gates and cleanup passed"
+}

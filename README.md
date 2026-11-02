@@ -49,14 +49,14 @@ Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
   Sprzątanie payloadów i aktywnej kolejki wykorzystuje indeksy, dzięki czemu
   pełna historia nie powoduje rozłączeń w nowej regresji 100000 wpisów/200 offline.
   [Retencja, migracja i zakres testu](docs/implementation/HISTORY-RETENTION.md).
-- Przypięty lokalny obraz dev.30 z kompletem źródeł:32 zestawów kontroli,
-  trwały wolumen, restart i backup/restore. Dłuższy R0 przeszedł:100 sesji,
-  6000 wiadomości przez600s,1CPU/256MiB/swap0. Zachowano wcześniejszą nieudaną
-  próbę dev.22, która ujawniła problem kolejki.
+- Przypięty lokalny obraz dev.33: 34 zestawy release, trwały wolumen, restart
+  i backup/restore. Godzinny test przeszedł wszystkie bramki: 100 sesji,
+  36000 wiadomości, 1 CPU/256 MiB/swap0; maksymalne RSS33,82MiB, bez przyrostu
+  deskryptorów i wątków. [Dokładny zakres i dowody](docs/implementation/VERIFICATION-2026-11-02-soak-dev33.md).
 
 [Macierz funkcjonalności i braków](docs/implementation/PARITY.md) oddziela
 zaimplementowane przepływy od kwalifikacji natywnych klientów. Nadal wymagają
-pracy m.in. kwalifikacja klienta, długi soak i profil wdrożeniowy. Klient GG6.1
+pracy m.in. kwalifikacja klienta, próby wielodniowe/mediów i profil wdrożeniowy. Klient GG6.1
 z naszą poprawką ma jawny koniec uploadu; niezmieniony oryginał nadal nie zapewnia
 go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementation/CLIENT-UPLOAD.md).
 
@@ -264,7 +264,7 @@ Warstwa bazy używa bezpośrednio zgodnych wersji `sqlx-core` i `sqlx-sqlite`;
 nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.
 
-Prywatne metryki dev.27 obejmują także [CPU i RSS procesu](docs/implementation/PROCESS-METRICS.md), z jawną dostępnością i wiekiem próbki. Ostatni kwalifikowany lokalnie obraz to dev.30.
+Prywatne metryki dev.27 obejmują także [CPU i RSS procesu](docs/implementation/PROCESS-METRICS.md), z jawną dostępnością i wiekiem próbki. Ostatni kwalifikowany lokalnie obraz to dev.33; przeszedł także godzinny test kolejek i wiadomości.
 
 [Deterministyczne testy mutacyjne parserów](docs/implementation/PROTOCOL-MUTATION.md) obejmują41 wzorców, wszystkie ich prefiksy i zmiany bitów oraz powtarzalne kampanie ze stałymi seedami.
 

@@ -1,0 +1,28 @@
+{
+  "format": 1,
+  "passed": true,
+  "source_commit": "98354cf99f83315aecc13e8977a4d5fec9d9b26b",
+  "runtime_image_id": "sha256:68fa16274ca92f14af82814cd3fba377517a9c46e2c3d5f334186aa2f8b3d466",
+  "verification_image_id": "sha256:d8dd67379d912c09ce98a29e14c6715e6f446a55acf22b311fd0a7c1bcb25054",
+  "binary_sha256": "267a7f76b33ffe73e707db9d57add571ef592755e6d8dba8948ec4a5025ea620",
+  "checks": [
+    "non-root PID1",
+    "effective cgroup limits",
+    "capabilities/seccomp/no-new-privileges",
+    "no network or published ports",
+    "named volume initialization",
+    "live CLI exclusion",
+    "offline delivery after container restart",
+    "backup/verify/restore into a new volume",
+    "restored authentication and message write",
+    "graceful SIGTERM"
+  ],
+  "cpu": 1,
+  "memory_max": 268435456,
+  "memory_swap_max": "max",
+  "swap_disabled": false,
+  "pids_max": 128,
+  "native_client_qualified": false,
+  "capacity_r0_qualified": false,
+  "temporary_containers_and_volumes_removed": true
+}

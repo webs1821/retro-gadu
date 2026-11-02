@@ -1,0 +1,29 @@
+{
+  "format": 1,
+  "source_commit": "98354cf99f83315aecc13e8977a4d5fec9d9b26b",
+  "version": "0.1.0-dev.33",
+  "schema": 14,
+  "runtime_image_id": "sha256:68fa16274ca92f14af82814cd3fba377517a9c46e2c3d5f334186aa2f8b3d466",
+  "verification_image_id": "sha256:d8dd67379d912c09ce98a29e14c6715e6f446a55acf22b311fd0a7c1bcb25054",
+  "binary_sha256": "267a7f76b33ffe73e707db9d57add571ef592755e6d8dba8948ec4a5025ea620",
+  "source_archive_sha256": "831906cf1c20bd4b2289e7a8259e1398334c8504bc1a6b4292846824c90036ef",
+  "archive_file": "rgg-dev33-runtime.tar.gz",
+  "archive_size": 62242937,
+  "archive_sha256": "7ec0625c0721e460941a5a6e7a1057c82cc606ac9cde23dfa7691e44b31174cc",
+  "gzip_and_config_verified": true,
+  "reports_sha256": {
+    "container-build-2026-11-02-dev33.json": "0006dff507ae016ff3172414270c15bc87af702d7a2f8fe440282c3528aceed4",
+    "container-test-image-2026-11-02-dev33.json": "df2b49998ba673058d57b91d56711d47a494b6f2a790dfe5cb6730dce1aab8ab",
+    "container-suite-2026-11-02-dev33.json": "431a2c0f72dd4c9cc92f84589c117819b96f72a91152291d38145d8a107ccbe0",
+    "container-runtime-2026-11-02-dev33.json": "4bb9d811cd7935bc599fae5255b414712ca58b5493f57e2611ebd0b453cff0c4",
+    "soak-2026-11-02-dev33-plan.json": "2b83332f28214db9bcf8ef0277794841c7f907874a1efd6533fc56f4bf06a26a",
+    "soak-2026-11-02-dev33.json": "70168a33b54ce8d2bd0623731fa754cf90b98b1fb2f91f25610e7a8af9454118"
+  },
+  "r0_sample_qualified": true,
+  "soak_qualified": true,
+  "native_client_qualified": false,
+  "production_qualified": false,
+  "pushed": false,
+  "deployed": false,
+  "temporary_containers_and_volumes_removed": true
+}

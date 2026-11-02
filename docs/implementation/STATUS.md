@@ -699,3 +699,15 @@ biblioteki bez zmian. ProbeSHA7e6bb1591a7dcb3aa22ac0ee951fedb81c0c0c3cde91874fde
 Raporty libgadu-paging-*-2026-11-02-dev33.json. Runtime33 bez zmian.
 W tle trwa odrębny godzinny soak obrazu33 ze źródła98354cf; ten wpis nie
 ogłasza jego ukończenia. Natywne GUI GG6 nadal niekwalifikowane.
+
+## 2026-11-02 — obraz dev.33 i pełny godzinny soak
+
+Źródło98354cf:34grupy release146,145s oraz restart/backup/restore PASS.
+Cztery cykle900s na tym samym procesie i bazie:36000 wiadomości dokładnie
+sprawdzonych,18000offline, bez błędów i zmian FIFO. Wszystkie bramki z planu
+przedstartowego PASS. RSS max33,82MiB, wzrost mediany bez sesji13,16MiB,
+22deskryptory i6wątków przez wszystkie przerwy. Maksimum średnich CPU14,85%.
+Po SIGTERM integralność/FK/sprzątnięcie danych PASS. Kontenery i wolumeny usunięte,
+prywatny Docker zatrzymany. Archiwum i sześć raportów zachowane, hashe sprawdzone.
+[Raport](VERIFICATION-2026-11-02-soak-dev33.md). Bez push/deploy; brak kwalifikacji
+natywnego GG6, WAN, mediów pod ciągłym obciążeniem i wielu dni pracy.

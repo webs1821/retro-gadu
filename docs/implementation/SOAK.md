@@ -77,3 +77,8 @@ To27,064s całego scenariusza, tylko10s nadawania. Raport:
 Krótki test obejmuje generator i runtime debug; sterownik kontenera i pełne
 progi wymagają dalszej próby. Dodane później sprawdzenie aktywnych prób dostawy
 w weryfikatorze kontenera nie jest objęte tą próbką.
+
+## Zakończona pełna próba
+
+Dev.33 ze źródła98354cf przeszedł wszystkie zapisane wyżej kryteria bez zmiany
+progów. [Raport, zakres i archiwum](VERIFICATION-2026-11-02-soak-dev33.md).
