@@ -7,10 +7,12 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.30**, schemat SQLite **13**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.31**, schemat SQLite **13**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
+- Niezależny klient libgadu 1.7.0 potwierdza logowanie, opisy, obecność i wiadomości
+  online/offline po awarii. Poprawiono opisy bez końcowego NUL w LOGIN60/NEW_STATUS.
 - Logowanie GG6, sesje, trwała kolejka online/offline, obecność, opisy,
   niewidoczność, prywatność, archiwa kontaktów i dobrowolny katalog publiczny.
 - Formatowanie, konferencje oraz klasyczne obrazki pobierane od połączonego
@@ -77,6 +79,8 @@ go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementati
 - [Metryki buforów obrazków](docs/implementation/IMAGE-METRICS.md), [weryfikacja dev.29](docs/implementation/VERIFICATION-2026-11-02-dev29.md)
 
 - [Profil WWW za proxy HTTPS](docs/implementation/WEB-PROXY.md), [weryfikacja dev.30](docs/implementation/VERIFICATION-2026-11-02-dev30.md)
+
+- [Zgodność z libgadu](docs/implementation/LIBGADU-COMPATIBILITY.md), [weryfikacja dev.31](docs/implementation/VERIFICATION-2026-11-02-dev31.md)
 
 ## Uruchomienie lokalne
 

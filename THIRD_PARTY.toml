@@ -159,3 +159,15 @@ symbols = ["X-Real-IP", "Secure", "proxy_set_header", "WebsiteClient"]
 changes = "Własny ograniczony walidator HTTPS origin i umowa pojedynczego lokalnego proxy. Fakty: serializacja origin/domyslny port, Secure cookie, zastępowanie nagłówków proxy. Dodatkowe źródła: https://www.rfc-editor.org/rfc/rfc6265 i https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header. Nie skopiowano implementacji ani tekstu specyfikacji."
 verification = "Własne testy walidacji/duplikatów i rzeczywiste TLS1.3 na loopback: zaufanie certyfikatu/nazwa, CSRF/IP, rejestracja, zmiana hasła/GG, limity, pobieranie i patcher. Nie uruchamiano nginx ani publicznej usługi."
 reviewed_on = "2026-11-02"
+
+[[sources]]
+id = "external-libgadu170-validation"
+project = "libgadu 1.7.0 external compatibility client"
+upstream_url = "https://github.com/wojtekka/libgadu/releases/download/1.7.0/libgadu-1.7.0.tar.gz"
+kind = "reference-only"
+upstream_authors = ["Wojtek Kaniewski", "Autorzy libgadu"]
+local_paths = ["validation/libgadu_170/probe.c", "validation/libgadu_170/build.py", "validation/libgadu_170/README.md", "tests/libgadu_client.py", "crates/rgg-protocol/src/gg6.rs", "docs/implementation/LIBGADU-COMPATIBILITY.md"]
+symbols = ["gg_login", "gg_change_status_descr", "LOGIN60", "decode_description"]
+changes = "Zewnętrzne archiwum LGPL2.1, SHA25613b0c4c1471f40022db3fd7d141d5d0b42dd67f0a9ca82db877c39b60e14071a, kompilowane lokalnie bez zmian. Własny samodzielny klientMIT używa API; sterownikAGPL działa w osobnym procesie. Źródła biblioteki i binarki nie są dołączane do repo/runtime. Własny parser rGG dopuszcza opis zakończony granicą pakietu na podstawie obserwacji TCP i faktów src/events.c,src/libgadu.c; bez kopiowania implementacji C."
+verification = "Hash archiwum i wszystkich pierwotnych plików po kompilacji; izolowana przestrzeń sieciowa z samym loopback; kontrola LOGIN60/0x20 na rzeczywistym TCP, hasło, opisy, prywatność, ACK i online/offline po awarii. Regresja dev30 zachowana, poprawka dev31 potwierdzona. Nie kwalifikuje GUI GG6 ani publicznego wdrożenia."
+reviewed_on = "2026-11-02"

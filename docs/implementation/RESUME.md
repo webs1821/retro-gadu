@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-02, dev.30
+# Punkt wznowienia — 2026-11-02, dev.31
 
 ## Zakres
 
@@ -14,6 +14,32 @@ Brak AGENTS.md w repo i przodkach. PLAN_IMPLEMENTACJI.md jest niezmienny:
 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
+
+BIEŻĄCY dev31 gotowy: wspólnygg6::decode_description toleruje brakNUL do70B,
+NUL wymaga0lub4bajtówczasu; bez zgadywania czasu z końca tekstu. LOGIN60/STATUS
+używają helpera, statusnieparsujuż2x. Zachowane limity/schema13/190deps.
+124Rust/fmt/Clippy/build PASSsession18196;7regresji26.949sPASSsession39760.
+Raporty libgadu-build/client/regressions-2026-11-02-dev31.json wrepo.
+Nieudany dev30 libgadu-client-2026-11-02-dev30-failure.json (opisbezNULrozłączał).
+Korpus44cases, nowa standardowaTCPregresja tests/gg6_presence_contacts.py.
+Osobne MIT validation/libgadu_170/{probe.c,build.py,LICENSE,README.md}; AGPL
+tests/libgadu_client.py. Oficjalnearchiwum1.7.0SHA13b0c4c1471f40022db3fd7d141d5d0b42dd67f0a9ca82db877c39b60e14071a.
+38upstreamplikówbez zmian, zewnętrznabiblioteka/COPYING i probew/tmp/rgg-libgadu170-final.
+CzterypołączeniaLOGIN60/0x20,CP1250login/status,invisible,złehasło,3offlinepoSIGKILL
+i2online,Ready/FIFO/ACK/DB/SIGTERMpass. Stara1.7.0funkcja descr_time bezNUL
+pozostajeambiguous/niekwalifikowana; opisujemy ograniczenie bez heurystyki.
+Build+testunshare-Urn,networkonlylo(s.if_nameindex); /proc/1nsdenied/sysfshost
+rozwiązanecomparisonouter namespaceprzekazanego przezlauncher; pierwsze próby
+workspace i/tmp/rgg-libgadu170 zachowane. Wszystkie procesytestowe zakończone.
+Currentdebug31serverf1176e600dbf8c9e64236341ca7d79014e181a0ec1acb8b1921af28aaafe670f
+admin994b02b251bea7d208b04e061c6d9ae79cb076da44208d87f42ba7d5a7b77e2f.
+Baseline30/tmp/rgg-baseline-dev30 zachowujeoba wcześniejszedebug30.
+13provenance,10crate,13migracji. Brakpush/deploy; obraz/R0dalej30.
+Potrzebny lokalnycommitdev31 jeśli jeszcze niewykonany. Kontynuowaćlokalnie.
+Sensownynastępnykrok: rozszerzyć niezależnyklientlibgadu o katalog (READ/WRITE/SEARCH)
+i archiwumkontaktów krótkie; potem obrazki/konferencje. Nie ruszaćżywegoGG.
+Niższe notatki są historyczne.
+
 
 BIEŻĄCY STAN: dev30 runtime90aed8d oraz poprawka harness94730ef zakończone.
 Obraz źródła94730ef przeszedł32grupy release123.254s, restart/volume/restore oraz

@@ -63,6 +63,36 @@ fn word(bytes: &[u8], start: usize) -> u32 {
     )
 }
 
+/// Legacy clients may delimit text with the packet boundary instead of NUL.
+/// A timestamp is recognized only after an explicit NUL, never guessed from text.
+/// Wire observation: external-libgadu170-validation in THIRD_PARTY.toml.
+pub(crate) fn decode_description(
+    tail: &[u8],
+) -> Result<(Option<String>, Option<u32>), DecodeError> {
+    if tail.is_empty() {
+        return Ok((None, None));
+    }
+    let (end, timestamp) = match tail.iter().position(|byte| *byte == 0) {
+        Some(end) => {
+            let timestamp = match tail.len() - end - 1 {
+                0 => None,
+                4 => Some(word(tail, end + 1)),
+                _ => return Err(DecodeError::Description),
+            };
+            (end, timestamp)
+        }
+        None => (tail.len(), None),
+    };
+    if end > 70 {
+        return Err(DecodeError::Description);
+    }
+    let (text, invalid) = WINDOWS_1250.decode_without_bom_handling(&tail[..end]);
+    if invalid {
+        return Err(DecodeError::Encoding);
+    }
+    Ok((Some(text.into_owned()), timestamp))
+}
+
 pub fn decode_login(body: &[u8]) -> Result<Login60, DecodeError> {
     if !(31..=106).contains(&body.len()) {
         return Err(DecodeError::Length);
@@ -71,28 +101,7 @@ pub fn decode_login(body: &[u8]) -> Result<Login60, DecodeError> {
     if number == 0 || number > 0x00ff_ffff {
         return Err(DecodeError::UserNumber);
     }
-    let tail = &body[31..];
-    let (description, return_at) = if tail.is_empty() {
-        (None, None)
-    } else {
-        let end = tail
-            .iter()
-            .position(|byte| *byte == 0)
-            .ok_or(DecodeError::Description)?;
-        if end > 70 || ![0, 4].contains(&(tail.len() - end - 1)) {
-            return Err(DecodeError::Description);
-        }
-        let (text, invalid) = WINDOWS_1250.decode_without_bom_handling(&tail[..end]);
-        if invalid {
-            return Err(DecodeError::Encoding);
-        }
-        let timestamp = if tail.len() == end + 5 {
-            Some(word(tail, end + 1))
-        } else {
-            None
-        };
-        (Some(text.into_owned()), timestamp)
-    };
+    let (description, return_at) = decode_description(&body[31..])?;
     Ok(Login60 {
         user: UserId::new(number).map_err(|_| DecodeError::UserNumber)?,
         response: word(body, 4),
@@ -156,7 +165,43 @@ mod tests {
         assert!(decode_login(&body).is_err());
         let mut unterminated = login();
         unterminated.extend_from_slice(b"text");
-        assert!(decode_login(&unterminated).is_err());
+        assert_eq!(
+            decode_login(&unterminated).unwrap().description.as_deref(),
+            Some("text")
+        );
+    }
+
+    #[test]
+    fn packet_boundary_descriptions_keep_limits_and_explicit_time_delimiters() {
+        for length in [1, 69, 70, 71, 75] {
+            let text = vec![b'x'; length];
+            for terminated in [false, true] {
+                let mut tail = text.clone();
+                if terminated {
+                    tail.push(0);
+                }
+                let mut body = login();
+                body.extend_from_slice(&tail);
+                assert_eq!(decode_login(&body).is_ok(), length <= 70);
+                assert_eq!(decode_description(&tail).is_ok(), length <= 70);
+            }
+        }
+        for length in [1, 2, 3, 5] {
+            let mut tail = b"text\0".to_vec();
+            tail.extend(vec![1; length]);
+            assert!(decode_description(&tail).is_err());
+        }
+        let (text, time) = decode_description(b"textabcd").unwrap();
+        assert_eq!(text.as_deref(), Some("textabcd"));
+        assert_eq!(time, None);
+        let (text, time) = decode_description(&[0xaf, 0xf3, 0xb3, 0xe6]).unwrap();
+        assert_eq!(text.as_deref(), Some("Żółć"));
+        assert_eq!(time, None);
+        assert_eq!(decode_description(b""), Ok((None, None)));
+        assert_eq!(
+            decode_description(b"\0\0\0\0\0"),
+            Ok((Some(String::new()), Some(0)))
+        );
     }
 
     #[test]

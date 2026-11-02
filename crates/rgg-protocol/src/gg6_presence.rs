@@ -3,11 +3,10 @@
 // Wire facts: libgadu-wire-reference / libgadu-legacy-reference in THIRD_PARTY.toml.
 use crate::{
     frame::Frame,
-    gg6::{DecodeError, Login60, encode_text},
+    gg6::{DecodeError, Login60, decode_description, encode_text},
     gg6_messages,
 };
 use bytes::{BufMut, BytesMut};
-use encoding_rs::WINDOWS_1250;
 use rgg_application::presence::{Availability, Presence, VisiblePresence};
 fn make(
     value: u32,
@@ -35,28 +34,12 @@ pub fn from_login(login: &Login60) -> Result<Presence, DecodeError> {
     make(login.status, login.description.clone(), login.return_at)
 }
 pub fn decode_status(body: &[u8]) -> Result<Presence, DecodeError> {
-    gg6_messages::decode_status(body)?;
+    if !(4..=79).contains(&body.len()) {
+        return Err(DecodeError::Length);
+    }
     let status = u32::from_le_bytes(body[..4].try_into().expect("validated"));
-    if body.len() == 4 {
-        return make(status, None, None);
-    }
-    let tail = &body[4..];
-    let end = tail
-        .iter()
-        .position(|b| *b == 0)
-        .ok_or(DecodeError::Description)?;
-    let (text, bad) = WINDOWS_1250.decode_without_bom_handling(&tail[..end]);
-    if bad {
-        return Err(DecodeError::Encoding);
-    }
-    let time = if tail.len() == end + 5 {
-        Some(u32::from_le_bytes(
-            tail[end + 1..].try_into().expect("validated"),
-        ))
-    } else {
-        None
-    };
-    make(status, Some(text.into_owned()), time)
+    let (description, time) = decode_description(&body[4..])?;
+    make(status, description, time)
 }
 fn entry(out: &mut BytesMut, view: &VisiblePresence, sized: bool) -> Result<(), DecodeError> {
     let p = &view.presence;
@@ -147,6 +130,8 @@ mod tests {
             let mut body = vec![4, 0, 0, 0];
             body.extend(vec![b'x'; n]);
             body.push(0);
+            assert_eq!(decode_status(&body).is_ok(), n <= 70);
+            body.pop();
             assert_eq!(decode_status(&body).is_ok(), n <= 70);
         }
         let mut v = v;

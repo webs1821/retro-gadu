@@ -1,0 +1,317 @@
+{
+  "passed": true,
+  "network_namespace": "net:[4026532272]",
+  "outer_network_namespace": "net:[4026531833]",
+  "interfaces": [
+    [
+      1,
+      "lo"
+    ]
+  ],
+  "loopback_only": true,
+  "binary_sha256": {
+    "server": "f1176e600dbf8c9e64236341ca7d79014e181a0ec1acb8b1921af28aaafe670f",
+    "admin": "994b02b251bea7d208b04e061c6d9ae79cb076da44208d87f42ba7d5a7b77e2f",
+    "probe": "9386791a4589d15a9d073ed151cc2c82a4a4a75dae4b67a4993d70d59250c8fd"
+  },
+  "driver_sha256": "478eee468a547ceaa4831b2829afcdb52a26ccbd99c863131e98902848346c34",
+  "login_captures": [
+    {
+      "packets": [
+        21
+      ],
+      "bytes": 39,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 1,
+      "protocol_version": 32
+    },
+    {
+      "packets": [
+        21,
+        16,
+        8,
+        11,
+        11,
+        11
+      ],
+      "bytes": 176,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 1,
+      "protocol_version": 32
+    },
+    {
+      "packets": [
+        21,
+        18,
+        8,
+        16,
+        11,
+        8
+      ],
+      "bytes": 106,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 2,
+      "protocol_version": 32
+    },
+    {
+      "packets": [
+        21,
+        18,
+        8,
+        2,
+        2,
+        11,
+        8
+      ],
+      "bytes": 144,
+      "login_type": 21,
+      "login_length": 35,
+      "uin": 1,
+      "protocol_version": 32,
+      "description_hex": "aff3b3e6",
+      "status_packets": [
+        "04000000aff3b37479206d6f7374",
+        "1400000048696464656e"
+      ]
+    }
+  ],
+  "client_events": [
+    [
+      {
+        "event": "login_rejected"
+      }
+    ],
+    [
+      {
+        "event": "login",
+        "uin": 1,
+        "protocol_version": 32
+      },
+      {
+        "event": "command",
+        "name": "notify"
+      },
+      {
+        "event": "notify",
+        "uin": 2,
+        "status": 1,
+        "description": ""
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "sent",
+        "seq": 24397159
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24397159
+      },
+      {
+        "event": "sent",
+        "seq": 24398381
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24398381
+      },
+      {
+        "event": "sent",
+        "seq": 24399254
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24399254
+      },
+      {
+        "event": "closed"
+      }
+    ],
+    [
+      {
+        "event": "login",
+        "uin": 2,
+        "protocol_version": 32
+      },
+      {
+        "event": "command",
+        "name": "empty"
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 9,
+        "time": 1793651875,
+        "text": "aff3b3e6207370727a6564207265737461727475"
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 9,
+        "time": 1793651875,
+        "text": "647275676120776961646f6d6f9ce6"
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 9,
+        "time": 1793651875,
+        "text": "74727a656369613a20b9e6eab3f1f39c9fbf"
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "command",
+        "name": "notify"
+      },
+      {
+        "event": "notify",
+        "uin": 1,
+        "status": 4,
+        "description": "aff3b3e6"
+      },
+      {
+        "event": "status",
+        "uin": 1,
+        "status": 4,
+        "description": "aff3b37479206d6f7374"
+      },
+      {
+        "event": "status",
+        "uin": 1,
+        "status": 1,
+        "description": ""
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 8,
+        "time": 1793651876,
+        "text": "776961646f6d6f9ce6206f6e6c696e65"
+      },
+      {
+        "event": "sent",
+        "seq": 24397159
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 1,
+        "status": 3,
+        "seq": 24397159
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "closed"
+      }
+    ],
+    [
+      {
+        "event": "login",
+        "uin": 1,
+        "protocol_version": 32
+      },
+      {
+        "event": "command",
+        "name": "empty"
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "command",
+        "name": "status"
+      },
+      {
+        "event": "command",
+        "name": "status"
+      },
+      {
+        "event": "sent",
+        "seq": 24397159
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24397159
+      },
+      {
+        "event": "message",
+        "sender": 2,
+        "class": 8,
+        "time": 1793651876,
+        "text": "6f64706f776965649f"
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "closed"
+      }
+    ]
+  ],
+  "offline_messages_after_crash": 3,
+  "online_messages": 2,
+  "invisibility": true,
+  "description_cp1250": true,
+  "readiness_gate": true,
+  "incorrect_password_rejected": true,
+  "clean_shutdown": true,
+  "login_description_cp1250": true,
+  "database_integrity": true,
+  "library_sources_modified": false,
+  "native_gg_qualified": false
+}

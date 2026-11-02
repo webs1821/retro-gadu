@@ -174,9 +174,26 @@ def archive_crash(lab, stage):
     assert get_archive(a)==(b"previous" if stage=="before_archive_commit" else b"rGG_archive_fault")
     assert lab.sql("PRAGMA integrity_check")==[("ok",)]
 
+def description_boundaries(lab):
+    lab.start(); observer=lab.client(2); sender=lab.client()
+    description='Żółć'
+    sender.send(0x15,words(1,oracle(PASSWORD,sender.seed),4,0x20)+bytes(13)+bytes([255,0xbe])+description.encode('cp1250'))
+    assert sender.receive()==(3,b'');sender.send(0x12);barrier(sender)
+    assert rules(observer,[(1,3)])==[(1,4,description,None)]
+    for terminated in [False,True]:
+        for size in [1,70]:
+            text=('ą' if terminated else 'ę')*size
+            sender.send(2,words(4)+text.encode('cp1250')+(b'\0' if terminated else b''))
+            barrier(sender);change(observer,(1,4,text,None))
+    for tail in [b'x'*71,b'x\0a',b'x\0ab',b'x\0abc',b'x\0abcde']:
+        bad=lab.client(3);bad.send(2,words(4)+tail);bad.closed();bad.close()
+        sender.ping();barrier(observer)
+    status(sender,5,'powrót',12345);barrier(sender);change(observer,(1,5,'powrót',12345))
+    assert lab.sql('PRAGMA integrity_check')==[('ok',)]
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument("--server",type=Path,required=True);parser.add_argument("--admin",type=Path,required=True);parser.add_argument("--faults",action="store_true");args=parser.parse_args()
-    cases=[("presence changes, invisibility and viewer-specific privacy",visibility),("initial privacy and durable offline descriptions",offline_and_initial),("contact archive boundaries, staging, replacement and restart",archives),("subscription paging and limits",subscriptions)]
+    cases=[("presence changes, invisibility and viewer-specific privacy",visibility),("initial privacy and durable offline descriptions",offline_and_initial),("contact archive boundaries, staging, replacement and restart",archives),("subscription paging and limits",subscriptions),("packet-boundary descriptions, NUL variants and malformed timestamps",description_boundaries)]
     if args.faults:
         for stage in ["before_archive_commit","after_archive_commit"]:cases.append(("crash "+stage,lambda lab,stage=stage:archive_crash(lab,stage)))
     for name,case in cases:

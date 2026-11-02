@@ -1,0 +1,88 @@
+{
+  "version": "0.1.0-dev.31",
+  "schema": 13,
+  "source_sha256": {
+    "Cargo.toml": "4e7188697f9920404f60213f593db22f022fe1d7acac614bee9b89f492968a79",
+    "Cargo.lock": "2064bc5a32181b85c602339509c174a75e3cc3ab47cf1ba3fd5c47b5c32d30a5",
+    "crates/rgg-protocol/src/gg6.rs": "9fb3c8c2740a848d28a46481b98a369886b1ab2a659e360c5d0b2f50d175bfd9",
+    "crates/rgg-protocol/src/gg6_messages.rs": "410ed781b58ee9c075fb36e01172784cf9ec840270522f21f121b145af6bbcad",
+    "crates/rgg-protocol/src/gg6_presence.rs": "52c79d802fe528db1faa9a0368a2fa797b506d214b445144697f5c41d4956dfb",
+    "crates/rgg-protocol/tests/fixtures/wire-corpus.json": "7e951056f1d54a2688a5eb65e0f73a07b4ee9a1c2bab9a04018a58cfb1cabd5b",
+    "tests/gg6_presence_contacts.py": "8f812b5b6bd69bac229103391db162ca21e163933f58e55b662ea82ee788410d",
+    "tests/libgadu_client.py": "478eee468a547ceaa4831b2829afcdb52a26ccbd99c863131e98902848346c34",
+    "validation/libgadu_170/probe.c": "ef9ffb2919ac0154f0b75361a6c4966a1b54371dda99a3de2fcc67fdb8870644",
+    "validation/libgadu_170/build.py": "89470d5d82a6159cced980dfb48b99672e66db07a503a0f65e298fcbc4860c5a"
+  },
+  "binary_sha256": {
+    "rgg-server": "f1176e600dbf8c9e64236341ca7d79014e181a0ec1acb8b1921af28aaafe670f",
+    "rgg-admin": "994b02b251bea7d208b04e061c6d9ae79cb076da44208d87f42ba7d5a7b77e2f"
+  },
+  "rust_validation": {
+    "execution_session": 18196,
+    "tests_passed": 124,
+    "cargo_test_workspace_locked": true,
+    "cargo_clippy_all_targets_deny_warnings": true,
+    "cargo_build_workspace_locked": true,
+    "note": "Observed successful tool execution; full raw Rust output is not archived in this report."
+  },
+  "steps": [
+    {
+      "test": "gg6_sessions",
+      "driver_sha256": "b91eb20b7539a462660dddc624a08f8b288cc5d9ba34db131b41e721a624b79a",
+      "returncode": 0,
+      "seconds": 5.691,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_presence_contacts",
+      "driver_sha256": "8f812b5b6bd69bac229103391db162ca21e163933f58e55b662ea82ee788410d",
+      "returncode": 0,
+      "seconds": 13.328,
+      "stdout": "PASS: presence changes, invisibility and viewer-specific privacy\nPASS: initial privacy and durable offline descriptions\nPASS: contact archive boundaries, staging, replacement and restart\nPASS: subscription paging and limits\nPASS: packet-boundary descriptions, NUL variants and malformed timestamps\nPASS: synthetic GG6 presence/contact suite; native-client qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_directory",
+      "driver_sha256": "01fea4414dc105b6fc3aa993a802c09582066a7b6545d812771673b8940abbcf",
+      "returncode": 0,
+      "seconds": 1.306,
+      "stdout": "PASS: opt-in profiles, native reply forms, Polish filters and persistence\nPASS: directory presence follows viewer privacy\nPASS: directory readiness, malformed fields and persistent rate limit\nPASS: synthetic directory suite; native GG6 qualification remains open\n",
+      "stderr": ""
+    },
+    {
+      "test": "session_contracts",
+      "driver_sha256": "f04535490f427668e96976fe76cde3a0ff198ef74be46e52444715bff6324e7b",
+      "returncode": 0,
+      "seconds": 3.957,
+      "stdout": "SESSION_STATE_REPORT={\"cases\": [{\"phase\": \"unauthenticated\", \"command\": \"text\"}, {\"phase\": \"unauthenticated\", \"command\": \"conference\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-offer\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-request\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-start\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-own\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-write\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-search\"}, {\"phase\": \"unauthenticated\", \"command\": \"archive-get\"}, {\"phase\": \"unauthenticated\", \"command\": \"archive-put\"}, {\"phase\": \"unauthenticated\", \"command\": \"contact-add\"}, {\"phase\": \"unauthenticated\", \"command\": \"contact-remove\"}, {\"phase\": \"unauthenticated\", \"command\": \"ping\"}, {\"phase\": \"unauthenticated\", \"command\": \"status\"}, {\"phase\": \"unauthenticated\", \"command\": \"empty-notify\"}, {\"phase\": \"initial\", \"command\": \"text\"}, {\"phase\": \"initial\", \"command\": \"conference\"}, {\"phase\": \"initial\", \"command\": \"image-offer\"}, {\"phase\": \"initial\", \"command\": \"image-request\"}, {\"phase\": \"initial\", \"command\": \"image-start\"}, {\"phase\": \"initial\", \"command\": \"directory-own\"}, {\"phase\": \"initial\", \"command\": \"directory-write\"}, {\"phase\": \"initial\", \"command\": \"directory-search\"}, {\"phase\": \"initial\", \"command\": \"archive-get\"}, {\"phase\": \"initial\", \"command\": \"archive-put\"}, {\"phase\": \"initial\", \"command\": \"contact-add\"}, {\"phase\": \"initial\", \"command\": \"contact-remove\"}, {\"phase\": \"initial\", \"command\": \"repeat-login\"}, {\"phase\": \"resynchronizing\", \"command\": \"text\"}, {\"phase\": \"resynchronizing\", \"command\": \"conference\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-offer\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-request\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-start\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-own\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-write\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-search\"}, {\"phase\": \"resynchronizing\", \"command\": \"archive-get\"}, {\"phase\": \"resynchronizing\", \"command\": \"archive-put\"}, {\"phase\": \"resynchronizing\", \"command\": \"contact-add\"}, {\"phase\": \"resynchronizing\", \"command\": \"contact-remove\"}, {\"phase\": \"resynchronizing\", \"command\": \"repeat-login\"}, {\"phase\": \"resynchronizing\", \"command\": \"empty-during-staging\"}], \"count\": 42, \"state_preserved\": true, \"legal_sync_and_message_after_checks\": true}\nPASS: pings remain legal during synchronization but cannot extend its deadline\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_statistics",
+      "driver_sha256": "6679e30e4ddb6403680344fa3509ab7dd87e3aa6cf1d12c1d3af47a7d44ffac7",
+      "returncode": 0,
+      "seconds": 1.333,
+      "stdout": "PASS: snapshot privacy, readiness, replacement, restart and retirement\nPASS: registration integration and independent opt-ins\nPASS: disabled endpoints, Host and shared source-IP budgets\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_proxy",
+      "driver_sha256": "9d8a4f7f43d1eea4f867b52bac29115e73dc91cac11474853f227cedbc3fc3a8",
+      "returncode": 0,
+      "seconds": 1.115,
+      "stdout": "PASS: 13 invalid proxy configurations rejected before database creation\nPASS: verified TLS, Secure cookies, IP-bound forms, registration and password session fence TLS=TLSv1.3\nPASS: proxy trust, hostile and duplicate headers, canonical IP and source budgets TLS=TLSv1.3\n",
+      "stderr": ""
+    },
+    {
+      "test": "lifecycle",
+      "driver_sha256": "c8a47d49bab2972cf133cad726f1d8bbd67c3c948df1610f39411200a8fde5eb",
+      "returncode": 0,
+      "seconds": 0.218,
+      "stdout": "PASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "seconds": 26.949
+}

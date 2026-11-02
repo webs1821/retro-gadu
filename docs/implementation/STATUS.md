@@ -591,3 +591,19 @@ i manifest hashy zapisano w workspace/rgg-container-2026-11-02-dev30; raporty
 są także w repo. Kontenery i wolumeny posprzątano, prywatny daemon zatrzymano.
 To nie długi soak ani kwalifikacja natywnego GG/publicznego wdrożenia.
 [Raport i sumy](VERIFICATION-2026-11-02-r0-dev30.md). Brak push/deploy.
+
+## 2026-11-02 — dev.31: niezależna libgadu i opisy bez NUL
+
+Nie zmieniana libgadu1.7.0 odtworzyła błąd dev30: opis statusu zakończony
+granicą pakietu rozłączał nadawcę. Wspólny parser LOGIN60/NEW_STATUS obsługuje
+teraz obie formy, nadal z limitem70B i jednoznacznym NUL przed czasem.
+Zachowano raport błędu i poprzednie binarki.124Rust,fmt/Clippy,7zestawów
+TCP/HTTP26.949s oraz niezależny klient przeszły.38plików biblioteki bez zmian.
+Test zewnętrzny działa wyłącznie na loopback w osobnej sieci; nie linkuje kodu
+rGG. Własny probe/builder MIT i sterownik AGPL,13wpisów pochodzenia.190deps,
+schema13 bez zmian. Korpus ma44przypadki.
+
+Potwierdzono opisy przy loginie i zmianie statusu, CP1250, niewidoczność,
+złe hasło,3offline po awarii,2online, Ready i FIFO. Nie kwalifikuje GUI GG6,
+katalogu/obrazków libgadu ani automatycznego reconnect. Obraz/R0 nadal30.
+[Raport](VERIFICATION-2026-11-02-dev31.md). Brak push/deploy.

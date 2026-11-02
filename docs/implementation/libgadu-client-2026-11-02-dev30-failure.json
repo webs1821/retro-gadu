@@ -1,0 +1,228 @@
+{
+  "passed": false,
+  "network_namespace": "net:[4026532214]",
+  "outer_network_namespace": "net:[4026531833]",
+  "interfaces": [
+    [
+      1,
+      "lo"
+    ]
+  ],
+  "loopback_only": true,
+  "binary_sha256": {
+    "server": "daf5b49fec22be520fa68d66a39ffc7b88bc4f01482744158c350d4531b84b3b",
+    "admin": "3e4fcab3667ee82386f390240da8bd946fe73623c8673eee15f285ce698292b7",
+    "probe": "85c531a8f5e65ec2045b4f84b28085a6dce07bdce149c485b1a6753520ca4c6d"
+  },
+  "driver_sha256": "7d4a46d47b4c8a68e37f8b97aa920aeafac56e67eaae0f89677c7afb00231164",
+  "login_captures": [
+    {
+      "packets": [
+        21
+      ],
+      "bytes": 39,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 1,
+      "protocol_version": 32
+    },
+    {
+      "packets": [
+        21,
+        16,
+        8,
+        11,
+        11,
+        11
+      ],
+      "bytes": 176,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 1,
+      "protocol_version": 32
+    },
+    {
+      "packets": [
+        21,
+        18,
+        8,
+        16
+      ],
+      "bytes": 68,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 2,
+      "protocol_version": 32
+    },
+    {
+      "packets": [
+        21,
+        18,
+        8,
+        2
+      ],
+      "bytes": 77,
+      "login_type": 21,
+      "login_length": 31,
+      "uin": 1,
+      "protocol_version": 32,
+      "status_packets": [
+        "04000000aff3b37479206d6f7374"
+      ]
+    }
+  ],
+  "client_events": [
+    [
+      {
+        "event": "login_rejected"
+      }
+    ],
+    [
+      {
+        "event": "login",
+        "uin": 1,
+        "protocol_version": 32
+      },
+      {
+        "event": "command",
+        "name": "notify"
+      },
+      {
+        "event": "notify",
+        "uin": 2,
+        "status": 1,
+        "description": ""
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "sent",
+        "seq": 24397159
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24397159
+      },
+      {
+        "event": "sent",
+        "seq": 24398381
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24398381
+      },
+      {
+        "event": "sent",
+        "seq": 24399254
+      },
+      {
+        "event": "command",
+        "name": "send"
+      },
+      {
+        "event": "ack",
+        "recipient": 2,
+        "status": 3,
+        "seq": 24399254
+      },
+      {
+        "event": "closed"
+      }
+    ],
+    [
+      {
+        "event": "login",
+        "uin": 2,
+        "protocol_version": 32
+      },
+      {
+        "event": "command",
+        "name": "empty"
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 9,
+        "time": 1793651689,
+        "text": "aff3b3e6207370727a6564207265737461727475"
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 9,
+        "time": 1793651689,
+        "text": "647275676120776961646f6d6f9ce6"
+      },
+      {
+        "event": "message",
+        "sender": 1,
+        "class": 9,
+        "time": 1793651689,
+        "text": "74727a656369613a20b9e6eab3f1f39c9fbf"
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "command",
+        "name": "notify"
+      },
+      {
+        "event": "notify",
+        "uin": 1,
+        "status": 2,
+        "description": ""
+      },
+      {
+        "event": "status",
+        "uin": 1,
+        "status": 1,
+        "description": ""
+      }
+    ],
+    [
+      {
+        "event": "login",
+        "uin": 1,
+        "protocol_version": 32
+      },
+      {
+        "event": "command",
+        "name": "empty"
+      },
+      {
+        "event": "command",
+        "name": "ping"
+      },
+      {
+        "event": "pong"
+      },
+      {
+        "event": "command",
+        "name": "status"
+      }
+    ]
+  ],
+  "error": "AssertionError(('status', {'uin': 1, 'status': 4, 'description': 'aff3b37479206d6f7374'}, [{'event': 'status', 'uin': 1, 'status': 1, 'description': ''}], None))"
+}

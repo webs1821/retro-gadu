@@ -1,0 +1,99 @@
+{
+  "source_url": "https://github.com/wojtekka/libgadu/releases/download/1.7.0/libgadu-1.7.0.tar.gz",
+  "archive_sha256": "13b0c4c1471f40022db3fd7d141d5d0b42dd67f0a9ca82db877c39b60e14071a",
+  "passed": true,
+  "steps": [
+    {
+      "command": [
+        "sh",
+        "./configure",
+        "--disable-shared",
+        "--enable-static",
+        "--without-openssl",
+        "--without-pthread",
+        "--without-bind",
+        "CFLAGS=-O1 -g"
+      ],
+      "returncode": 0,
+      "seconds": 13.628,
+      "log_sha256": "213d2fb5ae5f0b9fe7e669e1288903f50a480026041216b8e683083a58385ba5"
+    },
+    {
+      "command": [
+        "make",
+        "-j2"
+      ],
+      "returncode": 0,
+      "seconds": 15.73,
+      "log_sha256": "5b816e1f434853c7e0c661fc7a3d2a41d599f45730e8d56583e46894490f6061"
+    },
+    {
+      "command": [
+        "/usr/bin/gcc",
+        "-std=c11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-O1",
+        "-g",
+        "-I/tmp/rgg-libgadu170-final/libgadu-1.7.0/include",
+        "/mnt/d/Dokumenty/Documents/RetroGadu/validation/libgadu_170/probe.c",
+        "/tmp/rgg-libgadu170-final/libgadu-1.7.0/src/.libs/libgadu.a",
+        "-o",
+        "/tmp/rgg-libgadu170-final/probe"
+      ],
+      "returncode": 0,
+      "seconds": 0.387,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "builder_sha256": "89470d5d82a6159cced980dfb48b99672e66db07a503a0f65e298fcbc4860c5a",
+  "probe_source_sha256": "ef9ffb2919ac0154f0b75361a6c4966a1b54371dda99a3de2fcc67fdb8870644",
+  "network_namespace": "net:[4026532214]",
+  "outer_network_namespace": "net:[4026531833]",
+  "installed_systemwide": false,
+  "original_sources_unchanged": true,
+  "upstream_files_sha256": {
+    "NEWS": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "AUTHORS": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "config.sub": "e84fbd3818599b4712dc4f3faee22dcda7d9b6119dd55db806fabe8e4cf5587c",
+    "missing": "c71fc062966f41250b0972198fb300a7194f9a32b29f871f842533ad2f6d9fe8",
+    "configure.ac": "6b40ade8c6608cddd39dc108bbfbfde901cf63c26824cc486cb69f6fcbf26599",
+    "ChangeLog": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "depcomp": "e7e6b4d5287f6fca7a76518225debbe364265f2ab53b0371406ffffcb6f04a01",
+    "config.guess": "79ec1614c5855c395a0390df1c2a50a266773256e209815bfc15cfe8252afb6b",
+    "Makefile.in": "60e7d52226482c598b4f55ecd6f7e202987336cbe6499948e9edee448a87ab94",
+    "compile": "8bda630f41ca734fb4fa8452493e27535b2a93955120a7dac667647c7d410f31",
+    "configure": "04aa2debb1f4391f11fc71c104075d5a3b4f76c35b5fbe0b40b54f2ec337dd21",
+    "aclocal.m4": "b52f44d5f5f4e452faa58439e13c87bddba06fa2bef6e8c4e6491c8c0ba88a2b",
+    "Makefile.am": "665b3df878e5063f8f2742e1ff9421caa87b2a9dec131d40fdbee96fa6ceabac",
+    "ltmain.sh": "68b7a4a8ca86fb8572eb8aab6319b0dc9b40aad2462aa0469d3e6efdadf56822",
+    "config.h.in": "92ce6f13703382e40931a86cd120f45061883aeca7e3387a71deb6bb371e873f",
+    "COPYING": "c0ffb32bbd65370945966f165aa6c502c43c35adc7affbaaea67148d8cdac117",
+    "README": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "install-sh": "6d568b78fda03dd73971a54d6d5ef196e47abf2f03069297f3046b60a9fc3617",
+    "pkgconfig/libgadu.pc.in": "22daac474c2d6e5af5e55f0aed0ca32a10c375365065d69892962ca90f37840f",
+    "pkgconfig/Makefile.in": "cc04f7e8011f50d9fa5291f15c1fc4966fa292972888b0d2f2fc499e3c9e57db",
+    "pkgconfig/Makefile.am": "baa6ff086826faf35a9997e7f5ccc3aae653d7f440237e3a7ddac865ca88857b",
+    "src/dcc.c": "15f6d8fc42675f3712a610df9a5195ef4315f20be581f4422f0ed6e90476eb6e",
+    "src/obsolete.c": "4a955b4003ec30f5c66ad14ef689c206184ae9d41b2035a67cc415027f1b9c4b",
+    "src/pubdir50.c": "f2b75d68ea1b5bed37621789ede3faffa29893cf28b69aec0f644506a9d93264",
+    "src/Makefile.in": "407904d5dd7fcd54d3ccb2ee4747fa3bbfb153bb9257fe0a58f1f503a4c85576",
+    "src/events.c": "c4efaf39daf9c84cabe6de175cc8a0d4d6c79a654766d0559c3b304896bfe471",
+    "src/pubdir.c": "3ce63a7f0d902ed3b62716c1a2b3b221625150cfb7af04b77493291f4caddd40",
+    "src/libgadu.c": "7863f7061d3b7861d92ad4e057e247189df223a8e8915551d7c41cdc61403f3e",
+    "src/common.c": "4bea449df52bc4d25e23055f9655e7c5ca00c50110b2a2f6dfccbb290030967e",
+    "src/Makefile.am": "fe3c8d839e8102259f5a79518590c550498aca3f4e9ed777a34cf253e8ce8efe",
+    "src/http.c": "10ac32056a16901cd4ee55d8050f2b81e0aade894fd2a36948a4724c22b08528",
+    "include/libgadu.h.in": "a9a8fea5707af3d561cf2acfb8e8edcc6c36c1e1290f1e78fe4f97f355b8da9b",
+    "include/Makefile.in": "afacdf51d67f35a98f6c58e69b81a9077aad8d0b6bc9be8a6fe580f8dbbccbcd",
+    "include/compat.h": "ca7b81bbf59d876ef73e7bdea698c663b7b2ea037b27cff51d4428006b42ba80",
+    "include/Makefile.am": "cd2e35643aa0d620c9f62a8854170d25cedb86382594397ef7115a85c0329bc3",
+    "m4/stdint.m4": "99c0b2111eff35f8be84615a9f7e682b4f42a72369b763b61e7c0419c6256230",
+    "m4/openssl.m4": "56e4018a9ed299dfa2053fff98abd082acb3824f9da21ad0d0891429147b1fe3",
+    "m4/acx_pthread.m4": "3aab135da39fe1d11a4dbdd42c0a3979d26452bb530b485988e56716af9a218a"
+  },
+  "static_library_sha256": "ea9b855a2051240ffd58b3c4d4be5a52ffaabdd56d49a46576ef4aeeecf20904",
+  "probe_sha256": "9386791a4589d15a9d073ed151cc2c82a4a4a75dae4b67a4993d70d59250c8fd",
+  "compiler": "gcc (Ubuntu 9.4.0-1ubuntu1~20.04.2) 9.4.0"
+}

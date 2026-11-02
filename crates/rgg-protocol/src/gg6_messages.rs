@@ -3,7 +3,7 @@
 // Independent implementation of libgadu-wire-reference; see THIRD_PARTY.toml.
 use crate::{
     frame::Frame,
-    gg6::{DecodeError, encode_text},
+    gg6::{DecodeError, decode_description, encode_text},
 };
 use bytes::{BufMut, Bytes, BytesMut};
 use encoding_rs::WINDOWS_1250;
@@ -48,21 +48,7 @@ pub fn decode_status(body: &[u8]) -> Result<(bool, bool), DecodeError> {
         return Err(DecodeError::Length);
     }
     let value = word(body, 0);
-    if body.len() > 4 {
-        let end = body[4..]
-            .iter()
-            .position(|b| *b == 0)
-            .ok_or(DecodeError::Description)?;
-        if end > 70 || ![0, 4].contains(&(body.len() - 5 - end)) {
-            return Err(DecodeError::Description);
-        }
-        if WINDOWS_1250
-            .decode_without_bom_handling(&body[4..4 + end])
-            .1
-        {
-            return Err(DecodeError::Encoding);
-        }
-    }
+    decode_description(&body[4..])?;
     status(value)
 }
 pub fn contacts(body: &[u8]) -> Result<Vec<ContactRule>, DecodeError> {
@@ -438,6 +424,7 @@ mod tests {
         assert_eq!(status(0x8014).unwrap(), (false, true));
         assert!(status(6).is_err());
         assert!(status(0x10002).is_err());
-        assert!(decode_status(&[2, 0, 0, 0, b'x']).is_err());
+        assert!(decode_status(&[2, 0, 0, 0, b'x']).is_ok());
+        assert!(decode_status(&[2, 0, 0, 0, b'x', 0, 1]).is_err());
     }
 }

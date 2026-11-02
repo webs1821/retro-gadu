@@ -9,7 +9,9 @@ Parsery i logika transakcji są własną implementacją; nie kopiowano kodu tych
 LOGIN60 ustawia oczekiwany status. Dopiero kompletna lista prywatności atomowo
 zatwierdza reguły, obecność i Ready. Zmiana statusu przed Ready nie publikuje danych.
 Obsługiwane są dostępny, zajęty, niewidoczny i niedostępny, opis Windows-1250 do
-70 bajtów oraz opcjonalny czas powrotu. STATUS60 i NOTIFY_REPLY60 mają osobne
+70 bajtów oraz opcjonalny czas powrotu. Od dev.31 wejściowy opis może kończyć się
+granicą pakietu lub NUL. Czas jest rozpoznawany wyłącznie jako cztery bajty po NUL;
+nie zgadujemy go z końcówki tekstu. [Test niezależnej libgadu](LIBGADU-COMPATIBILITY.md). STATUS60 i NOTIFY_REPLY60 mają osobne
 enkodery: tylko snapshot ma bajt długości opisu. Metadane DCC pozostają zerowe.
 
 Polityka `effective_presence_for` ukrywa cały opis i czas, kiedy nadawca jest
