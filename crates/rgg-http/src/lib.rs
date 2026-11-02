@@ -9,6 +9,7 @@ mod metrics_runtime;
 mod password_change;
 pub mod patcher;
 mod statistics;
+mod web_access;
 mod website;
 use axum::{
     Json, Router,
@@ -26,6 +27,7 @@ use std::{
     },
     time::Duration,
 };
+pub use web_access::{WebEndpoint, WebProxy};
 
 #[derive(Clone)]
 pub struct HttpState {
@@ -53,10 +55,10 @@ impl HttpState {
         downloads: Option<Arc<downloads::Catalog>>,
         passwords: Option<Arc<rgg_application::password::PasswordService>>,
         patcher: Option<patcher::Settings>,
-        address: std::net::SocketAddr,
+        endpoint: WebEndpoint,
     ) -> Result<Self, &'static str> {
         self.website = Some(Arc::new(website::Website::new(
-            service, statistics, downloads, passwords, patcher, address,
+            service, statistics, downloads, passwords, patcher, endpoint,
         )?));
         Ok(self)
     }

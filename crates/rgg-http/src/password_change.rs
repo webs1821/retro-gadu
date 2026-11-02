@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 use crate::{
     HttpState,
+    web_access::WebsiteClient,
     website::{PASSWORD_COOKIE, notice_at},
 };
 use axum::{
-    Form,
-    extract::{ConnectInfo, State, rejection::FormRejection},
+    Extension, Form,
+    extract::{State, rejection::FormRejection},
     http::{HeaderMap, HeaderValue, StatusCode, header},
     response::{Html, IntoResponse, Response},
 };
@@ -16,19 +17,18 @@ use rgg_application::{
 };
 use rgg_domain::UserId;
 use serde::Deserialize;
-use std::net::SocketAddr;
 use zeroize::Zeroizing;
 fn notice(status: StatusCode, message: &str) -> Response {
     notice_at(status, message, "/password")
 }
 pub(crate) async fn form(
     State(state): State<HttpState>,
-    ConnectInfo(remote): ConnectInfo<SocketAddr>,
+    Extension(WebsiteClient(ip)): Extension<WebsiteClient>,
 ) -> Response {
     let Some(web) = &state.website else {
         return notice(StatusCode::NOT_FOUND, "Zmiana hasła jest wyłączona.");
     };
-    let token = match web.issue_password_token(remote.ip()) {
+    let token = match web.issue_password_token(ip) {
         Ok(value) => value,
         Err(status) => return notice(status, "Formularz jest chwilowo niedostępny."),
     };
@@ -37,7 +37,8 @@ pub(crate) async fn form(
     response.headers_mut().insert(
         header::SET_COOKIE,
         HeaderValue::from_str(&format!(
-            "{PASSWORD_COOKIE}={token}; Path=/password; HttpOnly; SameSite=Strict; Max-Age=600"
+            "{PASSWORD_COOKIE}={token}; Path=/password; HttpOnly; SameSite=Strict; Max-Age=600{}",
+            web.cookie_security()
         ))
         .expect("fixed cookie and hex"),
     );
@@ -80,7 +81,7 @@ fn command(input: Input) -> Result<PasswordChange, &'static str> {
 }
 pub(crate) async fn submit(
     State(state): State<HttpState>,
-    ConnectInfo(remote): ConnectInfo<SocketAddr>,
+    Extension(WebsiteClient(ip)): Extension<WebsiteClient>,
     headers: HeaderMap,
     input: Result<Form<Input>, FormRejection>,
 ) -> Response {
@@ -100,7 +101,7 @@ pub(crate) async fn submit(
             );
         }
     };
-    if !web.consume_password_token(&headers, &input.csrf, remote.ip()) {
+    if !web.consume_password_token(&headers, &input.csrf, ip) {
         return notice(
             StatusCode::FORBIDDEN,
             "Formularz wygasł lub został już użyty. Otwórz go ponownie.",
@@ -139,9 +140,11 @@ pub(crate) async fn submit(
     };
     response.headers_mut().insert(
         header::SET_COOKIE,
-        HeaderValue::from_static(
-            "rgg_password=; Path=/password; HttpOnly; SameSite=Strict; Max-Age=0",
-        ),
+        HeaderValue::from_str(&format!(
+            "rgg_password=; Path=/password; HttpOnly; SameSite=Strict; Max-Age=0{}",
+            web.cookie_security()
+        ))
+        .expect("fixed cookie syntax"),
     );
     response
 }

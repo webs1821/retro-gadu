@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-02, dev.29
+# Punkt wznowienia — 2026-11-02, dev.30
 
 ## Zakres
 
@@ -14,6 +14,35 @@ Brak AGENTS.md w repo i przodkach. PLAN_IMPLEMENTACJI.md jest niezmienny:
 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
+
+Dev29 ukończony w b412748. Dev30 zaimplementowany i zweryfikowany lokalnie:
+web_access.rs: WebProxy typedSerdeTryFrom canonicalHTTPSorigin+oneLoopbackProxyIP;
+WebEndpoint::new(bound,Option<WebProxy>) nadal loopback/nonzeroport. Website
+używa Endpoint zamiastSocketAddr. Sharedguard tworzy Extension WebsiteClient
+zweryfikowanegoIP, obaformularze używająextensiondoCSRF/budżetu, Secure także
+clearcookies. Host/Origin/FetchSite pojedyncze/dokładne; GETOriginjeślijestteż
+musi byćzgodny. XRealIP singleplainIP + XForwardedProtohttps tylko odexactpeer;
+XFF/Forwarded/XForwardedHostignorowane. MappedIPv6clientnormalizowanydoIPv4;
+mappedIPv6originodrzuconyjakaliasy/slash/query/userinfo/default443/invalidport.
+DOMDNS lowercaseLDH/253/63finalalphaonly (IDNpunycodeTLDunsupported). NoDNS.
+Configweb_proxy wymagaenabledwebsitefeature, bindpublicnadalzabroniony.
+http_proxy.py usesnewlocalPythonTLSproxy1joinedworker, OpenSSLCLIephemeralcert,
+cert+hostnameverify, noDNS/systemtrustchanges. ClientA/B testsCSRF, Secure,
+registration/passwordfence/GG, downloads/patcherexactbytes; spoofheaders,
+IPaliases/budgets, noDBchanges;13badconfigs beforeDB. TLS1.3success+negativeCA/name.
+123Rust/fmt/Clippy/build+12groupsTCP/HTTP allPASS;2container_context też.
+Report web-proxy-2026-11-02-dev30.json74.736s hashessourcesverified.
+Debug30 serverdaf5b49fec22be520fa68d66a39ffc7b88bc4f01482744158c350d4531b84b3b,
+admin3e4fcab3667ee82386f390240da8bd946fe73623c8673eee15f285ce698292b7.
+190deps/schema13 unchanged,12provenance (newhttps-proxy-reference primaryRFC/
+nginx facts),10crate. CI/container_suite32groups; Dockerverification now RUN
+openssl version; futurebuildwillverifyCLIpresence (noruntimepackagesadded).
+Noimage/R0/nginx qualification; image26 remainslatest. Noactiveprocess/test.
+Runnerworkspace/rgg-web-proxy30.py refusesoverwritingreport. Previouspreflight
+TLSfixturetriedinviteafterserverstart,correctexclusiveDBlockrejected; fixed
+fixtureonly toinvitebeforestart; finalfullreportpasses. Nootherpendingissue.
+DocsWEB-PROXY,VERIFICATIONdev30,STATUS/README/PARITYupdated. Need localcommit
+ofdev30 ifnotyetdone, thencontinueautonomouslocalworkbyremainingplan.
 
 Dev28 ukończony w16373ff. Dev29: ImageObservations/ImageSnapshot port application,
 Images::image_snapshot try_lock + skan<=32 bez alokacji/I/O/mutacji. Obserwuje ten
@@ -32,10 +61,9 @@ admina4d48c5441016ced693458c32817118e0783c7aefced41293a199fae62872ac5.
 Schema13/190deps/11provenance/10crate bez zmian. CI/container_suite31grup.
 Obraz/R0 nadal26; wszystkie testy zakończone. Workspace runner
 rgg-image-metrics29.py i -final.py; raportów nie nadpisywać.
-Następny zapowiedziany krok: konfiguracja WWW za proxy HTTPS testowanym lokalnie,
+Historycznie następny zapowiedziany krok (już wykonany wdev30): konfiguracja WWW za proxy HTTPS testowanym lokalnie,
 ze ścisłym canonical origin/Host/CSRF/cookie, jawnie zaufanym proxy i źródłemIP.
-Nie wdrażać ani nie otwierać publicznych nasłuchów. Implementacja tego kroku
-jeszcze nierozpoczęta; trzeba przejrzeć istniejący website/config i testy.
+Nie wdrażać ani nie otwierać publicznych nasłuchów. Implementacja tego kroku jest zakończona; bieżący stan opisany powyżej.
 
 Macierz stanów sesji utrwalona w67eaf97ea153165bd5b812fac372793fe121130a.
 Dev28 dodaje opcjonalne gg_advertise: walidowany rgg_http::AdvertisedEndpoint,
@@ -151,7 +179,7 @@ Raporty i dokumentacja kwalifikacji26 są utrwalane osobnym commitem po51c078c.
 
 Kontynuować autonomiczny rozwój lokalny do przerwania przez użytkownika.
 Sprawdzić pozostałe braki PARITY i planu; pozostały m.in.
-profil publicznej domeny, natywny GG, rzeczywisty import i długi soak.
+kwalifikacja publicznego proxy, natywny GG, rzeczywisty import i długi soak.
 Nie zmieniać zakresu lokalnego ani uruchamiać istniejącego GG/instalatora
 na jego bieżącym profilu. Nie uruchamiać subagentów bez nowej podstawy.
 Szkice CPU w workspace są już zastąpione finalnym kodem w repo.

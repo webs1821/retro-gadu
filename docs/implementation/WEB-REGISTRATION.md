@@ -60,3 +60,12 @@ Od dev.8 wspólny adapter `website.rs` obsługuje też opcjonalną stronę liczn
 GET strony głównej, /api/stats, formularza i CSS współdzielą powyższy budżet oraz
 limit współbieżności. Opcje rejestracji i liczników są niezależne. Helper podglądu
 uruchamia obie funkcje i otwiera adres strony głównej.
+
+
+Od dev.30 istnieje opcjonalny [profil WWW za lokalnym proxy HTTPS](WEB-PROXY.md).
+Dodaje jawny origin, pojedyncze zaufane proxy, zweryfikowane IP dla tokenów/limitów
+oraz Secure przy wydawaniu i kasowaniu cookies. Bindy nadal tylko loopback.
+W obu profilach GET z Origin musi wskazywać właściwy origin, a duplikaty
+Sec-Fetch-Site są odrzucane. Powyższe reguły ignorowania nagłówków proxy i braku
+Secure opisują domyślne bezpośrednie HTTP. Publiczna ekspozycja pozostaje
+niekwalifikowana; nie zmieniano działającej infrastruktury.

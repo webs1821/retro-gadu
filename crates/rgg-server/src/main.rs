@@ -165,7 +165,7 @@ async fn run() -> Result<(), Error> {
             downloads,
             passwords,
             config.client_patcher,
-            address,
+            rgg_http::WebEndpoint::new(address, config.web_proxy)?,
         )?
     } else {
         state

@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.29**, schemat SQLite **13**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.30**, schemat SQLite **13**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -75,6 +75,8 @@ go dla wielokrotności 2047 bajtów. [Zakres i testy poprawki](docs/implementati
 - [Liczniki](docs/implementation/PUBLIC-STATISTICS.md), [pobieranie](docs/implementation/DOWNLOADS.md), [pochodzenie kodu](THIRD_PARTY.toml)
 
 - [Metryki buforów obrazków](docs/implementation/IMAGE-METRICS.md), [weryfikacja dev.29](docs/implementation/VERIFICATION-2026-11-02-dev29.md)
+
+- [Profil WWW za proxy HTTPS](docs/implementation/WEB-PROXY.md), [weryfikacja dev.30](docs/implementation/VERIFICATION-2026-11-02-dev30.md)
 
 ## Uruchomienie lokalne
 

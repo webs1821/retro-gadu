@@ -22,6 +22,7 @@ pub struct Config {
     pub web_password_change: bool,
     #[serde(default)]
     pub web_public_stats: bool,
+    pub web_proxy: Option<rgg_http::WebProxy>,
     pub downloads_manifest: Option<PathBuf>,
     pub client_patcher: Option<rgg_http::patcher::Settings>,
     #[serde(default)]
@@ -59,6 +60,8 @@ pub enum ConfigError {
     WebRegistration,
     #[error("web_password_change requires a GG listener and initialized account keyring")]
     WebPasswordChange,
+    #[error("web_proxy requires an enabled website feature")]
+    WebProxy,
     #[error("metrics must use a separate loopback endpoint")]
     MetricsEndpoint,
     #[error(
@@ -93,6 +96,15 @@ impl Config {
         }
         if config.web_password_change && config.gg_bind.is_none() {
             return Err(ConfigError::WebPasswordChange);
+        }
+        if config.web_proxy.is_some()
+            && !(config.web_registration
+                || config.web_password_change
+                || config.web_public_stats
+                || config.downloads_manifest.is_some()
+                || config.client_patcher.is_some())
+        {
+            return Err(ConfigError::WebProxy);
         }
         if config
             .metrics_bind
@@ -139,6 +151,43 @@ impl Config {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn https_proxy_is_opt_in_validated_and_requires_website_features() {
+        let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n";
+        let profile = "[web_proxy]\norigin='https://rgg.test'\ntrusted_proxy='127.0.0.2'\n";
+        assert!(
+            Config::parse(base, Path::new("."))
+                .unwrap()
+                .web_proxy
+                .is_none()
+        );
+        assert!(matches!(
+            Config::parse(&format!("{base}{profile}"), Path::new(".")),
+            Err(ConfigError::WebProxy)
+        ));
+        assert!(
+            Config::parse(
+                &format!("{base}web_public_stats=true\n{profile}"),
+                Path::new(".")
+            )
+            .is_ok()
+        );
+        for profile in [
+            "origin='https://rgg.test'",
+            "trusted_proxy='127.0.0.2'",
+            "origin='http://rgg.test'\ntrusted_proxy='127.0.0.2'",
+            "origin='https://rgg.test'\ntrusted_proxy='10.0.0.1'",
+            "origin='https://rgg.test'\ntrusted_proxy='127.0.0.2'\ntrust_all=true",
+        ] {
+            assert!(
+                Config::parse(
+                    &format!("{base}web_public_stats=true\n[web_proxy]\n{profile}"),
+                    Path::new(".")
+                )
+                .is_err()
+            );
+        }
+    }
     #[test]
     fn password_website_requires_gg_and_is_disabled_by_default() {
         let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\n";

@@ -146,3 +146,16 @@ symbols = ["ProcessCPUTime", "VmRSS", "clock_gettime_dynamic"]
 changes = "Własny ograniczony parser VmRSS i wywołanie bezpiecznego API przypiętej rustix1.1.6; dodatkowa referencja https://docs.rs/rustix/1.1.6/rustix/time/index.html. Odczytano fakty dokumentacji i dokładne lokalne źródło API. Nie kopiowano kodu biblioteki/jądra ani tekstu dokumentacji. Rustix pozostaje osobną zależnością ujętą w inwentarzu licencji."
 verification = "Testy granic/I-O/overflow, braku i starości próbek, oraz realne HTTP porównane z niezależnym procfs; GG, restart i dołączenie samplera przy SIGTERM."
 reviewed_on = "2026-11-01"
+
+
+[[sources]]
+id = "https-proxy-reference"
+project = "IETF web origins/cookies and nginx proxy header interface"
+upstream_url = "https://www.rfc-editor.org/rfc/rfc6454"
+kind = "reference-only"
+upstream_authors = ["A. Barth", "IETF", "Autorzy nginx"]
+local_paths = ["crates/rgg-http/src/web_access.rs", "crates/rgg-http/src/website.rs", "crates/rgg-http/src/password_change.rs", "tests/http_proxy.py", "docs/implementation/WEB-PROXY.md"]
+symbols = ["X-Real-IP", "Secure", "proxy_set_header", "WebsiteClient"]
+changes = "Własny ograniczony walidator HTTPS origin i umowa pojedynczego lokalnego proxy. Fakty: serializacja origin/domyslny port, Secure cookie, zastępowanie nagłówków proxy. Dodatkowe źródła: https://www.rfc-editor.org/rfc/rfc6265 i https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header. Nie skopiowano implementacji ani tekstu specyfikacji."
+verification = "Własne testy walidacji/duplikatów i rzeczywiste TLS1.3 na loopback: zaufanie certyfikatu/nazwa, CSRF/IP, rejestracja, zmiana hasła/GG, limity, pobieranie i patcher. Nie uruchamiano nginx ani publicznej usługi."
+reviewed_on = "2026-11-02"

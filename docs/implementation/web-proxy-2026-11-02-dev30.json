@@ -1,0 +1,371 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.30",
+  "started_utc": "2026-11-02T19:53:36.894821+00:00",
+  "passed": true,
+  "checks": [
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--all"
+      ],
+      "exit_code": 0,
+      "seconds": 1.345,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--workspace",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "seconds": 31.187,
+      "stdout": "\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 6 tests\ntest accounts::tests::password_policy_rejects_silent_transcoding_and_redacts_debug ... ok\ntest directory::tests::polish_keys_years_and_profile_removal_are_explicit ... ok\ntest presence::tests::privacy_hides_the_entire_status_and_never_exports_invisibility ... ok\ntest telemetry::tests::cancellation_drop_and_duplicate_finish_are_accounted_once ... ok\ntest telemetry::tests::exact_boundaries_cumulative_infinity_and_saturating_arithmetic ... ok\ntest telemetry::tests::concurrent_updates_and_snapshots_keep_histogram_counts_consistent ... ok\n\ntest result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 7 tests\ntest tests::invitation_format_is_unambiguous_and_case_insensitive ... ok\ntest tests::legacy_invites_have_a_separate_case_sensitive_digest_and_strict_ascii_bounds ... ok\ntest gg_retro::tests::independent_libsodium_vector_binds_key_account_and_ciphertext ... ok\ntest tests::envelopes_are_randomized_and_bound_to_account_version_nonce_and_key_id ... ok\ntest tests::old_keys_are_readable_but_only_active_key_is_used_for_writing ... ok\ntest tests::key_files_survive_reload_refuse_overwrite_and_reject_invalid_data ... ok\ntest tests::successor_persists_all_old_keys_refuses_overwrite_and_stops_at_retention_limit ... ok\n\ntest result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s\n\n\nrunning 2 tests\ntest tests::text_validation_and_debug_do_not_leak_content ... ok\ntest tests::user_ids_do_not_inherit_a_legacy_wire_limit ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 15 tests\ntest legacy::tests::discovery_requires_a_bound_local_listener_even_with_an_explicit_destination ... ok\ntest downloads::tests::manifest_text_and_paths_are_bounded_and_html_is_escaped ... ok\ntest legacy::tests::explicit_destination_changes_only_the_ready_address_line_and_is_bounded ... ok\ntest metrics::tests::all_families_at_extreme_values_fit_the_response_budget ... ok\ntest metrics_images::tests::unavailable_empty_partial_and_extreme_snapshots_are_distinct_and_bounded ... ok\ntest metrics_runtime::tests::maximum_numeric_values_keep_the_export_bounded_and_finite ... ok\ntest metrics_runtime::tests::missing_stale_and_partial_observations_do_not_invent_zero_usage ... ok\ntest web_access::tests::canonical_origin_has_no_implicit_aliases_paths_credentials_or_public_proxy ... ok\ntest metrics::tests::busy_scrapes_and_a_stalled_repository_have_finite_admission_and_time ... ok\ntest web_access::tests::direct_profile_ignores_forwarding_headers_and_preserves_actual_peer ... ok\ntest website::tests::budgets_and_ambiguous_cookies_are_rejected ... ok\ntest metrics::tests::readiness_cache_expiry_and_storage_failure_never_export_an_expired_snapshot ... ok\ntest web_access::tests::only_one_explicit_proxy_and_unambiguous_headers_can_supply_identity ... ok\ntest website::tests::csrf_tokens_cannot_cross_registration_and_password_forms ... ok\ntest website::tests::csrf_is_single_use_ip_bound_expiring_and_bounded ... ok\n\ntest result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s\n\n\nrunning 15 tests\ntest frame::tests::coalesced_packets_and_unknown_kinds_keep_their_boundaries ... ok\ntest frame::tests::fragmented_header_and_payload_preserve_every_byte ... ok\ntest frame::tests::rejects_large_lengths_before_waiting_for_the_body_and_detects_eof ... ok\ntest gg6::tests::encoding_never_silently_replaces_unsupported_characters ... ok\ntest gg6::tests::login_length_and_wire_limits_are_separate_from_domain_types ... ok\ntest gg6::tests::polish_description_timestamp_and_invalid_tails ... ok\ntest gg6_directory::tests::native_read_codes_unset_sequences_and_sparse_search_rows ... ok\ntest gg6_images::tests::control_boundaries_and_missing_have_no_filename ... ok\ntest gg6_messages::tests::conference_options_preserve_order_accept_styles_in_either_order_and_bound_counts ... ok\ntest gg6_messages::tests::contacts_and_status_bounds ... ok\ntest gg6_messages::tests::image_descriptor_after_color_roundtrips_and_rejects_truncation_and_limits ... ok\ntest gg6_messages::tests::message_roundtrip_strips_untrusted_flags_and_preserves_polish_styles ... ok\ntest gg6_presence::tests::description_boundaries_and_distinct_snapshot_change_layouts ... ok\ntest gg6_contacts::tests::exact_chunk_is_ambiguous_and_export_has_an_explicit_last_type ... ok\ntest legacy_hash::tests::pinned_synthetic_vectors_cover_zero_rotations_high_bytes_and_overflow ... ok\n\ntest result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 3 tests\ntest independent_frames_fragmentation_coalescing_and_length_boundaries ... ok\ntest deterministic_mutation_campaign ... ok\ntest golden_corpus_all_prefixes_and_every_single_bit_mutation ... ok\n\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.71s\n\n\nrunning 19 tests\ntest config::tests::discovery_requires_an_ipv4_gg_listener ... ok\ntest config::tests::local_development_cannot_accidentally_listen_on_the_lan_or_internet ... ok\ntest config::tests::password_website_requires_gg_and_is_disabled_by_default ... ok\ntest http_listener::tests::admission_is_bounded_and_removes_inactive_addresses ... ok\ntest config::tests::http_limits_are_bounded_and_reject_unknown_fields ... ok\ntest config::tests::advertised_destination_is_explicit_and_never_relaxes_listener_policy ... ok\ntest config::tests::website_requires_the_initialized_gg_account_runtime ... ok\ntest config::tests::metrics_are_opt_in_loopback_and_separate_from_client_services ... ok\ntest config::tests::paths_are_relative_to_configuration_and_unknown_options_are_errors ... ok\ntest config::tests::https_proxy_is_opt_in_validated_and_requires_website_features ... ok\ntest config::tests::browser_patcher_is_opt_in_and_validates_hostname_before_database_open ... ok\ntest http_listener::tests::both_directions_extend_idle_but_idle_eventually_expires ... ok\ntest http_listener::tests::blocked_output_is_not_kept_alive_by_incoming_bytes ... ok\ntest http_listener::tests::empty_flush_does_not_reset_a_stalled_write ... ok\ntest http_listener::tests::lifetime_cannot_be_extended_by_continuous_traffic ... ok\ntest process_metrics::linux::tests::own_process_clock_is_monotonic_and_procfs_is_readable ... ok\ntest process_metrics::linux::tests::status_parser_ignores_non_utf8_names_and_checks_units_duplicates_and_overflow ... ok\ntest process_metrics::linux::tests::status_read_is_bounded_and_io_failure_is_not_zero_usage ... ok\ntest process_metrics::tests::cancelled_sampler_never_collects_and_running_sampler_joins_cleanly ... ok\n\ntest result: ok. 19 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 46 tests\ntest directory::tests::aliases_of_a_directory_do_not_create_two_owners ... ok\ntest directory::tests::lock_lives_until_owner_drops_and_can_then_be_reacquired ... ok\ntest accounts::tests::competing_manual_claims_are_atomic_and_automatic_numbers_skip_occupied_values ... ok\ntest accounts::tests::simultaneous_registrations_obey_the_three_use_limit_and_allocate_unique_numbers ... ok\ntest accounts::tests::encryption_failure_rolls_back_invitation_and_number_allocation ... ok\ntest accounts::tests::reused_nonce_is_rejected_even_after_the_old_account_has_been_retired ... ok\ntest accounts::tests::manual_numbers_do_not_jump_the_automatic_counter_and_conflicts_do_not_consume_invites ... ok\ntest accounts::tests::schema_two_migrates_existing_encrypted_accounts_and_backfills_nonce_history ... ok\ntest accounts::tests::retired_numbers_remain_reserved_after_restart_without_preserving_personal_fields ... ok\ntest password_maintenance::tests::authenticates_full_password_and_rolls_back_nonce_failure ... ok\ntest key_maintenance::tests::reused_nonce_rolls_back_the_entire_batch_then_resume_succeeds ... ok\ntest messaging_tests::actor_waits_for_socket_barrier_and_revocation_fences_previously_verified_login ... ok\ntest messaging_tests::concurrent_acceptance_obeys_atomic_recipient_quota_and_retirement_purges_payloads ... ok\ntest messaging_tests::quotas_expiry_and_terminal_payload_retention_are_enforced ... ok\ntest messaging_tests::privacy_is_atomic_persistent_and_unblocking_does_not_resurrect_messages ... ok\ntest image_tests::blocks_revoke_permanently_sessions_are_fenced_and_retirement_cascades ... ok\ntest messaging_tests::fifo_is_enqueue_order_and_reused_sequence_is_not_deduplicated ... ok\ntest image_tests::image_publication_serializes_block_commit_without_awaiting_an_actor ... ok\ntest operations_tests::operator_sessions_include_private_users_but_never_stale_sessions ... ok\ntest operations_tests::queue_gauges_follow_leases_transport_write_and_retention_without_fake_acknowledgements ... ok\ntest image_tests::offers_are_atomic_recipient_scoped_and_outlive_payload_and_history ... ok\ntest tests::sqlite_engine_floor_rejects_unfixed_and_unrecognized_versions ... ok\ntest messaging_tests::new_epoch_recovers_leases_and_stale_sessions_cannot_write ... ok\ntest conference_tests::context_is_validated_in_the_core_and_corrupt_metadata_is_terminal_and_purged ... ok\ntest image_tests::retained_offer_quota_cannot_be_bypassed_by_delivering_or_deleting_text ... ok\ntest password_maintenance::tests::refuses_live_inactive_accounts_and_version_overflow ... ok\ntest password_web_tests::wrong_unchanged_and_reused_nonce_preserve_secret_generation_and_audit ... ok\ntest password_web_tests::concurrent_changes_commit_exactly_one_secret_and_audit ... ok\ntest password_maintenance::tests::bounds_audit_count_and_age_without_exposing_expired_events ... ok\ntest password_web_tests::attempts_are_persistent_bounded_and_do_not_allocate_for_unknown_or_reset_on_clock_rollback ... ok\ntest tests::import_opener_requires_marker_and_cannot_reopen_existing_database ... ok\ntest presence_tests::friends_only_status_hides_presence_without_blocking_pending_messages ... ok\ntest write_pool_tests::queued_writers_leave_readers_available_and_rollback_precedes_the_next_writer ... ok\ntest tests::refuses_future_schema_without_overwriting_runtime_state ... ok\ntest presence_tests::archive_versions_are_independent_atomic_private_and_discard_staging_on_restart ... ok\ntest tests::initialization_is_durable_and_each_restart_gets_a_new_epoch ... ok\ntest presence_tests::privacy_commit_waits_for_an_in_progress_publication_without_waiting_on_observer_actor ... ok\ntest password_web_tests::socket_and_publication_barriers_precede_commit_and_stale_login_cannot_kick_new_session ... ok\ntest presence_tests::effective_presence_is_ready_scoped_private_and_offline_description_survives_epoch ... ok\ntest profile_tests::profiles_are_opt_in_fenced_replace_whole_form_and_use_literal_polish_filters ... ok\ntest profile_tests::removing_a_profile_waits_for_directory_publication_to_finish ... ok\ntest messaging_tests::corrupt_payload_is_terminal_and_attempt_history_is_bounded ... ok\ntest profile_tests::directory_rate_limit_survives_session_replacement_restart_and_backwards_clock ... ok\ntest statistics_tests::public_counters_require_current_ready_public_presence_and_exclude_tombstones ... ok\ntest profile_tests::keyset_paging_is_ordered_and_retirement_cascades_profiles ... ok\ntest messaging_tests::full_history_scrubs_sparse_payloads_without_expiring_a_live_writer ... ok\n\ntest result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.54s\n\n\nrunning 8 tests\ntest tests::bad_crc_order_overflow_stale_sessions_timeout_and_disconnect_release_data ... ok\ntest tests::crc_complete_before_publication_and_bounded_repacketization ... ok\ntest tests::global_capacity_partial_fragment_limit_and_expiry_free_the_reservation ... ok\ntest tests::observations::reservation_assembly_crc_and_output_retain_only_coordinator_owned_buffers ... ok\ntest tests::observations::reads_do_not_expire_or_refresh_and_failure_paths_release_buffers ... ok\ntest tests::unsolicited_duplicate_and_per_user_capacity_do_not_allocate ... ok\ntest tests::observations::busy_or_poisoned_lock_is_unavailable_and_does_not_wait_or_fake_zero ... ok\ntest tests::observations::maximum_allocations_quotas_and_mixed_state_accounting ... ok\n\ntest result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 2 tests\ntest server::telemetry_tests::abort_drops_the_real_socket_fence_connection_and_operation_observations ... ok\ntest tests::real_tcp_fragmentation_crosses_protocol_application_and_transport ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+      "stderr": "   Compiling rgg-transfers v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-transfers)\n   Compiling rgg-protocol v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol)\n   Compiling rgg-application v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-application)\n   Compiling rgg-domain v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-domain)\n   Compiling rgg-transport v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-transport)\n   Compiling rgg-credentials v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-credentials)\n   Compiling rgg-http v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-http)\n   Compiling rgg-store-sqlite v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-store-sqlite)\n   Compiling rgg-admin v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-admin)\n   Compiling rgg-server v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-server)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.01s\n     Running unittests src/main.rs (/tmp/rgg-target/debug/deps/rgg_admin-58990679a5f847ab)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_application-b265fc25d1ff886d)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_credentials-3bce7bdcf506cf9e)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_domain-3d2117906abbef66)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_http-f2cac37426495f81)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_protocol-c549df6a0c0fa004)\n     Running tests/adversarial.rs (/tmp/rgg-target/debug/deps/adversarial-9558d38e5adea070)\n     Running unittests src/main.rs (/tmp/rgg-target/debug/deps/rgg_server-92d1b8cb5d63ae7e)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_store_sqlite-b752dce98b9d0b79)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_transfers-0a7a4f442dcd0685)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_transport-ce5cc059780f5460)\n   Doc-tests rgg_application\n   Doc-tests rgg_credentials\n   Doc-tests rgg_domain\n   Doc-tests rgg_http\n   Doc-tests rgg_protocol\n   Doc-tests rgg_store_sqlite\n   Doc-tests rgg_transfers\n   Doc-tests rgg_transport\n"
+    },
+    {
+      "argv": [
+        "cargo",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--all-features",
+        "--offline",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "seconds": 1.256,
+      "stdout": "",
+      "stderr": "    Checking rgg-http v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-http)\n    Checking rgg-server v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-server)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.19s\n"
+    },
+    {
+      "argv": [
+        "cargo",
+        "build",
+        "--workspace",
+        "--offline"
+      ],
+      "exit_code": 0,
+      "seconds": 2.763,
+      "stdout": "",
+      "stderr": "   Compiling rgg-http v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-http)\n   Compiling rgg-server v0.1.0-dev.30 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-server)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 2.72s\n"
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_proxy.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 1.25,
+      "stdout": "PASS: 13 invalid proxy configurations rejected before database creation\nPASS: verified TLS, Secure cookies, IP-bound forms, registration and password session fence TLS=TLSv1.3\nPASS: proxy trust, hostile and duplicate headers, canonical IP and source budgets TLS=TLSv1.3\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_registration.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 6.446,
+      "stdout": "PASS: manual/automatic UIN, invite use, login, messaging and persistence\nPASS: Host/Origin/CSRF, replay, malformed inputs and bounded body\nPASS: twelve concurrent registrations share a three-use invitation\nPASS: request deadline and source-IP budget ignore forwarded headers\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_password.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 2.434,
+      "stdout": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_statistics.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 1.377,
+      "stdout": "PASS: snapshot privacy, readiness, replacement, restart and retirement\nPASS: registration integration and independent opt-ins\nPASS: disabled endpoints, Host and shared source-IP budgets\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_downloads.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 1.762,
+      "stdout": "PASS: hash verified immutable snapshot, HTML escaping, headers and integration\nPASS: bad manifests, traversal, duplicates, sizes and symlinks fail before startup\nPASS: independent opt-in, budget and GG isolation\nPASS: four slow streams bounded, disconnect releases capacity\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_patcher.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 0.775,
+      "stdout": "PASS: opt-in, exact embedded assets, CSP and navigation\nPASS: no upload, Host/Origin/body/query guards, shared budget and early config validation\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_limits.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 9.624,
+      "stdout": "PASS: connection_and_idle_limits\nPASS: traffic_cannot_extend_lifetime\nPASS: stalled_downloads_release_all_capacity\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_metrics.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 7.235,
+      "stdout": "PASS: private gauges, invisible users, offline queue, restart and retirement\nPASS: dedicated endpoint, browser guards, bounded sockets and clean stop\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/http_discovery.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 0.484,
+      "stdout": "PASS: disabled/enabled discovery, actual loopback listener, hostile Host ignored, HTTP/1.0 and GG login\nPASS: legacy account operations refused without invitation/account mutations or secret logging\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/discovery_proxy.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 0.789,
+      "stdout": "PASS: 15 invalid configurations rejected before creating a database\nPASS: explicit loopback relay, hostile headers, HTTP/1.0, GG login, online/offline and restart\nADVERTISED_ENDPOINT_REPORT={\"invalid_configs\": 15, \"relay_connections\": 4, \"forwarded_bytes\": 534, \"backend_changed\": true, \"all_loopback\": true, \"native_client_qualified\": false}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/gg6_sessions.py",
+        "--server",
+        "/tmp/rgg-target/debug/rgg-server",
+        "--admin",
+        "/tmp/rgg-target/debug/rgg-admin"
+      ],
+      "exit_code": 0,
+      "seconds": 5.773,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "/usr/local/bin/python3",
+        "tests/lifecycle.py",
+        "--binary",
+        "/tmp/rgg-target/debug/rgg-server"
+      ],
+      "exit_code": 0,
+      "seconds": 0.237,
+      "stdout": "PASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\n",
+      "stderr": ""
+    }
+  ],
+  "local_only": true,
+  "native_client_qualified": false,
+  "container_qualified": false,
+  "r0_qualified": false,
+  "seconds": 74.736,
+  "binaries": {
+    "rgg-server": "daf5b49fec22be520fa68d66a39ffc7b88bc4f01482744158c350d4531b84b3b",
+    "rgg-admin": "3e4fcab3667ee82386f390240da8bd946fe73623c8673eee15f285ce698292b7"
+  },
+  "source_sha256": {
+    "Cargo.lock": "0db64b1aadfd237b7cd9711134b8ade5fa7db7a8ea45ca68b36daccbc1364143",
+    "Cargo.toml": "1eeabc92384829bb21027836aeaa1e70c2e2dec1730dc6eb5b568e55bc3b7d08",
+    "config/rgg.example.toml": "05e68172510cab35655e27d0d6bafc6e99006cd5d59f2e1527ff71e966242c62",
+    "crates/rgg-admin/Cargo.toml": "4a976ad8f6ae03f5044fa30538237345ecf07e16d642cf3211978eb83a1165a4",
+    "crates/rgg-admin/src/backup.rs": "889d3ed7c4ccc5e038ed63bf05f78a9098dbc85e4d75dc06466acc6b5e726f7f",
+    "crates/rgg-admin/src/import/mod.rs": "49c02c7d744424c409a448a42350d41eecf969a8a383e4baa76d544c784bc760",
+    "crates/rgg-admin/src/import/validate.rs": "850b5a05308d1f8079ff5e95ff986c51f772d212972a13f5766a1f7293943523",
+    "crates/rgg-admin/src/import/wire.rs": "a9dffeed810d8b078603db36fec0659b654a11bc2e802b56339f8c0d8ab36be0",
+    "crates/rgg-admin/src/keys.rs": "4df76a64ef19d3870f4450f75b032ee508ef18dcaa8c12990780a0902d1e513e",
+    "crates/rgg-admin/src/main.rs": "7ff12cc1dd2c701dee86cd3b2beb914aa499f459ac2f6f34a95e5d4e828391ea",
+    "crates/rgg-admin/src/password.rs": "0796226875bdd0480c21e65c89ecf39033e6e6d3e5dedb337b706a768369ebd5",
+    "crates/rgg-application/Cargo.toml": "4f15ca0579c5fa1fcd063c4d9e261b533c70d43e975cf9df8ef820c5b48ba9c5",
+    "crates/rgg-application/src/accounts.rs": "b42e439a300ec76f14e6da6d4809557843ddb17f4be350550cca42ec3b454084",
+    "crates/rgg-application/src/conferences.rs": "ce4858da0f595d81875c883504feaf05ac6ca5240fa9db8b4f00e72ef82bc55e",
+    "crates/rgg-application/src/contacts.rs": "6afc947fc3aa0b40e5cac4d87a6bda85f181b22f16c221671f5e1bc89aaeba99",
+    "crates/rgg-application/src/directory.rs": "af5a44f943d0e078b812615268fd16fed7a010383ee96cb9f2e97a697ebe9393",
+    "crates/rgg-application/src/images.rs": "67c32ad6a2f710a0138122548fcf6031ab6c09b017474370907247e5168d3a13",
+    "crates/rgg-application/src/lib.rs": "daf941e0649ef096ee4d604ed70104c5466ee1eecdfb1465bfcdad775d759992",
+    "crates/rgg-application/src/messaging.rs": "6a353c0d7206236dc0b0b6245eaca3d5a06daf3c5270aebf0b6512b999fd0235",
+    "crates/rgg-application/src/operations.rs": "1e6d00c48520de3c90e5576efcc7fba057499a2eab463deebdf959bfeb259cba",
+    "crates/rgg-application/src/password.rs": "5d16cf27215ab40f3324a366a6f02015ac9703089ae1da395841fc739135cce7",
+    "crates/rgg-application/src/presence.rs": "ae705578691ff4b55c357cbd36cb6ba17a7a65fb44554b872de02585c81915cf",
+    "crates/rgg-application/src/registration.rs": "fa6328072f7dad3cfe68867f6e1cb3f7002b0448528e79e90b21bc0fa88ad366",
+    "crates/rgg-application/src/sessions.rs": "7874a5aa2e4c8ac0d854dbced93e5c67af1d3e906cf55f5314b85226326fe28d",
+    "crates/rgg-application/src/statistics.rs": "824e852c16b145d830b3be0a622bb58caea0139f805100362c536364b36a50d5",
+    "crates/rgg-application/src/telemetry.rs": "5ede9e584d9e40741d7a24354d769e57eff0ff3b97ebb937d685f2b7036e4233",
+    "crates/rgg-credentials/Cargo.toml": "54fcc7fa68c44ceb8addd0ff7ffb1315d356d1957dc89e90b8a68bb18df6961e",
+    "crates/rgg-credentials/src/gg_retro.rs": "3c2cc8a992b95d45ce3558e6ad1d1df35f7e379b736af506fcadfd3dcb2b7c7e",
+    "crates/rgg-credentials/src/lib.rs": "442d937cece255cbfdfadfad34d222e926599905dee0d43d39bccb6499ea0976",
+    "crates/rgg-domain/Cargo.toml": "a5c091c592e3713c006b49efcb4ef641794ea106c4685ea351710fe065b0af95",
+    "crates/rgg-domain/src/lib.rs": "5831bdb90f4d6f41a6ca737ae87662e95fecbe5916152ed0ea91b976ee413d1e",
+    "crates/rgg-http/Cargo.toml": "c3695790f93a9bb8d16421c9f0dbe3d1155aba9e667becf6a2d72cf4dd0cd10d",
+    "crates/rgg-http/src/downloads.rs": "8a688a7ac20881db2a11f58f03a887c63bc85b04897fa61dba498c7e85849883",
+    "crates/rgg-http/src/legacy.rs": "29d9d811b20bb18e3db9052cafbe5fc3b3cc87a8e45e93dc4a4693bd8fc8369a",
+    "crates/rgg-http/src/lib.rs": "b570db04cb5e22e6dbee688e6a1a9435f43a5074ff0dff525c157da335492b93",
+    "crates/rgg-http/src/metrics.rs": "d38e95fca258d0fa71af018347127d1d1db361130e8130584e159574734a0760",
+    "crates/rgg-http/src/metrics_images.rs": "8da45afe325c8dae14d6cbad787f63920e647111d2bb79cbab4d4514fefd300a",
+    "crates/rgg-http/src/metrics_runtime.rs": "535593c5f1f9c8151dd16d4036640e6e5cf12df5bbcb0a091eb25bb07379f094",
+    "crates/rgg-http/src/password_change.rs": "679a9ba06ad1046b81dff8056e01388ef97d108f279c60a266fb7cc1807c577b",
+    "crates/rgg-http/src/patcher.rs": "55f12e2491e9b43340935807beee3e368c9622d1fb82dc60111b17ccd6530594",
+    "crates/rgg-http/src/statistics.rs": "45d5585c0f7743d3700c7abd8a1e76523d27c0699ea63009a0bcfba18be1903a",
+    "crates/rgg-http/src/web_access.rs": "9dab691c0b48f4e181e176af1edc1b3ba097fca3a1a8bcd432df15e2fbcf30ff",
+    "crates/rgg-http/src/website.rs": "4b13ec9f8e200ef3a61a9230a2c059882d45eb007ddead62e776474995192a88",
+    "crates/rgg-protocol/Cargo.toml": "c0d449cf12ab147ca55a40e9a6ccaa44252db9d72af1fc26d1a771391edb6043",
+    "crates/rgg-protocol/src/frame.rs": "2a658017e71de38f6d853adfb2655d4e1722edf69dc6d3d11a88b4ddea81b355",
+    "crates/rgg-protocol/src/gg6.rs": "6abd954b9a392fb286a802f68a2752f9905367bb4665b4d792e3e55ab7fe4288",
+    "crates/rgg-protocol/src/gg6_contacts.rs": "fb006196a8d6cf92d44b438bd6dcc3aa321355b4bc6c79ec216aeb4a2dad241c",
+    "crates/rgg-protocol/src/gg6_directory.rs": "d3162ab366bc5f4bb41dd28351acaf717c450c63ed91b6920a9fb00ddfed15e8",
+    "crates/rgg-protocol/src/gg6_images.rs": "ad7edfd3321c242ae79d071bbf243975d5dead2d36dec9ef3f18212702b87375",
+    "crates/rgg-protocol/src/gg6_messages.rs": "3fe90ce3a5b892dddfe5e86bf8f3e47a04bf3a5b1304206d5a07767ce5ed76ed",
+    "crates/rgg-protocol/src/gg6_presence.rs": "9cc315886bb2bceb1f211e318e99be8f50052bc482121c51afbccff47e8fa641",
+    "crates/rgg-protocol/src/legacy_hash.rs": "913c2708055ab4f5d6c8b2ff261b741c66e85d58b1d57b36b5bd878dd1c856bb",
+    "crates/rgg-protocol/src/lib.rs": "c2b038c455d2e8dd28b4d413863d4df6bcab38474f75750f264f567998515595",
+    "crates/rgg-protocol/tests/adversarial.rs": "0408b7a1036754aaa3a071034e2c7a6c2952bea50c6097dede2160e4ce41d547",
+    "crates/rgg-server/Cargo.toml": "74df39b4990b379be94d29a1913c2c73ac9dc5d15622bbdde97bb632ac57c70e",
+    "crates/rgg-server/src/config.rs": "2afc9abc57241eb8244e2648dc80b02e83679a0a53b5f97f8b62d1436f99adae",
+    "crates/rgg-server/src/http_listener.rs": "dd6c2ab435cd14897bb0561877d9acc35d4528d2cf761a3c2084349f4fd18db6",
+    "crates/rgg-server/src/main.rs": "5681a06b75a64a17bde1f19972c1d842935072e73f506f3de42568342e9ef37b",
+    "crates/rgg-server/src/process_metrics.rs": "e78d3df31e5f6f3bded1eb9bf9a9bce570e4ca7c0ac73e40f99c5041a79f03ca",
+    "crates/rgg-store-sqlite/Cargo.toml": "2958c158d61b7eea3db6c2fd3a9ac6f22b92e97015e48395cc3c7460eb88570f",
+    "crates/rgg-store-sqlite/src/accounts.rs": "77d845c38c0a818b48d6a0d5a214e7e17e5f5a87e4497c7e3203ecf71839fef7",
+    "crates/rgg-store-sqlite/src/backup.rs": "7dd41eaab73775ffe4d3f2f3745084d068037264c8958d7b0e60cf80f267374c",
+    "crates/rgg-store-sqlite/src/conference_tests.rs": "1aecccd0898f89b2d9002c309c48ad18135dc2970bc2b411d908681170c02529",
+    "crates/rgg-store-sqlite/src/contacts.rs": "d1b7b4b455ac99ba6c777e72eafbf9381a03975f189bf2d4b63f32e8e8c3752d",
+    "crates/rgg-store-sqlite/src/database.rs": "96eb53dc87120452a1f8e3f622b95d125035a6a3e0500b3069eff67760196696",
+    "crates/rgg-store-sqlite/src/directory.rs": "9ce98c7106a6081a0ccc191b1e21e14ae4061bf1a6103e72c553c53edda50e0b",
+    "crates/rgg-store-sqlite/src/image_tests.rs": "ccc4dba61212a017dec6a2bcc8410a0852dd0df755ab2980a63b498a3ba4430f",
+    "crates/rgg-store-sqlite/src/images.rs": "99f9105b0df36b9b092c000723fb195bbf38d28b197abf1d614d12679d85408f",
+    "crates/rgg-store-sqlite/src/import_data.rs": "4bc27e4cb45bf7228bf0f696b37d5df692952b86ec20f2ae03a070b7e827e41b",
+    "crates/rgg-store-sqlite/src/key_maintenance.rs": "86398c277e39ef7412a584fb4fd9bd7533de690fe38ca7ef521a66efa76660e8",
+    "crates/rgg-store-sqlite/src/lib.rs": "f0c5b50a665b381f6fae67c87dcfe248f0a6d848ffbf1ba49b81102cf834bb75",
+    "crates/rgg-store-sqlite/src/messaging.rs": "d5eae0d8c04ff2403b024b0ce867efebb7095b26c2a51e85835bba3f854e4823",
+    "crates/rgg-store-sqlite/src/messaging_tests.rs": "7df96214719bed67fabc7116a16dc1e2f0c6e039e6b7bee6f7a2ac6160ace935",
+    "crates/rgg-store-sqlite/src/migrations.rs": "cbdd8398409d80be85d0988448c77c87514f7713474c5ae40cb45135f41ae8d9",
+    "crates/rgg-store-sqlite/src/operations.rs": "90786bcf7f0102de38dd957b630196bd94f0c7e89d7fb6b220390ff76172444b",
+    "crates/rgg-store-sqlite/src/operations_tests.rs": "5494538c8d3fef0e5d40aaee94bc004681956c5dacadbe8713a98f6f938cb4eb",
+    "crates/rgg-store-sqlite/src/password_maintenance.rs": "8eea174d42c2f3ccd542891c6c7af69db74082641b21879725b43a8b4d4f4a03",
+    "crates/rgg-store-sqlite/src/password_web.rs": "1e6a8d83ad66592eeefb39e5635945ef50e302a1c86f55805e2adc67e1f68703",
+    "crates/rgg-store-sqlite/src/password_web_tests.rs": "840985b6d723c51c910abf21208e8a16845db15edce8e0ff31b6589671689e54",
+    "crates/rgg-store-sqlite/src/presence.rs": "019014284e0af8d17ded4fd2a45b8c70eda7fd51795a2cc5ab264aa3711e9281",
+    "crates/rgg-store-sqlite/src/presence_tests.rs": "0568b151ec0e10b015dd018f95ea8cf44b9bafb820da6b46762dbc21971d95fa",
+    "crates/rgg-store-sqlite/src/profile_tests.rs": "cc36173394bdfe93848e4f8251be7c5d4dc1d5f3add6fa3c044fef69bad056e4",
+    "crates/rgg-store-sqlite/src/public_profiles.rs": "af82844d82aaefe1aa776171cd8f623bf52a98a52bcc6ff6d6df31932670973a",
+    "crates/rgg-store-sqlite/src/statistics.rs": "e67fa5a5fb6bdfc5a62e4be1cf2529885f03f5c823b330491845a9e7e58214c7",
+    "crates/rgg-store-sqlite/src/statistics_tests.rs": "49ed6e88532e20f60795b83ac0b0b343f00a194efae1080f32b45c6fee07e49f",
+    "crates/rgg-store-sqlite/src/write_pool_tests.rs": "44881bad03b3c9a453bfd2cddbf6af8598a6a63c595012995351edb3e2671fbe",
+    "crates/rgg-transfers/Cargo.toml": "aae1b16abfb26a594a1f084693f11dd9d19a44f9c24408925d02d71ecf31ba1e",
+    "crates/rgg-transfers/src/lib.rs": "2e7fda11051daccf5ab0090a1bdf47d9a4fd0db25312da0abde43b2a570719a0",
+    "crates/rgg-transfers/src/tests/observations.rs": "9a4c8dbcf858025495eb85fe9dc3c714cd30efbc2c3801ddb439321e8ff6b836",
+    "crates/rgg-transport/Cargo.toml": "7927da93256ecafee387853dafdeb72c4a8a8a863ebf787289056fc39759840b",
+    "crates/rgg-transport/src/lib.rs": "48ec2f6c89d27577fb056c072b6249f0ee826e25ba0caaf5af03f6fd3719c224",
+    "crates/rgg-transport/src/server.rs": "d845bc3cfac2230b8e49ec7b7148c839bbd09bcc4efcb27019bbedf2579f2f2a",
+    "deploy/Dockerfile": "5365c83aacc57be2e99c1771c48b71c054358f913f1a5d0b079b1b68ae7cd70d",
+    "tests/accounts_cli.py": "4b6ad809078ed5c6e61d6d6fa1dd406fa0a2c4bbb8ccca6d68fd9e743534f9b8",
+    "tests/backups_cli.py": "39faf8c889cee97db52bd16c1e6eee8a35b4ac5b1f6d406df88378e351fe1a6e",
+    "tests/client_browser.py": "1ccffcc180ebbbbb539dd76e0836fe10f83a181f811fd7803f4462d143f34ef1",
+    "tests/client_downloads.py": "cc0566653b2d63bbd2df4413c488a6ad7ef753f24ee82cad9f9be5f575b98c34",
+    "tests/client_package.py": "552dc0beb837175d5a0a58280b162d7980849e379d000964a719deedf454202d",
+    "tests/client_upload_wire.py": "6354520ea4bf88a7388a872fa53d4ee93aab45fbba97a40d1fbb0505b91f349a",
+    "tests/container_context.py": "daf048b39ce64672a1c357cdffc85a7deffa707a48f2a22f03de0d4676d918ba",
+    "tests/container_load.py": "8db118c2ff4cd9a40c1d38e0778791622d31c7c1fa6cf1adc968d10903d11941",
+    "tests/container_runtime.py": "2fa6c7aa21deffdb2b68a605bc73d729113cb694022066da860f6d999052559e",
+    "tests/container_suite.py": "2ab13e364e45708b4b2765438db72ef690a515bc0764df0eda5415c0e1cf12ed",
+    "tests/discovery_proxy.py": "4571f9f832f3d272e59214cba403ae3a67d62ff5af0abff1e7d39280bec8103c",
+    "tests/gg6_concurrent_replay.py": "be180f814112792d0c1494614527bce4f529adb5650f7ae454f9164a82bb664b",
+    "tests/gg6_conferences.py": "b01be38be5e6b44d187aa5dd0733a1317795ffc7420540cf8111f16581e6f443",
+    "tests/gg6_directory.py": "01fea4414dc105b6fc3aa993a802c09582066a7b6545d812771673b8940abbcf",
+    "tests/gg6_history_retention.py": "b833105fc45a66bef4ebadefa969f063f2366d560f15ac530c65c39fd23d896c",
+    "tests/gg6_images.py": "957b4bb2f8aa6f1f4546fbb798b5de613ff69b9442a22eee300b3b05e5182ea0",
+    "tests/gg6_presence_contacts.py": "510deaf2bf8e48a25a9773415d57c12a04f6d9774c663382183afc24492dd11f",
+    "tests/gg6_sessions.py": "b91eb20b7539a462660dddc624a08f8b288cc5d9ba34db131b41e721a624b79a",
+    "tests/http_discovery.py": "6cd8fd44bca42e7340754a243198e9f5c4d763351ff1fa8b27240d661b1ea36d",
+    "tests/http_downloads.py": "fff3da76e5935377a53cda8631cc37ee333e16a1f7e4f2cac95fedafc2720764",
+    "tests/http_limits.py": "98491b672c20e67b69d6935f27b223c9ce7a1a97f7632c24237192712f697010",
+    "tests/http_metrics.py": "e3310539596dff4e9a55aac4ff8522d38eeaada4eec792e93ad44071557a36a6",
+    "tests/http_password.py": "26f8496905360f066eb9f5a3c77c32a2d920e25529462add66f23cab88bde6b0",
+    "tests/http_patcher.py": "dfa415e912f9b494c47779f60c2f52d1eb7b31b3a3d7f5043ee0188fa2519ff7",
+    "tests/http_proxy.py": "9d8a4f7f43d1eea4f867b52bac29115e73dc91cac11474853f227cedbc3fc3a8",
+    "tests/http_registration.py": "d92fe2683b94a179180317541e4e18ebe8362a93c0d9970d5d003461b5757d34",
+    "tests/http_statistics.py": "6679e30e4ddb6403680344fa3509ab7dd87e3aa6cf1d12c1d3af47a7d44ffac7",
+    "tests/image_metrics.py": "ad1fff83e543c4188fded7ed7e6813dbbcbc7f18933b65cf6b63d98ad1810e2d",
+    "tests/keys_cli.py": "f0d122faa9504a46d57af9bd9208ef998be418b4cee7da33dad1ba6f90473dd7",
+    "tests/legacy_import.py": "ce5fe5ed58840e14ace2ebd764111f6eba8eadd138fe707670a95aa393e4831a",
+    "tests/legacy_inspection.py": "7ad275f1fb98945e41704852d648eb9dacfd87296d4a1a4074741d0c0d0b7033",
+    "tests/legacy_invitations.py": "1209276e809e21802306bcadb1655f91101a92a7642c4c6d62c34676dbbcd49e",
+    "tests/lifecycle.py": "c8a47d49bab2972cf133cad726f1d8bbd67c3c948df1610f39411200a8fde5eb",
+    "tests/local_endurance.py": "4227740d01ef10fb8c1ed6fc819a152359145f20373309d888366b2c6e1e5d1c",
+    "tests/password_cli.py": "0af13a434f80f19ba31f5f2ae184b75053adfcbf54d5889940ff1530d2716cfd",
+    "tests/process_metrics.py": "f3063d44a7e1e61a44cc80c12c5bbdf056aa10a50b4afd4bede7fb9724e49e23",
+    "tests/r0_smoke.py": "67bf5116aca695f25fb04b44d64db37a2463bbf66ab050ea0d624c5855d22027",
+    "tests/r0_workload.py": "9b1a543f305257a72a7ed991f2d99ebb0d84b7c32c1ee09c2276faf083dfc541",
+    "tests/runtime_metrics.py": "306a71e2665a9452732f93c70e0cd24fac0547994267e97f98938c1bb76d9b29",
+    "tests/session_contracts.py": "f04535490f427668e96976fe76cde3a0ff198ef74be46e52444715bff6324e7b",
+    "tests/sqlite_upgrade.py": "2e9dbff7b4de9df6ee253f9105ddafc7aaf28318d91886dda1ea9e79ed8f1985"
+  }
+}

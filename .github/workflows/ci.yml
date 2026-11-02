@@ -42,6 +42,8 @@ jobs:
       - run: python tests/discovery_proxy.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_registration.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_password.py --admin target/debug/rgg-admin --server target/debug/rgg-server
+      - run: openssl version
+      - run: python tests/http_proxy.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/legacy_invitations.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/legacy_import.py --admin target/debug/rgg-admin --server target/debug/rgg-server
       - run: python tests/http_statistics.py --admin target/debug/rgg-admin --server target/debug/rgg-server

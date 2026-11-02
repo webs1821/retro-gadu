@@ -42,3 +42,9 @@ ttl_seconds = 2592000
 # Optional browser-only GG 6.1 executable patcher; no file upload endpoint.
 # [client_patcher]
 # default_host = "127.0.0.1"
+
+# Optional website profile behind a separately configured local HTTPS proxy.
+# Requires at least one enabled website feature; does not start a proxy or TLS listener.
+# [web_proxy]
+# origin = "https://rgg.example.test:8443" # No slash; canonical lowercase host, omit default port 443.
+# trusted_proxy = "127.0.0.2" # Exact peer IP; proxy must overwrite X-Real-IP and X-Forwarded-Proto.

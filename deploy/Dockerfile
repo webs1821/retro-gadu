@@ -36,6 +36,8 @@ CMD ["/usr/local/bin/rgg-server", "--config", "/etc/rgg/rgg.toml"]
 
 # Optional test runner; the runtime image itself does not contain Python.
 FROM python:3.13-slim-bookworm@sha256:281d39ff02e3b389401586134ff9e6572954687822a58055ec07a60ded4e0b7f AS verification
+# The local TLS fixture creates a disposable certificate; never part of the runtime stage.
+RUN openssl version
 ARG SOURCE_COMMIT
 ARG VERSION
 LABEL org.opencontainers.image.revision="${SOURCE_COMMIT}" org.opencontainers.image.version="${VERSION}"

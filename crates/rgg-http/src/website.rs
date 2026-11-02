@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // SPDX-FileCopyrightText: 2026 webs1821
 use crate::HttpState;
+use crate::web_access::{WebEndpoint, WebsiteClient};
 use axum::{
-    Form, Router,
+    Extension, Form, Router,
     extract::{ConnectInfo, DefaultBodyLimit, Request, State, rejection::FormRejection},
     http::{HeaderMap, HeaderValue, Method, StatusCode, header},
     middleware::{self, Next},
@@ -141,8 +142,7 @@ pub(crate) struct Website {
     pub(crate) downloads: Option<Arc<crate::downloads::Catalog>>,
     pub(crate) patcher: Option<crate::patcher::Settings>,
     pub(crate) passwords: Option<Arc<rgg_application::password::PasswordService>>,
-    authority: String,
-    origin: String,
+    access: WebEndpoint,
     gate: Mutex<Gate>,
     concurrent: Semaphore,
 }
@@ -153,15 +153,13 @@ impl Website {
         downloads: Option<Arc<crate::downloads::Catalog>>,
         passwords: Option<Arc<rgg_application::password::PasswordService>>,
         patcher: Option<crate::patcher::Settings>,
-        address: SocketAddr,
+        access: WebEndpoint,
     ) -> Result<Self, &'static str> {
-        if !address.ip().is_loopback()
-            || address.port() == 0
-            || (service.is_none()
-                && statistics.is_none()
-                && downloads.is_none()
-                && passwords.is_none()
-                && patcher.is_none())
+        if (service.is_none()
+            && statistics.is_none()
+            && downloads.is_none()
+            && passwords.is_none()
+            && patcher.is_none())
             || patcher.as_ref().is_some_and(|settings| !settings.valid())
         {
             return Err("registration website requires a bound loopback listener");
@@ -172,18 +170,13 @@ impl Website {
             downloads,
             patcher,
             passwords,
-            authority: address.to_string(),
-            origin: format!("http://{address}"),
+            access,
             gate: Mutex::new(Gate::new(Instant::now())),
             concurrent: Semaphore::new(8),
         })
     }
-    fn accepts_headers(&self, headers: &HeaderMap, post: bool) -> bool {
-        single_header(headers, header::HOST) == Some(self.authority.as_str())
-            && (!post || single_header(headers, header::ORIGIN) == Some(self.origin.as_str()))
-            && headers
-                .get("sec-fetch-site")
-                .is_none_or(|v| v == "same-origin" || v == "none")
+    pub(crate) fn cookie_security(&self) -> &'static str {
+        self.access.cookie_security()
     }
     pub(crate) fn issue_password_token(&self, ip: IpAddr) -> Result<String, StatusCode> {
         let mut token = [0u8; 32];
@@ -269,7 +262,7 @@ pub(crate) fn routes(state: HttpState) -> Router<HttpState> {
 async fn guard(
     State(state): State<HttpState>,
     ConnectInfo(remote): ConnectInfo<SocketAddr>,
-    request: Request,
+    mut request: Request,
     next: Next,
 ) -> Response {
     let Some(web) = &state.website else {
@@ -298,12 +291,12 @@ async fn guard(
     if password_route
         && (request.uri().query().is_some()
             || (request.headers().contains_key(header::ORIGIN)
-                && single_header(request.headers(), header::ORIGIN) != Some(web.origin.as_str()))
+                && single_header(request.headers(), header::ORIGIN) != Some(web.access.origin()))
             || request.headers().get_all("sec-fetch-site").iter().count() > 1)
     {
         return notice_at(
             StatusCode::FORBIDDEN,
-            "Otwórz formularz pod lokalnym adresem tego serwera.",
+            "Otwórz formularz pod właściwym adresem serwera.",
             "/password",
         );
     }
@@ -322,12 +315,12 @@ async fn guard(
             return notice(StatusCode::BAD_REQUEST, "Nieprawidłowe żądanie.");
         }
         if (request.headers().contains_key(header::ORIGIN)
-            && single_header(request.headers(), header::ORIGIN) != Some(web.origin.as_str()))
+            && single_header(request.headers(), header::ORIGIN) != Some(web.access.origin()))
             || request.headers().get_all("sec-fetch-site").iter().count() > 1
         {
             return notice(
                 StatusCode::FORBIDDEN,
-                "Otwórz stronę pod lokalnym adresem tego serwera.",
+                "Otwórz stronę pod właściwym adresem serwera.",
             );
         }
     }
@@ -338,17 +331,18 @@ async fn guard(
         );
     }
     let post = request.method() == Method::POST;
-    if !web.accepts_headers(request.headers(), post) {
+    let Some(client) = web.access.client(request.headers(), remote.ip(), post) else {
         return notice(
             StatusCode::FORBIDDEN,
-            "Otwórz formularz pod lokalnym adresem tego serwera.",
+            "Otwórz formularz pod właściwym adresem serwera.",
         );
-    }
+    };
+    request.extensions_mut().insert(client);
     let charged = web
         .gate
         .lock()
         .map_err(|_| StatusCode::SERVICE_UNAVAILABLE)
-        .and_then(|mut g| g.charge(remote.ip(), post, Instant::now()));
+        .and_then(|mut g| g.charge(client.0, post, Instant::now()));
     if let Err(status) = charged {
         return notice(status, "Zbyt wiele prób. Spróbuj ponownie za minutę.");
     }
@@ -389,7 +383,7 @@ async fn styles() -> Response {
 }
 async fn form(
     State(state): State<HttpState>,
-    ConnectInfo(remote): ConnectInfo<SocketAddr>,
+    Extension(WebsiteClient(ip)): Extension<WebsiteClient>,
 ) -> Response {
     let Some(web) = &state.website else {
         return notice(StatusCode::NOT_FOUND, "Rejestracja jest wyłączona.");
@@ -405,7 +399,7 @@ async fn form(
         .gate
         .lock()
         .map_err(|_| StatusCode::SERVICE_UNAVAILABLE)
-        .and_then(|mut g| g.issue(token, remote.ip(), Instant::now()));
+        .and_then(|mut g| g.issue(token, ip, Instant::now()));
     if let Err(status) = result {
         return notice(status, "Formularz jest chwilowo niedostępny.");
     }
@@ -416,7 +410,8 @@ async fn form(
     response.headers_mut().insert(
         header::SET_COOKIE,
         HeaderValue::from_str(&format!(
-            "{COOKIE}={token}; Path=/register; HttpOnly; SameSite=Strict; Max-Age=600"
+            "{COOKIE}={token}; Path=/register; HttpOnly; SameSite=Strict; Max-Age=600{}",
+            web.cookie_security()
         ))
         .expect("fixed cookie syntax and hex token"),
     );
@@ -485,7 +480,7 @@ fn account_input(form: RegistrationForm) -> Result<NewAccount, AccountError> {
 }
 async fn submit(
     State(state): State<HttpState>,
-    ConnectInfo(remote): ConnectInfo<SocketAddr>,
+    Extension(WebsiteClient(ip)): Extension<WebsiteClient>,
     headers: HeaderMap,
     input: Result<Form<RegistrationForm>, FormRejection>,
 ) -> Response {
@@ -507,7 +502,7 @@ async fn submit(
         (Some(cookie), Some(submitted)) if cookie.ct_eq(&submitted).unwrap_u8() == 1 => web
             .gate
             .lock()
-            .map(|mut g| g.consume(cookie, remote.ip(), Instant::now()))
+            .map(|mut g| g.consume(cookie, ip, Instant::now()))
             .unwrap_or(false),
         _ => false,
     };
@@ -562,9 +557,11 @@ async fn submit(
     };
     response.headers_mut().insert(
         header::SET_COOKIE,
-        HeaderValue::from_static(
-            "rgg_register=; Path=/register; HttpOnly; SameSite=Strict; Max-Age=0",
-        ),
+        HeaderValue::from_str(&format!(
+            "rgg_register=; Path=/register; HttpOnly; SameSite=Strict; Max-Age=0{}",
+            web.cookie_security()
+        ))
+        .expect("fixed cookie syntax"),
     );
     response
 }

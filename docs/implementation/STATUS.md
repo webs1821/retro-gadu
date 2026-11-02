@@ -550,3 +550,17 @@ limity i rozłączenia sprawne. Zachowano pierwszą próbę z błędem asercji q
 190 bibliotek/schema13 bez zmian. Przyszły container_suite31grup; obraz nadal26.
 [Kontrakt](IMAGE-METRICS.md), [weryfikacja](VERIFICATION-2026-11-02-dev29.md).
 Brak push/deploy i zmian działającego GG.
+
+
+## 2026-11-02 — dev.30: jawny profil WWW przez lokalny HTTPS proxy
+
+WebProxy waliduje kanoniczny HTTPS-origin i dokładnie jeden IP loopback proxy.
+WebEndpoint oddziela adres strony od bind; WebsiteClient przekazuje zweryfikowane
+IP do CSRF i limitów. Strict Host/Origin/Fetch-Site, X-Real-IP i HTTPS od zaufanego
+peer, Secure cookie także przy kasowaniu. Brak fallbacku do niezaufanych nagłówków.
+123Rust,fmt,Clippy,12grup TCP/HTTP i2container_context PASS. RzeczywistyTLS1.3,
+obca nazwa/CA odmówione, formularze i GG, pobieranie/patcher, limity/IP aliasy,
+13 złych konfiguracji przed DB.190deps/schema13 bez zmian;12provenance.
+[Kontrakt](WEB-PROXY.md), [weryfikacja](VERIFICATION-2026-11-02-dev30.md).
+Przyszły container_suite32grupy wymagaCLIopenssl wverification, runtimebeznowych
+narzędzi. Brak nowego obrazu/R0/nginx/natywnegoGG/push/deploy; obraz nadal26.
