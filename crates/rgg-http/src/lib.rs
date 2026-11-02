@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 pub mod downloads;
 mod legacy;
+pub use legacy::AdvertisedEndpoint;
 pub mod metrics;
 mod metrics_runtime;
 mod password_change;
@@ -61,8 +62,9 @@ impl HttpState {
     pub fn with_legacy_discovery(
         mut self,
         endpoint: std::net::SocketAddr,
+        advertised: Option<AdvertisedEndpoint>,
     ) -> Result<Self, &'static str> {
-        self.discovery = Some(legacy::Discovery::new(endpoint)?);
+        self.discovery = Some(legacy::Discovery::new(endpoint, advertised)?);
         Ok(self)
     }
 }

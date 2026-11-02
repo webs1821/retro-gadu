@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-02, dev.27
+# Punkt wznowienia — 2026-11-02, dev.28
 
 ## Zakres
 
@@ -14,6 +14,27 @@ Brak AGENTS.md w repo i przodkach. PLAN_IMPLEMENTACJI.md jest niezmienny:
 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
+
+Macierz stanów sesji utrwalona w67eaf97ea153165bd5b812fac372793fe121130a.
+Dev28 dodaje opcjonalne gg_advertise: walidowany rgg_http::AdvertisedEndpoint,
+numerycznyIPv4/nonzeroport, odrzuca0/8 i>=224. Konfiguracja wymaga discovery oraz
+lokalnego IPv4gg_bind. Nie zmienia public-bind guard, DNS, Host ani WWW/TLS.
+HttpState::with_legacy_discovery ma drugi argument Option<AdvertisedEndpoint>.
+W tests/gg6_sessions.Lab.start dodano opcjonalny gg_advertise=None (domyślny tekst
+konfiguracji bez zmian). discovery_proxy.py: bounded8par relay127.0.0.2->127.0.0.1,
+HTTP1.0/hostileheaders, online/offline, restart z nowym portem zaplecza;15 złych
+konfiguracji przed DB.113Rust,fmt/Clippy,discovery+proxy i5 regresji PASS.
+Raport advertised-endpoint-2026-11-02-dev28.json rozróżnia wcześniejsze wyniki
+narzędzia od pięciu dodatkowych grup z pełnym stdout/stderr. Sumy źródeł sprawdzone.
+Nowy normalny debug28:
+server22efb6a346685965175c7a2d414115630a2c4ef5bb7ee866f6fc0be80ff5e948,
+admin631c1caad9d265f940fd947491d967731834fee70bcbba856d9a4c0b8bc4d80f.
+Baseline27 zweryfikowany i zachowany w/tmp/rgg-baseline-dev27.190 bibliotek,
+11provenance,10crate,schema13 bez zmian. CI/przyszły container_suite30grup.
+ADVERTISED-ENDPOINT.md iVERIFICATION-2026-11-02-dev28.md. Publiczny profil WWW/TLS
+nadal niezaimplementowany/niekwalifikowany. Brak nowego obrazu, push lub deploy.
+Wszystkie serwery/relaytesty zakończone. Runner workspace/rgg-advertise28.py nie
+nadpisuje raportu. Ostatni kwalifikowany obraz pozostaje dev26 z archiwum poniżej.
 
 Testy mutacyjne są zapisane w fc796b925a5ff89c6dfb464d9bf77bd0d305c726.
 Kolejny osobny krok testowy: tests/session_contracts.py,42 komendy w złych stanach
@@ -124,7 +145,7 @@ RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup
 CARGO_TARGET_DIR=/tmp/rgg-target
 CC=/tmp/gg-retro-toolchain/gcc/cc
 PATH=$CARGO_HOME/bin:$PATH; cd /mnt/d/Dokumenty/Documents/RetroGadu.
-/tmp/rgg-target/debug to zwykły dev27; /tmp/rgg-target/release nadal stary kandydat
+/tmp/rgg-target/debug to zwykły dev28; /tmp/rgg-target/release nadal stary kandydat
 writer oznaczony dev22. Nie utożsamiać go z nowym release z obrazu.
 
 Prywatny silnik Docker29.9.2/runc1.5.2:

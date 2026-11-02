@@ -12,6 +12,7 @@ pub struct Config {
     pub data_dir: PathBuf,
     pub http_bind: SocketAddr,
     pub gg_bind: Option<SocketAddr>,
+    pub gg_advertise: Option<rgg_http::AdvertisedEndpoint>,
     pub metrics_bind: Option<SocketAddr>,
     #[serde(default)]
     pub legacy_discovery: bool,
@@ -52,6 +53,8 @@ pub enum ConfigError {
     Limits,
     #[error("legacy_discovery requires a local IPv4 GG listener")]
     LegacyDiscovery,
+    #[error("gg_advertise requires legacy_discovery and a local IPv4 GG listener")]
+    AdvertisedEndpoint,
     #[error("web_registration requires a GG listener and initialized account keyring")]
     WebRegistration,
     #[error("web_password_change requires a GG listener and initialized account keyring")]
@@ -81,6 +84,9 @@ impl Config {
         }
         if config.legacy_discovery && !config.gg_bind.is_some_and(|a| a.is_ipv4()) {
             return Err(ConfigError::LegacyDiscovery);
+        }
+        if config.gg_advertise.is_some() && !config.legacy_discovery {
+            return Err(ConfigError::AdvertisedEndpoint);
         }
         if config.web_registration && config.gg_bind.is_none() {
             return Err(ConfigError::WebRegistration);
@@ -269,6 +275,56 @@ mod tests {
             ));
         }
         assert!(Config::parse("data_dir='data'\nhttp_bind='127.0.0.1:0'\ngg_bind='127.0.0.1:0'\nlegacy_discovery=true",Path::new(".")).is_ok());
+    }
+    #[test]
+    fn advertised_destination_is_explicit_and_never_relaxes_listener_policy() {
+        let base = "data_dir='data'\nhttp_bind='127.0.0.1:0'\ngg_bind='127.0.0.1:0'\n";
+        assert!(
+            Config::parse(base, Path::new("."))
+                .unwrap()
+                .gg_advertise
+                .is_none()
+        );
+        assert!(matches!(
+            Config::parse(
+                &format!("{base}gg_advertise='198.51.100.7:8074'"),
+                Path::new(".")
+            ),
+            Err(ConfigError::AdvertisedEndpoint)
+        ));
+        for value in ["127.0.0.2:18074", "198.51.100.7:8074"] {
+            assert!(
+                Config::parse(
+                    &format!("{base}legacy_discovery=true\ngg_advertise='{value}'"),
+                    Path::new(".")
+                )
+                .is_ok()
+            );
+        }
+        for value in [
+            "[::1]:8074",
+            "example.invalid:8074",
+            "127.0.0.1:0",
+            "0.0.0.0:8074",
+            "255.255.255.255:8074",
+            "224.0.0.1:8074",
+        ] {
+            assert!(
+                Config::parse(
+                    &format!("{base}legacy_discovery=true\ngg_advertise='{value}'"),
+                    Path::new(".")
+                )
+                .is_err()
+            );
+        }
+        let public = base.replace("gg_bind='127.0.0.1:0'", "gg_bind='0.0.0.0:8074'");
+        assert!(matches!(
+            Config::parse(
+                &format!("{public}legacy_discovery=true\ngg_advertise='198.51.100.7:8074'"),
+                Path::new(".")
+            ),
+            Err(ConfigError::PublicBind)
+        ));
     }
     #[test]
     fn paths_are_relative_to_configuration_and_unknown_options_are_errors() {

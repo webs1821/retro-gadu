@@ -28,7 +28,7 @@ aktywność nie może przesuwać bezwzględnego deadline. Inna sesja działa nad
 Wynik z2026-11-02: wszystkie przypadki przeszły na zwykłych binarkach dev.27.
 Raport `session-contracts-2026-11-02.json` zawiera macierz, czasy i hashe sterownika,
 serwera oraz administratora. Dodano test do CI i przyszłej kwalifikacji obrazu
-(obecny container_suite ma29 grup). Ostatni kwalifikowany obraz pozostaje dev.26.
+(po tym kroku container_suite miał29 grup). Ostatni kwalifikowany obraz pozostaje dev.26.
 
 To własny deterministyczny test wybranych stanów, używający istniejącego,
 przypisanego w THIRD_PARTY portu wyroczni GG32. Nie stanowi pełnego fuzzingu

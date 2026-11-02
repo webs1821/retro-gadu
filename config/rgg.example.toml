@@ -8,6 +8,7 @@ shutdown_seconds = 5
 # In WSL, use a Linux filesystem path for data_dir and keys.toml (see README).
 # gg_bind = "127.0.0.1:8074"
 # legacy_discovery = true # Requires gg_bind with a loopback IPv4 address.
+# gg_advertise = "127.0.0.2:18074" # Optional destination behind a separately configured TCP relay.
 # web_registration = true # Local /register; requires gg_bind and an initialized keyring.
 # web_password_change = true # Local /password; requires gg_bind, keyring, no pending rotation.
 # web_public_stats = true # Local / and /api/stats; counts only publicly visible presence.

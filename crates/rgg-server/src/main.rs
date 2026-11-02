@@ -170,7 +170,10 @@ async fn run() -> Result<(), Error> {
         state
     };
     let state = if config.legacy_discovery {
-        state.with_legacy_discovery(gg.as_ref().ok_or("GG listener missing")?.0.local_addr()?)?
+        state.with_legacy_discovery(
+            gg.as_ref().ok_or("GG listener missing")?.0.local_addr()?,
+            config.gg_advertise,
+        )?
     } else {
         state
     };

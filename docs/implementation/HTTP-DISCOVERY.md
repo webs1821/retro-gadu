@@ -1,7 +1,7 @@
-# Lokalne HTTP discovery — dev.6
+# Lokalne HTTP discovery — dev.6, rozszerzenie dev.28
 
 Po włączeniu `legacy_discovery = true` w głównej sekcji konfiguracji endpointy
-`/appsvc/appmsg3.asp` i `/appsvc/appmsg4.asp` podają rzeczywisty adres aktywnego
+`/appsvc/appmsg3.asp` i `/appsvc/appmsg4.asp` domyślnie podają rzeczywisty adres aktywnego
 nasłuchu GG. Przykład odpowiedzi: `0 0 127.0.0.1:8074 127.0.0.1` z CRLF.
 Port pochodzi z otwartego listenera, więc działa także konfiguracja portu 0.
 Nie jest wyliczany z Host, X-Forwarded-* ani parametrów zapytania.
@@ -26,3 +26,8 @@ Bezpieczne odzyskiwanie konta pozostaje do implementacji.
 
 Publiczny nasłuch, domena produkcyjna, proxy i TLS pozostają poza lokalnym
 profilem uruchomienia. Opcja discovery nie znosi blokady adresów innych niż loopback.
+
+Dev.28 dodaje opcjonalne `gg_advertise` z walidowanym IPv4:port pośrednika.
+[Kontrakt i test lokalnego przekierowania](ADVERTISED-ENDPOINT.md).
+Adres jawnie wpisany przez operatora może różnić się od loopback, lecz rzeczywiste
+nasłuchy nadal są lokalne; nie jest to kwalifikacja publicznego profilu.

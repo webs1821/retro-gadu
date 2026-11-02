@@ -526,3 +526,14 @@ Pingi nie przedłużają bezwzględnego deadline synchronizacji. Raport z hasham
 zapisano w session-contracts-2026-11-02.json. Test dodany do CI/container_suite
 (przyszły obraz29grup). Runtime/schema/dependencies bez zmian.
 [Zakres](SESSION-CONTRACTS.md). Ostatni kwalifikowany obraz nadal dev.26.
+
+
+## 2026-11-02 — dev.28: osobny endpoint ogłaszany GG6
+
+Opcjonalne gg_advertise podaje jawny IPv4:port pośrednika, bez wpływu na gg_bind
+ani twardą blokadę publicznych nasłuchów. Walidacja przed otwarciem danych,
+bez DNS i bez adresu z nagłówków.113 Rust,fmt,Clippy, lokalny relay(online/offline/
+restart),15 odmów konfiguracji, dotychczasowe discovery i5 dodatkowych regresji
+przeszły.190 bibliotek i schema13 bez zmian. Przyszły container_suite30grup.
+[Kontrakt](ADVERTISED-ENDPOINT.md), [weryfikacja](VERIFICATION-2026-11-02-dev28.md).
+Debug28 gotowy lokalnie; baseline27 zachowany. Obraz nadal26, brak push/deploy.

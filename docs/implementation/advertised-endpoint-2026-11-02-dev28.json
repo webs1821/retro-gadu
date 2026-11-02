@@ -1,0 +1,81 @@
+{
+  "format": 1,
+  "version": "0.1.0-dev.28",
+  "schema": 13,
+  "base_commit": "67eaf97ea153165bd5b812fac372793fe121130a",
+  "server_sha256": "22efb6a346685965175c7a2d414115630a2c4ef5bb7ee866f6fc0be80ff5e948",
+  "admin_sha256": "631c1caad9d265f940fd947491d967731834fee70bcbba856d9a4c0b8bc4d80f",
+  "source_sha256": {
+    "Cargo.toml": "84c0f03b9727fa84549521b2bdc4bf80333ab32d99c4ac9ea797d3d8c426cce6",
+    "Cargo.lock": "89ed624da69a72e103f662143f2999366c4574882091726b58ab5fd71fbe5c54",
+    "crates/rgg-http/src/lib.rs": "114271f3f04c2da53401134e1ca8f048f895a45d66518c0e1eec804e7f379e2e",
+    "crates/rgg-http/src/legacy.rs": "29d9d811b20bb18e3db9052cafbe5fc3b3cc87a8e45e93dc4a4693bd8fc8369a",
+    "crates/rgg-server/src/config.rs": "ad637b1b602d01035f6a7f7092b392c494fe553c8245acecd607b4e7fc8b8aae",
+    "crates/rgg-server/src/main.rs": "3b464c5d09bda445588f50b57928aa2026cc5a4baba6a5d1057a861537dd3a52",
+    "tests/gg6_sessions.py": "b91eb20b7539a462660dddc624a08f8b288cc5d9ba34db131b41e721a624b79a",
+    "tests/http_discovery.py": "6cd8fd44bca42e7340754a243198e9f5c4d763351ff1fa8b27240d661b1ea36d",
+    "tests/discovery_proxy.py": "4571f9f832f3d272e59214cba403ae3a67d62ff5af0abff1e7d39280bec8103c"
+  },
+  "previously_completed_checks": {
+    "rust_workspace_tests": 113,
+    "rust_workspace_passed": true,
+    "clippy_all_targets_all_features_passed": true,
+    "normal_build_passed": true,
+    "http_discovery_passed": true,
+    "discovery_proxy": {
+      "passed": true,
+      "invalid_configs": 15,
+      "relay_connections": 4,
+      "forwarded_bytes": 534,
+      "backend_changed": true,
+      "all_loopback": true
+    }
+  },
+  "checks": [
+    {
+      "test": "lifecycle",
+      "driver_sha256": "c8a47d49bab2972cf133cad726f1d8bbd67c3c948df1610f39411200a8fde5eb",
+      "seconds": 0.251,
+      "passed": true,
+      "stdout": "PASS: live/ready HTTP, exclusive process lock, crash/restart, fresh epoch, migration persistence, integrity, graceful SIGTERM, public-bind rejection\n",
+      "stderr": ""
+    },
+    {
+      "test": "gg6_sessions",
+      "driver_sha256": "b91eb20b7539a462660dddc624a08f8b288cc5d9ba34db131b41e721a624b79a",
+      "seconds": 5.567,
+      "passed": true,
+      "stdout": "PASS: login/sessions/FIFO/restart/encoding\nPASS: privacy readiness/persistence\nPASS: quotas/packet bounds\nPASS: connection limits\nPASS: slow receiver isolation\nPASS: GG6 synthetic protocol suite; native GG remains unqualified\n",
+      "stderr": ""
+    },
+    {
+      "test": "session_contracts",
+      "driver_sha256": "f04535490f427668e96976fe76cde3a0ff198ef74be46e52444715bff6324e7b",
+      "seconds": 4.007,
+      "passed": true,
+      "stdout": "SESSION_STATE_REPORT={\"cases\": [{\"phase\": \"unauthenticated\", \"command\": \"text\"}, {\"phase\": \"unauthenticated\", \"command\": \"conference\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-offer\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-request\"}, {\"phase\": \"unauthenticated\", \"command\": \"image-start\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-own\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-write\"}, {\"phase\": \"unauthenticated\", \"command\": \"directory-search\"}, {\"phase\": \"unauthenticated\", \"command\": \"archive-get\"}, {\"phase\": \"unauthenticated\", \"command\": \"archive-put\"}, {\"phase\": \"unauthenticated\", \"command\": \"contact-add\"}, {\"phase\": \"unauthenticated\", \"command\": \"contact-remove\"}, {\"phase\": \"unauthenticated\", \"command\": \"ping\"}, {\"phase\": \"unauthenticated\", \"command\": \"status\"}, {\"phase\": \"unauthenticated\", \"command\": \"empty-notify\"}, {\"phase\": \"initial\", \"command\": \"text\"}, {\"phase\": \"initial\", \"command\": \"conference\"}, {\"phase\": \"initial\", \"command\": \"image-offer\"}, {\"phase\": \"initial\", \"command\": \"image-request\"}, {\"phase\": \"initial\", \"command\": \"image-start\"}, {\"phase\": \"initial\", \"command\": \"directory-own\"}, {\"phase\": \"initial\", \"command\": \"directory-write\"}, {\"phase\": \"initial\", \"command\": \"directory-search\"}, {\"phase\": \"initial\", \"command\": \"archive-get\"}, {\"phase\": \"initial\", \"command\": \"archive-put\"}, {\"phase\": \"initial\", \"command\": \"contact-add\"}, {\"phase\": \"initial\", \"command\": \"contact-remove\"}, {\"phase\": \"initial\", \"command\": \"repeat-login\"}, {\"phase\": \"resynchronizing\", \"command\": \"text\"}, {\"phase\": \"resynchronizing\", \"command\": \"conference\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-offer\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-request\"}, {\"phase\": \"resynchronizing\", \"command\": \"image-start\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-own\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-write\"}, {\"phase\": \"resynchronizing\", \"command\": \"directory-search\"}, {\"phase\": \"resynchronizing\", \"command\": \"archive-get\"}, {\"phase\": \"resynchronizing\", \"command\": \"archive-put\"}, {\"phase\": \"resynchronizing\", \"command\": \"contact-add\"}, {\"phase\": \"resynchronizing\", \"command\": \"contact-remove\"}, {\"phase\": \"resynchronizing\", \"command\": \"repeat-login\"}, {\"phase\": \"resynchronizing\", \"command\": \"empty-during-staging\"}], \"count\": 42, \"state_preserved\": true, \"legal_sync_and_message_after_checks\": true}\nPASS: pings remain legal during synchronization but cannot extend its deadline\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_registration",
+      "driver_sha256": "d92fe2683b94a179180317541e4e18ebe8362a93c0d9970d5d003461b5757d34",
+      "seconds": 6.405,
+      "passed": true,
+      "stdout": "PASS: manual/automatic UIN, invite use, login, messaging and persistence\nPASS: Host/Origin/CSRF, replay, malformed inputs and bounded body\nPASS: twelve concurrent registrations share a three-use invitation\nPASS: request deadline and source-IP budget ignore forwarded headers\n",
+      "stderr": ""
+    },
+    {
+      "test": "http_password",
+      "driver_sha256": "26f8496905360f066eb9f5a3c77c32a2d920e25529462add66f23cab88bde6b0",
+      "seconds": 2.398,
+      "passed": true,
+      "stdout": "PASS: live session fence, data preservation, new login and backup/restore\nPASS: opt-in, independent CSRF purpose, Host/Origin, malformed forms and key-rotation gate\nPASS: persistent account budget, uniform rejection and offline replay\nPASS: competing current-password changes commit once\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "native_client_qualified": false,
+  "image_qualified": false,
+  "pushed": false,
+  "deployed": false
+}

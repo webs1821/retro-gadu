@@ -7,7 +7,7 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.27**, schemat SQLite **13**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.28**, schemat SQLite **13**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
@@ -254,3 +254,5 @@ Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx
 Prywatne metryki dev.27 obejmują także [CPU i RSS procesu](docs/implementation/PROCESS-METRICS.md), z jawną dostępnością i wiekiem próbki. Ostatni kwalifikowany obraz pozostaje dev.26.
 
 [Deterministyczne testy mutacyjne parserów](docs/implementation/PROTOCOL-MUTATION.md) obejmują41 wzorców, wszystkie ich prefiksy i zmiany bitów oraz powtarzalne kampanie ze stałymi seedami.
+
+Dev.28 pozwala ustawić [oddzielny adres ogłaszany klientom GG6](docs/implementation/ADVERTISED-ENDPOINT.md), przy zachowaniu lokalnych nasłuchów.
