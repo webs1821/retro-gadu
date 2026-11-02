@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-02, dev.32
+# Punkt wznowienia — 2026-11-02, dev.33
 
 ## Upoważnienie i granice
 
@@ -13,7 +13,43 @@ Repo `D:\Dokumenty\Documents\RetroGadu`, master. Commity jako webs1821,
 `D:\Dokumenty\Documents\ChatGPT\Serwery`. Zapisy repo/build/git wymagają
 eskalacji. Brak AGENTS.md. Plan niezmienny, SHA256 w raporcie dev.32.
 
-## Bieżący stan
+## Bieżący stan dev33
+
+131 Rust/fmt/Clippy all-features/build i10regresji PASS. Runtime Unix odrzuca
+publiczne istniejące katalogi przed otwarciem DB/lock oraz symlinki/hardlinki/
+FIFO/specjalne pliki SQLite i blokady. Dowód błędu32: UID65534 odczytał
+syntetyczny e-mail z DB0644 w katalogu0755; klucza0600 nie mógł odczytać.
+Fixture Rust wymagają teraz jawnego0700. Schemat14 bez zmian. Inwentarz190
+odświeżony i zgodny; audyt RustSec0/0. DokumentyDATA-DIRECTORY/VERIFICATIONdev33.
+Zmiany33 przygotowane do commitu: sprawdzić gitstatus/log i dokończyć.
+Debugserver33 `e87990579aa028c969da74f024ab0213bee0e1be7e7aa91b32334638a78d752d`,
+debugadmin33 `36bf755635abcb958137612e386da23258b0e49360bd9e6b24eb5084ec149c9d`.
+Baseline32 /tmp/rgg-baseline-dev32 zachowany; baseline31 także.
+
+UWAGA: prywatny Docker nadal działa, sesja exec80822, socket
+/tmp/rgg-docker-local-20261101/docker32.sock, pidfiledaemon32.pid,
+execrootrun32, datarootdata29. Stop dopiero po zakończeniu/posprzątaniu prób:
+workspace/rgg-container-stop32.py sprawdza PID/cmdline i brak kontenerów/wolumenów.
+Nie zabijać innych usług, nie usuwać cache/obrazów/archiwów.
+
+Dev32 źródło59d0f8a12690d49936e6384da1d94c176722c38a ma gotowe obrazy:
+runtime sha256:1e882cff0c1f94bbbb19a3a39421a71e93627e3ca995945a2776ce2039127761,
+verification sha256:8f9f72b6fdf227449fb3e593bb6e0ef25c458d9d9539755e6663e6e036c2afd3.
+33releasegrupy147.358s/runtime/krótkie10s×1 i10s×2 PASS, cleanupPASS. Raporty
+wrepo i/tmp/rgg-docker-local-20261101/*dev32-final*. Wcześniejsze eb94baa
+obrazy niekwalifikowane (staryhashinwentarza); zachowane. Audyt32 /tmp/rgg-audit32.json.
+Pełny godzinny soak32 NIE startował. Przenieść go na poprawiony obraz33.
+Sterownik iSOAK.md zapisane w eb94baa, potwierdzone krótkimi próbami.
+
+Następny krok: lokalnycommit33, build runtime/verification33 na istniejącym
+prywatnymDocker32, suite34 i runtime, następnie900s×4. Można wykorzystać
+workspace rgg-container-*-32-final.py jako wzór; użyć świeżych nazw raportów
+i nowego sourcecommit. Krótkie bramki sterownika już potwierdzone, ponawiać
+tylko gdy zmieni się sterownik. Podczas długiej próby nie kończyć pracy;
+komunikować postęp, reagować na przerwanie użytkownika. Po sukcesie raporty,
+archiwumobrazu, cleanup, stopDocker i lokalnycommit. Nadal zero push/deploy.
+
+## Poprzedni stan dev32
 
 Dev.32 / schema14: reset administratora offline z obowiązkową kopią, potwierdzeniem
 UIN, oryginalnymi kluczami, atomową zmianą sekretu/wersji/generacji/limitu/audytu.

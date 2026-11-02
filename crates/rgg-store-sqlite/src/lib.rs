@@ -50,6 +50,17 @@ use std::{path::Path, sync::Arc, time::Duration};
 
 pub const SCHEMA_VERSION: i64 = 14;
 
+#[cfg(test)]
+pub(crate) fn test_directory() -> tempfile::TempDir {
+    let directory = tempfile::tempdir().unwrap();
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        std::fs::set_permissions(directory.path(), std::fs::Permissions::from_mode(0o700)).unwrap();
+    }
+    directory
+}
+
 // The bundled engine must include the WAL-reset fix. Check the linked runtime,
 // not the version of a system sqlite3/Python command used by external diagnostics.
 fn sqlite_version_supported(value: &str) -> bool {
@@ -312,7 +323,7 @@ mod tests {
 
     #[tokio::test]
     async fn import_opener_requires_marker_and_cannot_reopen_existing_database() {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         assert!(matches!(
             SqliteStore::open_new_import(root.path()).await,
             Err(OpenError::IncompleteImport)
@@ -334,7 +345,7 @@ mod tests {
 
     #[tokio::test]
     async fn initialization_is_durable_and_each_restart_gets_a_new_epoch() {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         let first = SqliteStore::open(root.path()).await.unwrap();
         first.check().await.unwrap();
         first.integrity_check().await.unwrap();
@@ -357,7 +368,7 @@ mod tests {
 
     #[tokio::test]
     async fn refuses_future_schema_without_overwriting_runtime_state() {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         let store = SqliteStore::open(root.path()).await.unwrap();
         let epoch = store.process_epoch().to_owned();
         sqlx::query("UPDATE _sqlx_migrations SET version=9999 WHERE version=(SELECT max(version) FROM _sqlx_migrations)")

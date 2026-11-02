@@ -179,7 +179,7 @@ mod tests {
         LegacyPassword::new(Zeroizing::new(s.as_bytes().to_vec())).unwrap()
     }
     async fn setup() -> (tempfile::TempDir, SqliteStore, Keyring, UserId) {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         let store = SqliteStore::open(root.path()).await.unwrap();
         let ring = Keyring::create_new(&root.path().join("keys.toml")).unwrap();
         store.create_invite([1; 32], 1).await.unwrap();

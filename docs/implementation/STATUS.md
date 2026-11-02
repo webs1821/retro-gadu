@@ -675,3 +675,16 @@ zmianach wersji workspace. Odświeżono inwentarz pełnym cargo metadata; wszyst
 190 rekordów bibliotek są identyczne. Weryfikator inwentarza przechodzi.
 [Dowód](inventory-2026-11-02-dev32.json). Pierwsze obrazy ze źródła eb94baa
 zbudowano, ale nie kwalifikowano; końcowy obraz wymaga aktualnego inwentarza.
+
+## 2026-11-02 — obraz32, sterownik soak i kontrola katalogu33
+
+Źródło59d0f8a dev32:33grupy release PASS147,358s, restart/backup/restore PASS.
+Krótkie pomiary10s×1 oraz10s×2 przy100sesjach przeszły wszystkie swoje bramki,
+w tym PID/starttime oraz RSS/FD/wątki. R0 i godzinnego soak nie kwalifikują.
+Wyniki są w container-*-dev32.json i soak-smoke{1,2}-2026-11-02-dev32.json.
+
+Odrębny przegląd wykazał odczyt bazy przez lokalny UID65534 po wskazaniu
+katalogu0755 w dev32. Dev33 wymaga katalogu tylko właściciela, sprawdza pliki
+bazy/lock i nie zmienia danych po odmowie.131Rust,10regresji i audyt RustSec
+0/0 PASS. [Kontrakt](DATA-DIRECTORY.md), [dowody](VERIFICATION-2026-11-02-dev33.md).
+Pełny soak zostaje przeniesiony na obraz z tą poprawką; dotąd nie startował.

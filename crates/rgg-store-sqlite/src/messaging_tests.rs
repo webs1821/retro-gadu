@@ -13,7 +13,7 @@ fn uid(n: u32) -> UserId {
     UserId::new(n).unwrap()
 }
 pub(super) async fn setup() -> (tempfile::TempDir, Arc<SqliteStore>, Arc<Keyring>) {
-    let root = tempfile::tempdir().unwrap();
+    let root = crate::test_directory();
     let store = Arc::new(SqliteStore::open(root.path()).await.unwrap());
     let ring = Arc::new(Keyring::create_new(&root.path().join("keys.toml")).unwrap());
     store.create_invite([1; 32], 3).await.unwrap();

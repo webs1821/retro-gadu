@@ -6,7 +6,7 @@ use tokio::time::{Duration, timeout};
 
 #[tokio::test]
 async fn queued_writers_leave_readers_available_and_rollback_precedes_the_next_writer() {
-    let root = tempfile::tempdir().unwrap();
+    let root = crate::test_directory();
     let store = SqliteStore::open(root.path()).await.unwrap();
     let original: i64 = sqlx::query_scalar("SELECT started_at FROM runtime_state WHERE id=1")
         .fetch_one(&store.pool)

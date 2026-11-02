@@ -236,7 +236,7 @@ mod tests {
     }
 
     async fn setup(uses: u32) -> (tempfile::TempDir, SqliteStore, Keyring) {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         let store = SqliteStore::open(root.path()).await.unwrap();
         let ring = Keyring::create_new(&root.path().join("keys.toml")).unwrap();
         store.create_invite([5; 32], uses).await.unwrap();
@@ -373,7 +373,7 @@ mod tests {
 
     #[tokio::test]
     async fn schema_two_migrates_existing_encrypted_accounts_and_backfills_nonce_history() {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         let scripts = root.path().join("old-migrations");
         std::fs::create_dir(&scripts).unwrap();
         std::fs::write(

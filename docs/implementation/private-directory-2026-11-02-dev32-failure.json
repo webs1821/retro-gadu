@@ -1,0 +1,14 @@
+{
+  "version": "dev32",
+  "admin_sha256": "c3f7025072661e2dd73c05ffd345c9c289bf5fb0dbec939823e51369f8c1a7c9",
+  "synthetic_only": true,
+  "directory_mode": "0o755",
+  "database_mode": "0o644",
+  "key_mode": "0o600",
+  "reader_uid": 65534,
+  "reader_exit": 0,
+  "reader": {
+    "database_readable": true,
+    "key_readable": false
+  }
+}

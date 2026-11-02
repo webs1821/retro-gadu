@@ -24,7 +24,7 @@ def main():
     common = ['--server', str(binary), '--admin', admin]
     checks = [('tools/verify_repository.py', []), ('tests/client_package.py', []), ('tests/legacy_inspection.py', []), ('tests/lifecycle.py', ['--binary', str(binary)])]
     checks += [('tests/' + name + '.py', common) for name in [
-        'accounts_cli', 'backups_cli', 'keys_cli', 'password_cli', 'password_reset_cli', 'gg6_sessions', 'session_contracts', 'gg6_concurrent_replay', 'gg6_history_retention',
+        'data_directory', 'accounts_cli', 'backups_cli', 'keys_cli', 'password_cli', 'password_reset_cli', 'gg6_sessions', 'session_contracts', 'gg6_concurrent_replay', 'gg6_history_retention',
         'gg6_presence_contacts', 'gg6_directory', 'http_discovery', 'discovery_proxy', 'http_registration', 'http_password', 'http_proxy',
         'http_statistics', 'http_downloads', 'http_patcher', 'http_limits', 'http_metrics', 'runtime_metrics', 'process_metrics', 'image_metrics', 'r0_smoke', 'gg6_conferences',
         'gg6_images', 'legacy_invitations', 'legacy_import']]

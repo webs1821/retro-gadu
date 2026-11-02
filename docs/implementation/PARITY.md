@@ -12,7 +12,7 @@ wyniku testów działającego gg-retro.
 |---|---|---|---|
 | Izolacja modułów i rejestr pochodzenia | gotowe lokalnie | `tools/verify_repository.py` | nie dotyczy |
 | Konfiguracja lokalna, błędy opcji, live/ready | gotowe lokalnie | testy `config`, `tests/lifecycle.py` | nie dotyczy |
-| OS lock, SQLite WAL/FULL, migracje, nowa epoka po awarii | gotowe lokalnie | testy store + `lifecycle.py` | nie dotyczy |
+| OS lock, prywatność katalogu, SQLite WAL/FULL, migracje, nowa epoka po awarii | gotowe lokalnie; Unix wymaga prywatnego katalogu i odrzuca dowiązania/pliki specjalne bazy i lock | testy store, `lifecycle.py`, `data_directory.py`; rzeczywisty odczyt błędnego układu dev32 jako UID65534, odmowa dev33 | Windows ACL niekwalifikowane |
 | Ramkowanie GG, fragmentacja, limit, niepełny EOF | gotowe lokalnie; parsery mają deterministyczny test mutacyjny, fuzzing sterowany pokryciem pozostaje otwarty | `frame::tests`, `rgg-transport::tests`, `adversarial.rs`:41 wzorców/11545 prefiksów/92032 bit-flipy/2mln mutacji, limity i zachowanie poprawnych wyników | nie sprawdzono |
 | Parser LOGIN60, CP1250, GG32 | gotowe lokalnie | testy protokołu i `gg6_sessions.py` | nie sprawdzono |
 | Konta i zaszyfrowane hasła | gotowe lokalnie przez CLI i WWW, offline rotacja kluczy ze wznowieniem; importer ggv1 gotowy na sztucznych danych | accounts::tests, credentials::tests, accounts_cli.py, keys_cli.py | nie dotyczy |

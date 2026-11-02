@@ -1,0 +1,1070 @@
+{
+  "format": 1,
+  "source_commit": "59d0f8a12690d49936e6384da1d94c176722c38a",
+  "version": "0.1.0-dev.32",
+  "runtime_image": "sha256:1e882cff0c1f94bbbb19a3a39421a71e93627e3ca995945a2776ce2039127761",
+  "verification_image": "sha256:8f9f72b6fdf227449fb3e593bb6e0ef25c458d9d9539755e6663e6e036c2afd3",
+  "limits": {
+    "memory_max": 268435456,
+    "cpu_max": "100000 100000",
+    "pids_max": 128,
+    "swap_max": 0,
+    "swap_initial": "max",
+    "swap_set_directly": true,
+    "uid": 10001,
+    "read_only_root": true,
+    "cap_eff": 0,
+    "no_new_privileges": true,
+    "seccomp_filter": true
+  },
+  "workload": {
+    "format": 1,
+    "passed": true,
+    "sessions": 100,
+    "offline_accounts": 20,
+    "rate": 10,
+    "initial_terminal_records": 0,
+    "sequence_base": 0,
+    "duration_seconds": 10.001,
+    "scheduled": 100,
+    "accepted": 100,
+    "online_verified": 50,
+    "offline_verified": 50,
+    "all_payloads_exact": true,
+    "offline_fifo": true,
+    "ack_p50_ms": 2.396,
+    "ack_p95_ms": 2.812,
+    "ack_max_ms": 4.129,
+    "online_p95_ms": 5.939,
+    "online_max_ms": 7.139,
+    "schedule_lag_max_ms": 1.238,
+    "achieved_rate": 9.9991,
+    "measure_start": 705.616405841,
+    "measure_end": 715.617258327,
+    "metrics_samples": [
+      {
+        "at": 705.61848427,
+        "ready_sessions": 100.0,
+        "pending": 0.0,
+        "queue_bytes": 0.0
+      },
+      {
+        "at": 706.620361303,
+        "ready_sessions": 100.0,
+        "pending": 5.0,
+        "queue_bytes": 660.0
+      },
+      {
+        "at": 707.622302365,
+        "ready_sessions": 100.0,
+        "pending": 11.0,
+        "queue_bytes": 1452.0
+      },
+      {
+        "at": 708.624566428,
+        "ready_sessions": 100.0,
+        "pending": 15.0,
+        "queue_bytes": 1980.0
+      },
+      {
+        "at": 709.62700529,
+        "ready_sessions": 100.0,
+        "pending": 20.0,
+        "queue_bytes": 2640.0
+      },
+      {
+        "at": 710.629171225,
+        "ready_sessions": 100.0,
+        "pending": 25.0,
+        "queue_bytes": 3300.0
+      },
+      {
+        "at": 711.631556897,
+        "ready_sessions": 100.0,
+        "pending": 30.0,
+        "queue_bytes": 3960.0
+      },
+      {
+        "at": 712.633617933,
+        "ready_sessions": 100.0,
+        "pending": 35.0,
+        "queue_bytes": 4620.0
+      },
+      {
+        "at": 713.635523692,
+        "ready_sessions": 100.0,
+        "pending": 40.0,
+        "queue_bytes": 5280.0
+      },
+      {
+        "at": 714.63762431,
+        "ready_sessions": 100.0,
+        "pending": 45.0,
+        "queue_bytes": 5940.0
+      }
+    ],
+    "errors": [],
+    "native_client_qualified": false
+  },
+  "workload_cycles": [
+    {
+      "format": 1,
+      "passed": true,
+      "sessions": 100,
+      "offline_accounts": 20,
+      "rate": 10,
+      "initial_terminal_records": 0,
+      "sequence_base": 0,
+      "duration_seconds": 10.001,
+      "scheduled": 100,
+      "accepted": 100,
+      "online_verified": 50,
+      "offline_verified": 50,
+      "all_payloads_exact": true,
+      "offline_fifo": true,
+      "ack_p50_ms": 2.396,
+      "ack_p95_ms": 2.812,
+      "ack_max_ms": 4.129,
+      "online_p95_ms": 5.939,
+      "online_max_ms": 7.139,
+      "schedule_lag_max_ms": 1.238,
+      "achieved_rate": 9.9991,
+      "measure_start": 705.616405841,
+      "measure_end": 715.617258327,
+      "metrics_samples": [
+        {
+          "at": 705.61848427,
+          "ready_sessions": 100.0,
+          "pending": 0.0,
+          "queue_bytes": 0.0
+        },
+        {
+          "at": 706.620361303,
+          "ready_sessions": 100.0,
+          "pending": 5.0,
+          "queue_bytes": 660.0
+        },
+        {
+          "at": 707.622302365,
+          "ready_sessions": 100.0,
+          "pending": 11.0,
+          "queue_bytes": 1452.0
+        },
+        {
+          "at": 708.624566428,
+          "ready_sessions": 100.0,
+          "pending": 15.0,
+          "queue_bytes": 1980.0
+        },
+        {
+          "at": 709.62700529,
+          "ready_sessions": 100.0,
+          "pending": 20.0,
+          "queue_bytes": 2640.0
+        },
+        {
+          "at": 710.629171225,
+          "ready_sessions": 100.0,
+          "pending": 25.0,
+          "queue_bytes": 3300.0
+        },
+        {
+          "at": 711.631556897,
+          "ready_sessions": 100.0,
+          "pending": 30.0,
+          "queue_bytes": 3960.0
+        },
+        {
+          "at": 712.633617933,
+          "ready_sessions": 100.0,
+          "pending": 35.0,
+          "queue_bytes": 4620.0
+        },
+        {
+          "at": 713.635523692,
+          "ready_sessions": 100.0,
+          "pending": 40.0,
+          "queue_bytes": 5280.0
+        },
+        {
+          "at": 714.63762431,
+          "ready_sessions": 100.0,
+          "pending": 45.0,
+          "queue_bytes": 5940.0
+        }
+      ],
+      "errors": [],
+      "native_client_qualified": false
+    }
+  ],
+  "quiescent_samples": [],
+  "resource_samples": [
+    {
+      "at": 693.357042557,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 20,
+      "rss": 10039296,
+      "rss_peak": 10039296,
+      "threads": 5,
+      "memory_current": 2506752,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 36164,
+        "user_usec": 22602,
+        "system_usec": 13561,
+        "nice_usec": 0,
+        "nr_periods": 4,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 693.360259341,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 20,
+      "rss": 10039296,
+      "rss_peak": 10039296,
+      "threads": 5,
+      "memory_current": 2506752,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 36164,
+        "user_usec": 22602,
+        "system_usec": 13561,
+        "nice_usec": 0,
+        "nr_periods": 4,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 694.361803877,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 23,
+      "rss": 10522624,
+      "rss_peak": 10522624,
+      "threads": 5,
+      "memory_current": 3817472,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 48724,
+        "user_usec": 29234,
+        "system_usec": 19489,
+        "nice_usec": 0,
+        "nr_periods": 6,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 695.363389623,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 33,
+      "rss": 10772480,
+      "rss_peak": 10772480,
+      "threads": 5,
+      "memory_current": 4866048,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 94516,
+        "user_usec": 47258,
+        "system_usec": 47258,
+        "nice_usec": 0,
+        "nr_periods": 16,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 696.364988715,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 42,
+      "rss": 10977280,
+      "rss_peak": 10977280,
+      "threads": 5,
+      "memory_current": 5390336,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 147322,
+        "user_usec": 60960,
+        "system_usec": 86361,
+        "nice_usec": 0,
+        "nr_periods": 26,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 697.366593296,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 52,
+      "rss": 11239424,
+      "rss_peak": 11239424,
+      "threads": 5,
+      "memory_current": 5914624,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 216698,
+        "user_usec": 72232,
+        "system_usec": 144465,
+        "nice_usec": 0,
+        "nr_periods": 36,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 698.368272245,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 61,
+      "rss": 11460608,
+      "rss_peak": 11460608,
+      "threads": 5,
+      "memory_current": 6176768,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 5,
+      "cpu": {
+        "usage_usec": 296471,
+        "user_usec": 85286,
+        "system_usec": 211185,
+        "nice_usec": 0,
+        "nr_periods": 46,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 699.369922563,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 73,
+      "rss": 11907072,
+      "rss_peak": 11907072,
+      "threads": 6,
+      "memory_current": 6963200,
+      "memory_peak": 7020544,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 392040,
+        "user_usec": 87120,
+        "system_usec": 304920,
+        "nice_usec": 0,
+        "nr_periods": 56,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 700.371585904,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 82,
+      "rss": 12148736,
+      "rss_peak": 12148736,
+      "threads": 6,
+      "memory_current": 7487488,
+      "memory_peak": 7487488,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 503453,
+        "user_usec": 127861,
+        "system_usec": 375591,
+        "nice_usec": 0,
+        "nr_periods": 66,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 701.373179804,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 92,
+      "rss": 12431360,
+      "rss_peak": 12431360,
+      "threads": 6,
+      "memory_current": 8531968,
+      "memory_peak": 8531968,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 626276,
+        "user_usec": 153373,
+        "system_usec": 472902,
+        "nice_usec": 0,
+        "nr_periods": 76,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 702.374846521,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 101,
+      "rss": 12664832,
+      "rss_peak": 12664832,
+      "threads": 6,
+      "memory_current": 9056256,
+      "memory_peak": 9056256,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 757323,
+        "user_usec": 191411,
+        "system_usec": 565911,
+        "nice_usec": 0,
+        "nr_periods": 86,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 703.376551265,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 111,
+      "rss": 12890112,
+      "rss_peak": 12890112,
+      "threads": 6,
+      "memory_current": 9576448,
+      "memory_peak": 9576448,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 905406,
+        "user_usec": 226351,
+        "system_usec": 679054,
+        "nice_usec": 0,
+        "nr_periods": 96,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 704.378370483,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 120,
+      "rss": 13119488,
+      "rss_peak": 13119488,
+      "threads": 6,
+      "memory_current": 10100736,
+      "memory_peak": 10100736,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1064218,
+        "user_usec": 261961,
+        "system_usec": 802257,
+        "nice_usec": 0,
+        "nr_periods": 106,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 705.380363066,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13258752,
+      "rss_peak": 13258752,
+      "threads": 6,
+      "memory_current": 10100736,
+      "memory_peak": 10100736,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1188489,
+        "user_usec": 283163,
+        "system_usec": 905326,
+        "nice_usec": 0,
+        "nr_periods": 116,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 706.381998913,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13443072,
+      "rss_peak": 13443072,
+      "threads": 6,
+      "memory_current": 11149312,
+      "memory_peak": 11149312,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1283781,
+        "user_usec": 302778,
+        "system_usec": 981002,
+        "nice_usec": 0,
+        "nr_periods": 126,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 707.383657234,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13516800,
+      "rss_peak": 13516800,
+      "threads": 6,
+      "memory_current": 11378688,
+      "memory_peak": 11403264,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1381599,
+        "user_usec": 328754,
+        "system_usec": 1052845,
+        "nice_usec": 0,
+        "nr_periods": 136,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 708.385378844,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13537280,
+      "rss_peak": 13537280,
+      "threads": 6,
+      "memory_current": 11358208,
+      "memory_peak": 11403264,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1480058,
+        "user_usec": 345069,
+        "system_usec": 1134989,
+        "nice_usec": 0,
+        "nr_periods": 147,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 709.387053915,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13590528,
+      "rss_peak": 13590528,
+      "threads": 6,
+      "memory_current": 11612160,
+      "memory_peak": 11620352,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1578019,
+        "user_usec": 375915,
+        "system_usec": 1202103,
+        "nice_usec": 0,
+        "nr_periods": 157,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 710.388754266,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13684736,
+      "rss_peak": 13684736,
+      "threads": 6,
+      "memory_current": 11874304,
+      "memory_peak": 11874304,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1676024,
+        "user_usec": 394358,
+        "system_usec": 1281666,
+        "nice_usec": 0,
+        "nr_periods": 167,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 711.390497326,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13758464,
+      "rss_peak": 13758464,
+      "threads": 6,
+      "memory_current": 11874304,
+      "memory_peak": 11874304,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1774677,
+        "user_usec": 416842,
+        "system_usec": 1357834,
+        "nice_usec": 0,
+        "nr_periods": 177,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 712.39228068,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13832192,
+      "rss_peak": 13832192,
+      "threads": 6,
+      "memory_current": 11874304,
+      "memory_peak": 11874304,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1871747,
+        "user_usec": 441882,
+        "system_usec": 1429865,
+        "nice_usec": 0,
+        "nr_periods": 187,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 713.393951616,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13905920,
+      "rss_peak": 13905920,
+      "threads": 6,
+      "memory_current": 11874304,
+      "memory_peak": 11874304,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 1973062,
+        "user_usec": 475685,
+        "system_usec": 1497376,
+        "nice_usec": 0,
+        "nr_periods": 197,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 714.395590709,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 13971456,
+      "rss_peak": 13971456,
+      "threads": 6,
+      "memory_current": 11874304,
+      "memory_peak": 11874304,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 2071669,
+        "user_usec": 489667,
+        "system_usec": 1582002,
+        "nice_usec": 0,
+        "nr_periods": 207,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 715.397468542,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 122,
+      "rss": 14036992,
+      "rss_peak": 14036992,
+      "threads": 6,
+      "memory_current": 12136448,
+      "memory_peak": 12136448,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 2171085,
+        "user_usec": 524337,
+        "system_usec": 1646747,
+        "nice_usec": 0,
+        "nr_periods": 217,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 716.399146835,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 42,
+      "rss": 13770752,
+      "rss_peak": 13770752,
+      "threads": 6,
+      "memory_current": 11431936,
+      "memory_peak": 12398592,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 2418271,
+        "user_usec": 593238,
+        "system_usec": 1825033,
+        "nice_usec": 0,
+        "nr_periods": 226,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    },
+    {
+      "at": 717.400910277,
+      "pid": 14153,
+      "start_ticks": 69168,
+      "fds": 22,
+      "rss": 13778944,
+      "rss_peak": 13778944,
+      "threads": 6,
+      "memory_current": 9830400,
+      "memory_peak": 12398592,
+      "swap_current": 0,
+      "pids_current": 6,
+      "cpu": {
+        "usage_usec": 2438399,
+        "user_usec": 600285,
+        "system_usec": 1838114,
+        "nice_usec": 0,
+        "nr_periods": 231,
+        "nr_throttled": 0,
+        "throttled_usec": 0,
+        "nr_bursts": 0,
+        "burst_usec": 0
+      },
+      "memory_events": {
+        "low": 0,
+        "high": 0,
+        "max": 0,
+        "oom": 0,
+        "oom_kill": 0,
+        "oom_group_kill": 0
+      }
+    }
+  ],
+  "cpu_fraction": 0.09842,
+  "cpu_fractions": [
+    0.09842016406397906
+  ],
+  "cpu_observation_seconds": [
+    9.015
+  ],
+  "peak_rss_bytes": 14036992,
+  "memory_peak_bytes": 12398592,
+  "database": {
+    "TransportWrittenUnconfirmed": 100
+  },
+  "gates": {
+    "all_messages": true,
+    "exact_payloads": true,
+    "session_samples": true,
+    "rate": true,
+    "schedule": true,
+    "ack": true,
+    "online": true,
+    "rss": true,
+    "cpu": true,
+    "swap": true,
+    "same_process": true,
+    "no_oom": true,
+    "database": true
+  },
+  "passed": true,
+  "r0_sample_qualified": false,
+  "soak_qualified": false,
+  "native_client_qualified": false,
+  "production_qualified": false,
+  "workload_driver_sha256": "4d2651436858b2c1cdbf4336aba9c3981752b53a309f65cc8991ac744465b4ad",
+  "driver_sha256": "1eb17ba9f69a5472136096dcf1299eb849c7adfd83eabdf7479068f07655c46f",
+  "cleanup_verified": true
+}

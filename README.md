@@ -7,8 +7,10 @@ gotowej implementacji, a testy syntetyczne nie oznaczają kwalifikacji klienta G
 
 ## Aktualny stan
 
-Wersja **0.1.0-dev.32**, schemat SQLite **14**, dziesięć modułów Rust.
+Wersja **0.1.0-dev.33**, schemat SQLite **14**, dziesięć modułów Rust.
 Kod jest sprawdzany na Linux/WSL, na danych syntetycznych i portach loopback.
+Na Unix katalog danych musi być prywatny (0700); niebezpieczne pliki blokady
+i bazy są odrzucane przed otwarciem. [Zasady i aktualizacja](docs/implementation/DATA-DIRECTORY.md).
 Oryginalnego klienta GG6 ani natywnego buildu Windows jeszcze nie kwalifikowano.
 
 - Niezależny klient libgadu 1.7.0 potwierdza logowanie, opisy, obecność i wiadomości

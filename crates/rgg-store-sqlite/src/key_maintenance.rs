@@ -129,7 +129,7 @@ mod tests {
     }
     #[tokio::test]
     async fn reused_nonce_rolls_back_the_entire_batch_then_resume_succeeds() {
-        let root = tempfile::tempdir().unwrap();
+        let root = crate::test_directory();
         let store = SqliteStore::open(root.path()).await.unwrap();
         let ring = Keyring::create_new(&root.path().join("keys.toml")).unwrap();
         store.create_invite([7; 32], 2).await.unwrap();
