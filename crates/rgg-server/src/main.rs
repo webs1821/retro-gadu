@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 webs1821
 mod config;
 mod http_listener;
+mod process_metrics;
 use axum::serve::ListenerExt;
 use rgg_application::{
     accounts::{AccountRepository, SecretProtector},
@@ -182,6 +183,10 @@ async fn run() -> Result<(), Error> {
             Ok((listener, router, address))
         })
         .transpose()?;
+    let process_task = metrics.as_ref().map(|_| {
+        info!("Private process measurements enabled");
+        tokio::spawn(process_metrics::run(telemetry.clone(), stop.clone()))
+    });
     let metrics_stop = stop.clone();
     let mut metrics_task = tokio::spawn(async move {
         if let Some((listener, router, address)) = metrics {
@@ -268,6 +273,17 @@ async fn run() -> Result<(), Error> {
         metrics_task.abort();
         let _ = metrics_task.await;
         warn!("Metrics drain deadline exceeded");
+    }
+    if let Some(mut task) = process_task {
+        match tokio::time::timeout(Duration::from_secs(2), &mut task).await {
+            Ok(Ok(())) => info!("Process measurement sampler stopped"),
+            Ok(Err(_)) => warn!("Process measurement sampler failed"),
+            Err(_) => {
+                task.abort();
+                let _ = task.await;
+                warn!("Process measurement sampler drain deadline exceeded");
+            }
+        }
     }
     if let Some(hub) = hub {
         hub.finish_shutdown().await;

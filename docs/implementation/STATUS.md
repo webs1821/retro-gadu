@@ -487,3 +487,17 @@ workspace/rgg-container-2026-11-01-dev26. Sześć raportów i manifest hashy
 skopiowano do repo i workspace. Prywatny daemon zatrzymany; cache zachowany.
 Długi soak i klient natywny nadal niekwalifikowane. Brak push/deploy.
 [Raport](VERIFICATION-2026-11-01-r0-dev26.md).
+
+
+## 2026-11-02 — dev.27: CPU i RSS własnego procesu
+
+Opcjonalny prywatny listener uruchamia jeden sampler1/s na Linux: bezpieczny
+zegar CPU przez rustix oraz ograniczony odczyt VmRSS. Jawna dostępność i wiek;
+próbki starsze niż5s nie publikują wartości. Brak nowych etykiet użytkowników,
+publicznych bindów, własnego unsafe ani zmian bazy (schema13).
+
+108 testów Rust,fmt,Clippy i7 grup realnego HTTP/TCP przeszły, w tym pełna historia,
+3000 równoczesnych offline, lifecycle i smokeR0. Wersje190 bibliotek niezmienione;
+11 wpisów pochodzenia. Ostatnim kwalifikowanym obrazem pozostaje dev.26.
+[Kontrakt](PROCESS-METRICS.md), [weryfikacja](VERIFICATION-2026-11-02-dev27.md).
+Bez push/deploy i zmian działającego GG.

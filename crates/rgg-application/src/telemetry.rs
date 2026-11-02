@@ -76,11 +76,18 @@ impl Histogram {
 }
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Snapshot {
+    pub process: Option<ProcessSample>,
     pub active_connections: u64,
     pub admissions: [u64; Admission::ALL.len()],
     pub endings: [u64; ConnectionEnd::ALL.len()],
     pub outcomes: [[u64; Outcome::ALL.len()]; Operation::ALL.len()],
     pub latency: [Histogram; Operation::ALL.len()],
+}
+#[derive(Clone, Copy, Debug)]
+pub struct ProcessSample {
+    pub observed_at: Instant,
+    pub cpu_time: Option<Duration>,
+    pub resident_bytes: Option<u64>,
 }
 #[derive(Default)]
 pub struct RuntimeTelemetry {
@@ -90,6 +97,10 @@ pub struct RuntimeTelemetry {
 impl RuntimeTelemetry {
     pub fn snapshot(&self) -> Snapshot {
         *self.state.lock().unwrap_or_else(|e| e.into_inner())
+    }
+    /// The caller collects OS observations before taking this short lock.
+    pub fn process_sample(&self, sample: ProcessSample) {
+        self.state.lock().unwrap_or_else(|e| e.into_inner()).process = Some(sample);
     }
     pub fn admission(&self, result: Admission) {
         let mut state = self.state.lock().unwrap_or_else(|e| e.into_inner());

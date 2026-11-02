@@ -133,3 +133,16 @@ symbols = ["Uc", "emu_start", "2.1.4"]
 changes = "Własny, samodzielny programMIT używaAPI zewnętrznej instalacji Unicorna2.1.4 do emulacji wybranej funkcji x86. Nie skopiowano kodu Unicorna, nie dołączono jego biblioteki do repo/runtime i nie importuje się kodu rGG do procesu emulatora. Sterowniki rGG komunikują się wyłącznie przez pliki wynikowe. Oryginalny klient pozostaje wejściem użytkownika poza repo."
 verification = "Przypięty hash koła Windowsx64 w requirements;79 przypadków CPU z kontrolą granic/pamięci/stosu i osiem przechwyconych sekwencji TCP. Nie kwalifikuje uruchomienia całego GG ani systemu Windows."
 reviewed_on = "2026-11-01"
+
+
+[[sources]]
+id = "process-observations-reference"
+project = "Linux procfs and rustix process clock API"
+upstream_url = "https://www.kernel.org/doc/html/latest/filesystems/proc.html"
+kind = "reference-only"
+upstream_authors = ["Linux kernel contributors", "rustix contributors"]
+local_paths = ["crates/rgg-server/src/process_metrics.rs", "docs/implementation/PROCESS-METRICS.md", "tests/process_metrics.py"]
+symbols = ["ProcessCPUTime", "VmRSS", "clock_gettime_dynamic"]
+changes = "Własny ograniczony parser VmRSS i wywołanie bezpiecznego API przypiętej rustix1.1.6; dodatkowa referencja https://docs.rs/rustix/1.1.6/rustix/time/index.html. Odczytano fakty dokumentacji i dokładne lokalne źródło API. Nie kopiowano kodu biblioteki/jądra ani tekstu dokumentacji. Rustix pozostaje osobną zależnością ujętą w inwentarzu licencji."
+verification = "Testy granic/I-O/overflow, braku i starości próbek, oraz realne HTTP porównane z niezależnym procfs; GG, restart i dołączenie samplera przy SIGTERM."
+reviewed_on = "2026-11-01"

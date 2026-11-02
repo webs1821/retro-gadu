@@ -28,7 +28,7 @@ def main():
     checks += [('tests/' + name + '.py', common) for name in [
         'accounts_cli', 'backups_cli', 'keys_cli', 'password_cli', 'gg6_sessions', 'gg6_concurrent_replay', 'gg6_history_retention',
         'gg6_presence_contacts', 'gg6_directory', 'http_discovery', 'http_registration', 'http_password',
-        'http_statistics', 'http_downloads', 'http_patcher', 'http_limits', 'http_metrics', 'runtime_metrics', 'r0_smoke', 'gg6_conferences',
+        'http_statistics', 'http_downloads', 'http_patcher', 'http_limits', 'http_metrics', 'runtime_metrics', 'process_metrics', 'r0_smoke', 'gg6_conferences',
         'gg6_images', 'legacy_invitations', 'legacy_import']]
     started = time.monotonic()
     completed = []

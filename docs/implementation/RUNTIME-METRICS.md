@@ -36,7 +36,8 @@ są eksportowane, również zerowe. Wynik rejected logowania odzwierciedla decyz
 Authenticator; nie rozróżnia nieznanego konta, błędnego hasła i szczegółów
 odmowy. Success logowania oznacza zapis LOGIN_OK, nie zakończenie synchronizacji.
 
-Łącznie z agregatami DB: **17 rodzin, 112 szeregów**, odpowiedź poniżej 16 KiB.
+Zakres dev.22 z agregatami DB: **17 rodzin, 112 szeregów**. Dev.27 dodaje
+[CPU/RSS](PROCESS-METRICS.md): razem21 rodzin/maks117 szeregów, poniżej16KiB.
 Format wynika z [oficjalnej specyfikacji](https://prometheus.io/docs/instrumenting/exposition_formats/).
 Własna implementacja bez pakietu eksportera; pochodzenie odnotowane w THIRD_PARTY.
 Nieużywane kategorie nie tworzą nowych szeregów, nie ma dynamicznej mapy etykiet.
@@ -66,6 +67,6 @@ Interrupted→Pending, nie tylko obecność innych wiadomości w kolejce.
 Licznik może zniknąć z restartem, także pomiędzy commit a ACK. Anulowanie
 oczekiwania nie dowodzi rollback operacji aktora. Zapis TCP i oznaczenie w DB
 nie są potwierdzeniem klienta GG6. Nadal możliwy duplikat na granicy awarii.
-Brak metryk RSS/CPU, rozmiarów buforów, pełnego śledzenia każdej odmowy image-control
+Dev.27 dodaje CPU/RSS. Nadal brak metryk rozmiarów buforów, pełnego śledzenia każdej odmowy image-control
 czy histogramu shutdown. Kategorie Other i Cancelled pozostają jawne.
 Nie uruchamiano Prometheusa ani promtool. Nie wykonano nowego obrazu/R0 dev.22.

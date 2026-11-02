@@ -1,4 +1,4 @@
-# Punkt wznowienia — 2026-11-01, dev.26
+# Punkt wznowienia — 2026-11-02, dev.27
 
 ## Zakres
 
@@ -14,6 +14,23 @@ Brak AGENTS.md w repo i przodkach. PLAN_IMPLEMENTACJI.md jest niezmienny:
 cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
+
+Dev.27 kończy opcjonalne prywatne CPU/RSS: rgg-server/process_metrics.rs,
+ProcessSample w application/telemetry, cztery rodziny w HTTP. Jeden sampler1/s,
+Skip, age od początku odczytów, stara próbka>5s i brak źródła mająavailability0
+bez udawanego użycia0. CPU przez fallible clock_gettime_dynamic(Known(ProcessCPUTime)),
+RSS bounded16KiB+1/proc/self/status; parser bajtowy/kB/duplikaty/overflow.
+Sampler tylko z metrics_bind, cancellation i join przy shutdown. Bez własnego
+unsafe; bezpośrednia Linux rustix1.1.6/time,190 zewnętrznych wersji bez zmian.
+108Rust,fmt,Clippy i7 grup procesowych PASS: process_metrics,http_metrics,
+runtime_metrics,lifecycle,gg6_history_retention,gg6_concurrent_replay,r0_smoke.
+Raport process-metrics-2026-11-01-dev27.json; opis VERIFICATION-2026-11-02-dev27.md.
+21 rodzin/maks117 szeregów<16KiB. CI i przyszły container_suite mają teraz28grup.
+11 wpisów pochodzenia,10crate,13migracji. Normalny debug27:
+server089c2d0346289e57407b109cd1bcc38ee4c0110348f62a7f6f00c17c9e346555,
+admin ccc8c5b6e1fa92e959fd84ee04246e442fd41892087bd546b0e96e89c2748022.
+Raporty obrazu26 utrwalono commitem22b0932. Dev27 jest kolejnym lokalnym commitem;
+bez nowego obrazu/R0/soak. Brak aktywnych procesów testowych i pytań do użytkownika.
 
 - 77d88ac: dev25, poprawka uploadu klienta GG6.1. Własny stub82B w128B paddingu,
   27 zakresów, pusty MORE dla dodatniej wielokrotności2047 i licznik ACK.
@@ -32,7 +49,7 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
   Ten sam runtime przeszedł poprawiony test przy tych samych limitach.
   container-dev26-attempt1.json zachowuje nieudaną próbę i diagnostykę.
 
-Normalne binarki debug dev26 przywrócone po awariach:
+Historyczne binarki debug dev26 po awariach (obecne debug27 opisano wyżej):
 server63f80a1c657000fb07d5b8a893eae6902a900cce8e4930c802d96fe3955f6b73,
 admin b00fb3f370eb2a24ac8be6e1dfbed116bef3b2a7e21b8b5567e1cdfeeca9845e.
 Historia-regresja dotyczy starej wersji fixture, co odnotowano; nowy sterownik
@@ -63,23 +80,15 @@ wyszła0. Build27957, suite45425, R038995 i eksport85223 zakończone0.
 Żaden test/daemon nie pozostaje aktywny. Cache, stare obrazy i archiwa zachowane.
 Raporty i dokumentacja kwalifikacji26 są utrwalane osobnym commitem po51c078c.
 
-## Następny krok
+## Kolejne prace
 
-Zapowiedziano przygotowanie prywatnych metryk CPU/RAM procesu. Jeszcze NIE są
-zaimplementowane w repo. W workspace są rgg-process-metrics-notes.txt oraz
-rgg-process-metrics-draft.rs: projekt samplera Linux, parser VmRSS, szkic testów.
-Przeczytać i przejrzeć, nie traktować szkicu jako przetestowanego kodu.
-Rustix1.1.6 już jest pośrednio w lockfile; lokalnie sprawdzono bezpieczne
-clock_gettime(ClockId::ProcessCPUTime)->Timespec. Potrzebny bezpośredni feature
-"time" tylko dla Linux, bez własnego unsafe i bez zmiany wersji bibliotek.
-
-Propozycja: app telemetry Copy ProcessSample z observed_at/CPU Duration/RSS Option;
-server jeden sampler1/s tylko przy włączonych metrykach, cancellation/shutdown;
-HTTP stałe rodziny CPU counter/RSS gauge/dostępność źródeł/wiek próbki.
-Stara/nieobecna próbka nie może udawać zużycia0. Utrzymać limit16KiB odpowiedzi.
-Parser ograniczony16KiB+1, nie wymaga UTF8 nazw procesu, kontroluje jednostki,
-duplikaty i overflow. Dopracować lifecycle oraz API przed integracją.
-Zależności/moduły i testy w istniejącym układzie; żadnych nowych subagentów.
+Kontynuować autonomiczny rozwój lokalny do przerwania przez użytkownika.
+Sprawdzić pozostałe braki PARITY i planu; poza metrykami buforów są m.in.
+profil publicznej domeny, natywny GG, rzeczywisty import i długi soak.
+Nie zmieniać zakresu lokalnego ani uruchamiać istniejącego GG/instalatora
+na jego bieżącym profilu. Nie uruchamiać subagentów bez nowej podstawy.
+Szkice CPU w workspace są już zastąpione finalnym kodem w repo.
+Procesowy runner testów: workspace/rgg-process-metrics27.py; nie nadpisuje raportu.
 
 ## Narzędzia
 
@@ -91,7 +100,7 @@ RUSTUP_HOME=/tmp/gg-retro-toolchain/rustup
 CARGO_TARGET_DIR=/tmp/rgg-target
 CC=/tmp/gg-retro-toolchain/gcc/cc
 PATH=$CARGO_HOME/bin:$PATH; cd /mnt/d/Dokumenty/Documents/RetroGadu.
-/tmp/rgg-target/debug to zwykły dev26; /tmp/rgg-target/release nadal stary kandydat
+/tmp/rgg-target/debug to zwykły dev27; /tmp/rgg-target/release nadal stary kandydat
 writer oznaczony dev22. Nie utożsamiać go z nowym release z obrazu.
 
 Prywatny silnik Docker29.9.2/runc1.5.2:

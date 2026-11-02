@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # SPDX-FileCopyrightText: 2026 webs1821
 """Private operational snapshots on real loopback HTTP/GG, disposable synthetic data."""
-import argparse,json,re,socket,tempfile,time
+import argparse,json,math,re,socket,tempfile,time
 from pathlib import Path
 from types import SimpleNamespace
 from gg6_sessions import Lab,until
@@ -35,7 +35,13 @@ def metrics(lab):
             assert key not in values and family in types
             if family!=name:assert types[family]=='histogram'
             values[key]=float(value)
-    assert len(types)==17 and len(values)==112,(types,values)
+    process_keys=['rgg_process_sample_age_seconds','rgg_process_cpu_seconds_total','rgg_process_resident_memory_bytes']
+    assert len(types)==21 and len(values)==114+sum(key in values for key in process_keys),(types,values)
+    assert all(math.isfinite(value) for value in values.values())
+    for resource,key in [('cpu',process_keys[1]),('resident_memory',process_keys[2])]:
+        available=values['rgg_process_measurements_available{resource="'+resource+'"}']
+        assert available in (0,1) and (key in values)==bool(available)
+        if available:assert 0<=values[process_keys[0]]<=5
     for operation in ['login','accept','delivery']:
         base='rgg_operation_duration_seconds'
         buckets=[values[base+'_bucket{operation="'+operation+'",le="'+bound+'"}'] for bound in ['0.001','0.005','0.01','0.05','0.1','0.5','1','5','15','+Inf']]
