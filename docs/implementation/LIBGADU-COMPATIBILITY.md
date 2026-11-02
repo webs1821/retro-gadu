@@ -38,8 +38,22 @@ Dowód: `libgadu-directory-2026-11-02.json`; nowy probe i powtórzenie podstawow
 przepływu są w `libgadu-extended-probe-2026-11-02.json` oraz
 `libgadu-extended-core-2026-11-02.json`. Runtime pozostał niezmieniony (dev.31).
 
-Obrazki, konferencje, stronicowanie i pełne bloki kontaktów bez terminatora
-pozostają poza zakresem tych testów libgadu. Jej stara funkcja czasu powrotu dopisuje cztery bajty
+`libgadu_media.py` potwierdził także konferencję z dwoma odbiorcami (online/offline
+po awarii, jedna kopia dla każdego, poprawny kontekst) oraz klasyczne obrazki.
+5120 syntetycznych bajtów przechodzi przez API oferty/request/reply w trzech
+fragmentach z dokładnym porównaniem danych i CRC. Obce konto nie dostaje obrazu;
+oferta offline przeżywa restart, ale pierwszy odbiór wymaga dostępnego nadawcy,
+który może być niewidoczny. Własne formatowanie oferty używa struktur publicznego
+API biblioteki, bez kopiowania jej implementacji.
+
+Pięć raportów `libgadu-media-*-2026-11-02.json` / `libgadu-media-2026-11-02.json`
+wiąże nowego klienta z niezmienioną biblioteką i runtime dev.31. Pierwsza próba
+zakończyła się błędnym oczekiwaniem testu liczby ofert: klucz zawiera message_id,
+więc dwa wysłania tworzą dwie oferty. Poprawiono tylko test; pierwszy wynik zachowano.
+Przepływy core i katalogu powtórzono na rozszerzonym testerze i przeszły.
+
+Stronicowanie i pełne bloki kontaktów bez terminatora pozostają poza zakresem
+tych testów libgadu. Jej stara funkcja czasu powrotu dopisuje cztery bajty
 bez separatora; bez jednoznacznego formatu nie próbujemy odgadywać, gdzie kończy
 się tekst. Test klienta GUI GG6 nadal pozostaje odrębną otwartą bramką.
 

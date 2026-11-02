@@ -623,3 +623,19 @@ z niezmienioną biblioteką i binarkami dev31. Biblioteki nie przebudowywano
 ponownie; sprawdzono hash statycznego archiwum z wcześniejszego buildreportu.
 Testy zakończone, sieć tylko izolowanyloopback. Runtime/schema/deps bez zmian;
 nie powtarzano Rust/R0 dla zmiany wyłącznie testera. Brak push/deploy.
+
+## 2026-11-02 — niezależna libgadu: konferencje i klasyczne obrazki
+
+Nowy libgadu_media.py przeszedł konferencję dla2odbiorców: online i offline
+po awarii, po jednej kopii, zachowany kontekst. Obrazki:5120B/3fragmenty,
+porównanie całych danych i niezależny CRC, odmowa obcemu odbiorcy, oferta
+offline po restarcie, brak nadawcy i późniejszy odbiór od niewidocznego.
+Nie testuje renderowania grafiki. Pierwszą próbę zachowano: błędne oczekiwanie
+1oferty po2wiadomościach poprawiono na2oferty (PK zawiera message_id).
+Runtime pozostał niezmieniony.
+
+Nowy probe3372c0c8b060ac5e909651f51a6c66f10008e437948f674ac5b556c98e736c99
+linkuje tę samą bibliotekę. Poprzednie core/directory też przeszły. Pięć raportów
+libgadu-media*2026-11-02.json wrepo; źródła/hash/binarki sprawdzone.
+Wersja31/schema13/190deps bez zmian; nie powtarzanoRust/R0. Wszystkieprocesy
+testowe zakończone, izolowanyloopback. Brakpush/deploy.

@@ -15,6 +15,22 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
 
+NAJNOWSZY KROK PO1cb3e0e: media libgadu gotowe, tests/libgadu_media.py.
+Nowyprobe3372c0c8b060ac5e909651f51a6c66f10008e437948f674ac5b556c98e736c99
+w/tmp/rgg-libgadu170-media; statycznalibbez zmianz/tmp/rgg-libgadu170-final.
+Cprobeimage_size255,formaty/recipientsinmessageevent,imageAPI i conference.
+core+directory ponowionePASS; media-finalPASS: conference2odbiorcówonline/offline
+poSIGKILL, context, noextra; image5120B/3chunkszCRC, outsiderreject,offlineoffer
+restart,missingA potem invisibleA download. Wszystkieproc zakończone.
+Pierwszemedia.jsonfailedjedynieassertcountofert1zamiast2(keymessage_id).
+Poprawionotestcounts={'messages':2,'offers':2}; zachowanoraportfirst+final.
+Pięćreportówrepo libgadu-media-probe/core/directory/attempt1-2026-11-02.json
+i libgadu-media-2026-11-02.json,hashes verified. Runtime31unchanged;niepowtarzaćRust/R0
+bez nowejzmiany. Docs/provenance13 aktualne. Potrzebnylokalnycommit jeśliniewykonany.
+Nadal poza zakresem libgadu: paging,pełne2047bezterminatora,descr_timebezNUL;
+natywneGUI/Windows i długi soakniekwalifikowane. Usernadalprosiwdalsząlokalnąpracę.
+
+
 NAJNOWSZY KROK PO3294590: rozszerzony libgadu probe + tests/libgadu_directory.py.
 Oba scenariusze (core+directory)PASS w/tmp/rgg-libgadu170-directory.
 Nowyprobe15f0b4296a43e410f8ae936cf487175f2cbc76be59802847c12698e7f454e8ac,

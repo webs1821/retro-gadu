@@ -1,0 +1,21 @@
+{
+  "command": [
+    "/usr/bin/gcc",
+    "-std=c11",
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+    "-O1",
+    "-g",
+    "-I/tmp/rgg-libgadu170-final/libgadu-1.7.0/include",
+    "/mnt/d/Dokumenty/Documents/RetroGadu/validation/libgadu_170/probe.c",
+    "/tmp/rgg-libgadu170-final/libgadu-1.7.0/src/.libs/libgadu.a",
+    "-o",
+    "/tmp/rgg-libgadu170-media/probe"
+  ],
+  "returncode": 0,
+  "probe_sha256": "3372c0c8b060ac5e909651f51a6c66f10008e437948f674ac5b556c98e736c99",
+  "probe_source_sha256": "aea2a5d0bd846d6d49ea28bd5180f4e94c53d93ba11ee3c5eba87577955210ea",
+  "library_build_report_sha256": "1a347d21ea19b59d287015a314398c7ae8a6a046c21220764af6c39171255ece",
+  "static_library_sha256": "ea9b855a2051240ffd58b3c4d4be5a52ffaabdd56d49a46576ef4aeeecf20904"
+}

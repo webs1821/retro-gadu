@@ -54,7 +54,15 @@ Import/eksport kontaktów obejmuje 0, 24, 2046 i 2048 bajtów CP1250, izolację 
 i restart. Dokładna wielokrotność 2047 bez terminatora pozostaje niejednoznaczna
 w niezmienionej bibliotece; ten test nie oznacza jej kwalifikacji.
 
+`tests/libgadu_media.py` korzysta z tych samych argumentów. API konferencji wysyła
+po jednej wiadomości do dwóch odbiorców: jeden odbiera online, drugi po awarii
+i restarcie. Sprawdzane są kontekst uczestników, brak dodatkowych kopii i baza.
+API obrazków oferuje i przesyła 5120 syntetycznych bajtów w trzech fragmentach;
+wynik jest porównywany bajtowo, a CRC niezależnie przez Python zlib. Test obejmuje
+obcego odbiorcę, ofertę offline po restarcie, brak nadawcy i późniejszy odbiór od
+niewidocznego nadawcy. Nie testuje dekodowania/renderowania pliku graficznego.
+
 Nie jest to wykonanie oryginalnego GUI GG6 ani test automatycznego reconnect.
-Nie obejmuje jeszcze obrazków, konferencji, stronicowania katalogu czy czasu
+Nie obejmuje jeszcze stronicowania katalogu, całej macierzy błędnych obrazków czy czasu
 powrotu w API libgadu. Testy są uruchamiane jawnie, poza zwykłą CI; regresja
 opisów jest również w standardowym `gg6_presence_contacts.py` i testach Rust.
