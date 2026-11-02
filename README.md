@@ -252,3 +252,5 @@ nie rozwiązuje zbędnych sterowników MySQL/PostgreSQL ani ich zależności.
 Migracje są osadzone w programie i zachowują kontrolę sum przez migrator SQLx.
 
 Prywatne metryki dev.27 obejmują także [CPU i RSS procesu](docs/implementation/PROCESS-METRICS.md), z jawną dostępnością i wiekiem próbki. Ostatni kwalifikowany obraz pozostaje dev.26.
+
+[Deterministyczne testy mutacyjne parserów](docs/implementation/PROTOCOL-MUTATION.md) obejmują41 wzorców, wszystkie ich prefiksy i zmiany bitów oraz powtarzalne kampanie ze stałymi seedami.

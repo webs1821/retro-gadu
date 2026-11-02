@@ -15,6 +15,21 @@ cc6fadfb16ab173d486b21aaa47eaf8c7843436fef8e67155a5333ae6613adec.
 
 ## Najnowszy stan
 
+Commit2a58f395c86c3f27cc65ff7a506e3fd992a1ce63 kończy implementację dev27.
+Następny osobny commit testowy dodaje crates/rgg-protocol/tests/adversarial.rs
+oraz fixtures/wire-corpus.json:41 własnych wzorców,11545 prefiksów,92032 bit-flipy,
+2mln mutacji/8seedów. Limity/przyjęte wyniki i niezależne ramkowanie sprawdzone.
+111Rust,fmt/Clippy PASS. Runtime/dependencies/schema bez zmian, binarki debug27
+mają nadal sumy poniżej. Domyślne20k mutacji uruchamia cargo test; limit env
+RGG_PROTOCOL_CASES1..2mln, niezerowy RGG_PROTOCOL_SEED. Własny PRNG tylko do testów.
+Raporty protocol-mutation-2026-11-02-final-plan.json oraz -final.json zweryfikowane.
+Pierwsze plan.json i .json zachowują preflight z błędami Clippy chunks_exact;
+nie było wtedy rozszerzonego fuzzingu. Końcowy probeSHA9231c45d43a53a6ccdf14ed1b5bff76ab621bef113efd880269ee7eaeaa873fc.
+Workspace runners rgg-protocol-mutation.py (pierwszy) i -final.py (końcowy),
+nie uruchamiać ponownie pod tymi samymi raportami. Wszystkie procesy zakończone.
+PROTOCOL-MUTATION.md dokumentuje zakres: bez coverage guidance/sanitizerów,
+bez sekwencji złych stanów sesji, dekompresji czy klienta natywnego.
+
 Dev.27 kończy opcjonalne prywatne CPU/RSS: rgg-server/process_metrics.rs,
 ProcessSample w application/telemetry, cztery rodziny w HTTP. Jeden sampler1/s,
 Skip, age od początku odczytów, stara próbka>5s i brak źródła mająavailability0

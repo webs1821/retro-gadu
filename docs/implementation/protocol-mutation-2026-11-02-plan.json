@@ -1,0 +1,33 @@
+{
+  "format": 1,
+  "base_commit": "2a58f395c86c3f27cc65ff7a506e3fd992a1ce63",
+  "source_sha256": {
+    "crates/rgg-protocol/tests/adversarial.rs": "49900d8babfca1449712f0d0be67df4960256112761ba0fbe85452427861abc8",
+    "crates/rgg-protocol/tests/fixtures/wire-corpus.json": "ca72df426d0818e3ddd40190706ff25971b1e26a056b714a8d85bdc40f1d6986",
+    "crates/rgg-protocol/src/frame.rs": "2a658017e71de38f6d853adfb2655d4e1722edf69dc6d3d11a88b4ddea81b355",
+    "crates/rgg-protocol/src/gg6.rs": "6abd954b9a392fb286a802f68a2752f9905367bb4665b4d792e3e55ab7fe4288",
+    "crates/rgg-protocol/src/gg6_contacts.rs": "fb006196a8d6cf92d44b438bd6dcc3aa321355b4bc6c79ec216aeb4a2dad241c",
+    "crates/rgg-protocol/src/gg6_directory.rs": "d3162ab366bc5f4bb41dd28351acaf717c450c63ed91b6920a9fb00ddfed15e8",
+    "crates/rgg-protocol/src/gg6_images.rs": "ad7edfd3321c242ae79d071bbf243975d5dead2d36dec9ef3f18212702b87375",
+    "crates/rgg-protocol/src/gg6_messages.rs": "3fe90ce3a5b892dddfe5e86bf8f3e47a04bf3a5b1304206d5a07767ce5ed76ed",
+    "crates/rgg-protocol/src/gg6_presence.rs": "9cc315886bb2bceb1f211e318e99be8f50052bc482121c51afbccff47e8fa641",
+    "crates/rgg-protocol/src/legacy_hash.rs": "913c2708055ab4f5d6c8b2ff261b741c66e85d58b1d57b36b5bd878dd1c856bb",
+    "crates/rgg-protocol/src/lib.rs": "c2b038c455d2e8dd28b4d413863d4df6bcab38474f75750f264f567998515595"
+  },
+  "seeds": [
+    1,
+    2,
+    3,
+    20261102,
+    32201839963672834,
+    81985529216486895,
+    9223372036854775809,
+    18446744073709551615
+  ],
+  "iterations_per_seed": 250000,
+  "total_mutations": 2000000,
+  "max_input_bytes": 8192,
+  "timeout_seconds_per_run": 60,
+  "coverage_guided": false,
+  "native_client_qualified": false
+}

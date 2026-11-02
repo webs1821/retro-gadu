@@ -501,3 +501,17 @@ publicznych bindów, własnego unsafe ani zmian bazy (schema13).
 11 wpisów pochodzenia. Ostatnim kwalifikowanym obrazem pozostaje dev.26.
 [Kontrakt](PROCESS-METRICS.md), [weryfikacja](VERIFICATION-2026-11-02-dev27.md).
 Bez push/deploy i zmian działającego GG.
+
+
+## 2026-11-02 — dev.27: testy mutacyjne protokołu
+
+Osobny krok testowy, bez zmiany runtime, zależności ani schematu. Własny korpus41
+pakietów GG6 obejmuje też maksymalne poprawne opisy, kontakty, style i fragmenty
+obrazków.11545 prefiksów,92032 bit-flipy i2mln mutacji/8 seedów przeszły;
+kontrolowano też kontrakty zaakceptowanych danych i ramkowanie.111 testów Rust,
+fmt iClippy PASS. Korpus działa w zwykłym cargo test bez nowych narzędzi.
+
+Budżet i sumy źródeł zapisane przed próbą; finalne raporty potwierdzają brak panic
+oraz naruszeń sprawdzanych kontraktów w tym zakresie. Zachowano pierwszy preflight
+zatrzymany przez Clippy. To nie fuzzing sterowany pokryciem i nie kwalifikacja GG,
+stanów sesji czy produkcji. [Zakres i wyniki](PROTOCOL-MUTATION.md).

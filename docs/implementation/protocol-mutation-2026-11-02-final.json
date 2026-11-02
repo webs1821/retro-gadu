@@ -1,0 +1,365 @@
+{
+  "format": 1,
+  "plan_sha256": "2a7f0918fb5bb6da45639b0826868eb680cf517c1c7c091a676cb3e85a8d7dc9",
+  "passed": true,
+  "checks": [
+    {
+      "name": "fmt",
+      "passed": true,
+      "seconds": 1.025,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "name": "clippy",
+      "passed": true,
+      "seconds": 1.368,
+      "stdout": "",
+      "stderr": "    Checking rgg-protocol v0.1.0-dev.27 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol)\n    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.29s\n"
+    },
+    {
+      "name": "compile-probe",
+      "passed": true,
+      "seconds": 1.118,
+      "stdout": "{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"proc-macro\"],\"filenames\":[\"/tmp/rgg-target/debug/build/proc-macro2-ab005e1b49b4395b/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[\"wrap_proc_macro\",\"proc_macro_span_location\",\"proc_macro_span_file\"],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/proc-macro2-ef41e94ab0f532d9/out\"}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#unicode-ident@1.0.27\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-ident-1.0.27/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"unicode_ident\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-ident-1.0.27/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libunicode_ident-81bfb0f85f6a8742.rlib\",\"/tmp/rgg-target/debug/deps/libunicode_ident-81bfb0f85f6a8742.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"proc-macro\"],\"filenames\":[\"/tmp/rgg-target/debug/build/quote-cb66644ea05edbd9/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.191/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.191/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/build/libc-0b3e93e097eeb127/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"result\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/build/serde_core-ba68d45a71ab3b05/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustversion@1.0.23\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.23/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.23/build/build.rs\",\"edition\":\"2018\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/build/rustversion-f5ed32b1082d42cd/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.21\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/build/thiserror-f7b54138f33f94db/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#pin-project-lite@0.2.17\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pin-project-lite-0.2.17/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"pin_project_lite\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/pin-project-lite-0.2.17/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libpin_project_lite-d48789d525c49729.rlib\",\"/tmp/rgg-target/debug/deps/libpin_project_lite-d48789d525c49729.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"derive\",\"serde_derive\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/build/serde-94cd7afb59b66330/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#futures-core@0.3.34\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-core-0.3.34/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"futures_core\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-core-0.3.34/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libfutures_core-3b39bc7c8546ea11.rlib\",\"/tmp/rgg-target/debug/deps/libfutures_core-3b39bc7c8546ea11.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#futures-task@0.3.34\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-task-0.3.34/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"futures_task\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-task-0.3.34/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libfutures_task-b3d9cb52b6b50815.rlib\",\"/tmp/rgg-target/debug/deps/libfutures_task-b3d9cb52b6b50815.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#slab@0.4.12\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/slab-0.4.12/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"slab\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/slab-0.4.12/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libslab-1fe17daa02024b00.rlib\",\"/tmp/rgg-target/debug/deps/libslab-1fe17daa02024b00.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#bytes@1.12.1\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bytes-1.12.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"bytes\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bytes-1.12.1/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libbytes-fa84c749ecf7f594.rlib\",\"/tmp/rgg-target/debug/deps/libbytes-fa84c749ecf7f594.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/build/zmij-946061105b7cdaa0/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#futures-sink@0.3.34\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-sink-0.3.34/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"futures_sink\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-sink-0.3.34/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libfutures_sink-cdabf34dc84b79fc.rlib\",\"/tmp/rgg-target/debug/deps/libfutures_sink-cdabf34dc84b79fc.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.154\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.154/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.154/build.rs\",\"edition\":\"2021\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/build/serde_json-a4a9ff45eaa6f756/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#simdutf8@0.1.5\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/simdutf8-0.1.5/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"simdutf8\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/simdutf8-0.1.5/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"aarch64_neon\",\"public_imp\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libsimdutf8-1e38e05939dba1f6.rlib\",\"/tmp/rgg-target/debug/deps/libsimdutf8-1e38e05939dba1f6.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#scopeguard@1.2.0\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scopeguard-1.2.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"scopeguard\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scopeguard-1.2.0/src/lib.rs\",\"edition\":\"2015\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libscopeguard-72077e85bdc77ec2.rlib\",\"/tmp/rgg-target/debug/deps/libscopeguard-72077e85bdc77ec2.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#subtle@2.6.1\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/subtle-2.6.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"subtle\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/subtle-2.6.1/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"i128\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libsubtle-f34aecc78a882465.rlib\",\"/tmp/rgg-target/debug/deps/libsubtle-f34aecc78a882465.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#multiversion_no_op@1.0.0\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/multiversion_no_op-1.0.0/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"multiversion_no_op\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/multiversion_no_op-1.0.0/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libmultiversion_no_op-cee1959f5944bc89.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#core_detect@1.0.0\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/core_detect-1.0.0/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"core_detect\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/core_detect-1.0.0/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libcore_detect-1acfb520c3612705.rlib\",\"/tmp/rgg-target/debug/deps/libcore_detect-1acfb520c3612705.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.5\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.5/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"cfg_if\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.5/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libcfg_if-0fbeb365b695d2ff.rlib\",\"/tmp/rgg-target/debug/deps/libcfg_if-0fbeb365b695d2ff.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"itoa\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libitoa-b101c554dc96d6c2.rlib\",\"/tmp/rgg-target/debug/deps/libitoa-b101c554dc96d6c2.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.3/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"memchr\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.3/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libmemchr-2974315c36bbf455.rlib\",\"/tmp/rgg-target/debug/deps/libmemchr-2974315c36bbf455.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/quote-16720ff8b16631c2/out\"}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"proc_macro2\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"proc-macro\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libproc_macro2-48009055b595a344.rlib\",\"/tmp/rgg-target/debug/deps/libproc_macro2-48009055b595a344.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[\"linux_time_bits64\"],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/libc-b16900953188bf6a/out\"}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/serde_core-affc157fe1b322b9/out\"}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustversion@1.0.23\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/rustversion-d2854a6eb6777e68/out\"}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.21\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/thiserror-5f5ed575411202b9/out\"}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[\"if_docsrs_then_no_serde_core\"],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/serde-ba8426c877a92a17/out\"}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/zmij-1a4b1e45daff5eb9/out\"}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.154\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[\"fast_arithmetic=\\\"64\\\"\"],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/serde_json-7839a7dd090f34de/out\"}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"quote\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"proc-macro\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libquote-8a050a42cff7de9b.rlib\",\"/tmp/rgg-target/debug/deps/libquote-8a050a42cff7de9b.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#libc@0.2.191\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.191/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"libc\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.191/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/liblibc-ca95d298963f410e.rlib\",\"/tmp/rgg-target/debug/deps/liblibc-ca95d298963f410e.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"serde_core\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"result\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libserde_core-1e9d9efd87f47fd3.rlib\",\"/tmp/rgg-target/debug/deps/libserde_core-1e9d9efd87f47fd3.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#rustversion@1.0.23\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.23/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"rustversion\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.23/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/librustversion-330082f51b296de7.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"zmij\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libzmij-017fa04e9bfbd0ce.rlib\",\"/tmp/rgg-target/debug/deps/libzmij-017fa04e9bfbd0ce.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#syn@3.0.9\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-3.0.9/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"syn\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-3.0.9/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"clone-impls\",\"default\",\"derive\",\"full\",\"parsing\",\"printing\",\"proc-macro\",\"visit-mut\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libsyn-95c37f75d08d26c9.rlib\",\"/tmp/rgg-target/debug/deps/libsyn-95c37f75d08d26c9.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#errno@0.3.14\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/errno-0.3.14/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"errno\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/errno-0.3.14/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/liberrno-6a405010a76bf51b.rlib\",\"/tmp/rgg-target/debug/deps/liberrno-6a405010a76bf51b.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#mio@1.2.4\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/mio-1.2.4/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"mio\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/mio-1.2.4/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"net\",\"os-ext\",\"os-poll\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libmio-a163f743e9731f15.rlib\",\"/tmp/rgg-target/debug/deps/libmio-a163f743e9731f15.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#socket2@0.6.5\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.5/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"socket2\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/socket2-0.6.5/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"all\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libsocket2-ca8210dbcb50b073.rlib\",\"/tmp/rgg-target/debug/deps/libsocket2-ca8210dbcb50b073.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#encoding_rs@0.8.43\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/encoding_rs-0.8.43/Cargo.toml\",\"target\":{\"kind\":[\"custom-build\"],\"crate_types\":[\"bin\"],\"name\":\"build-script-build\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/encoding_rs-0.8.43/build.rs\",\"edition\":\"2024\",\"doc\":false,\"doctest\":false,\"test\":false},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"default\"],\"filenames\":[\"/tmp/rgg-target/debug/build/encoding_rs-d8a57000114a2833/build-script-build\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.154\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.154/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"serde_json\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.154/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libserde_json-906cb9383affae14.rlib\",\"/tmp/rgg-target/debug/deps/libserde_json-906cb9383affae14.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde_derive@1.0.229\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_derive-1.0.229/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"serde_derive\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_derive-1.0.229/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libserde_derive-bb914fe359b7c4d8.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#signal-hook-registry@1.4.8\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/signal-hook-registry-1.4.8/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"signal_hook_registry\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/signal-hook-registry-1.4.8/src/lib.rs\",\"edition\":\"2015\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libsignal_hook_registry-1449f61b6fabbdc1.rlib\",\"/tmp/rgg-target/debug/deps/libsignal_hook_registry-1449f61b6fabbdc1.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#thiserror-impl@2.0.21\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-impl-2.0.21/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"thiserror_impl\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-impl-2.0.21/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libthiserror_impl-d7159352e3061bf7.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#tokio-macros@2.7.2\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-macros-2.7.2/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"tokio_macros\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-macros-2.7.2/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libtokio_macros-717159663490c799.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#futures-macro@0.3.34\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-macro-0.3.34/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"futures_macro\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-macro-0.3.34/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libfutures_macro-5ca3cb2127f5120e.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"build-script-executed\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#encoding_rs@0.8.43\",\"linked_libs\":[],\"linked_paths\":[],\"cfgs\":[],\"env\":[],\"out_dir\":\"/tmp/rgg-target/debug/build/encoding_rs-b2faa362f052adb2/out\"}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#async-trait@0.1.92\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/async-trait-0.1.92/Cargo.toml\",\"target\":{\"kind\":[\"proc-macro\"],\"crate_types\":[\"proc-macro\"],\"name\":\"async_trait\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/async-trait-0.1.92/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":0,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/libasync_trait-5f88292a97cd291d.so\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"serde\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"derive\",\"serde_derive\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libserde-38010616223ac20f.rlib\",\"/tmp/rgg-target/debug/deps/libserde-38010616223ac20f.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#thiserror@2.0.21\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"thiserror\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.21/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"default\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libthiserror-d77e1b97487706ca.rlib\",\"/tmp/rgg-target/debug/deps/libthiserror-d77e1b97487706ca.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#tokio@1.54.1\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"tokio\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-1.54.1/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"bytes\",\"default\",\"io-util\",\"libc\",\"macros\",\"mio\",\"net\",\"rt\",\"rt-multi-thread\",\"signal\",\"signal-hook-registry\",\"socket2\",\"sync\",\"time\",\"tokio-macros\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libtokio-f1ce68d902523d30.rlib\",\"/tmp/rgg-target/debug/deps/libtokio-f1ce68d902523d30.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#futures-util@0.3.34\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"futures_util\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/futures-util-0.3.34/src/lib.rs\",\"edition\":\"2018\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"async-await\",\"async-await-macro\",\"default\",\"futures-macro\",\"slab\",\"std\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libfutures_util-d4d19894dfc273b1.rlib\",\"/tmp/rgg-target/debug/deps/libfutures_util-d4d19894dfc273b1.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#encoding_rs@0.8.43\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/encoding_rs-0.8.43/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"encoding_rs\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/encoding_rs-0.8.43/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"default\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libencoding_rs-3453e08eba7c0ceb.rlib\",\"/tmp/rgg-target/debug/deps/libencoding_rs-3453e08eba7c0ceb.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#zeroize@1.9.1\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zeroize-1.9.1/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"zeroize\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zeroize-1.9.1/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"alloc\",\"default\",\"serde\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libzeroize-e5bcf040886ecb81.rlib\",\"/tmp/rgg-target/debug/deps/libzeroize-e5bcf040886ecb81.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"registry+https://github.com/rust-lang/crates.io-index#tokio-util@0.7.20\",\"manifest_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-util-0.7.20/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"tokio_util\",\"src_path\":\"/tmp/gg-retro-toolchain/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tokio-util-0.7.20/src/lib.rs\",\"edition\":\"2021\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[\"codec\",\"default\",\"futures-util\",\"libc\",\"rt\"],\"filenames\":[\"/tmp/rgg-target/debug/deps/libtokio_util-59f8bbe527275b54.rlib\",\"/tmp/rgg-target/debug/deps/libtokio_util-59f8bbe527275b54.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-domain#0.1.0-dev.27\",\"manifest_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-domain/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"rgg_domain\",\"src_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-domain/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/librgg_domain-98cb8f46517c85f4.rlib\",\"/tmp/rgg-target/debug/deps/librgg_domain-98cb8f46517c85f4.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-application#0.1.0-dev.27\",\"manifest_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-application/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"rgg_application\",\"src_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-application/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/librgg_application-ff61fc039d5df149.rlib\",\"/tmp/rgg-target/debug/deps/librgg_application-ff61fc039d5df149.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol#0.1.0-dev.27\",\"manifest_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol/Cargo.toml\",\"target\":{\"kind\":[\"lib\"],\"crate_types\":[\"lib\"],\"name\":\"rgg_protocol\",\"src_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol/src/lib.rs\",\"edition\":\"2024\",\"doc\":true,\"doctest\":true,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":false},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/librgg_protocol-7019a6d518c0a21d.rlib\",\"/tmp/rgg-target/debug/deps/librgg_protocol-7019a6d518c0a21d.rmeta\"],\"executable\":null,\"fresh\":true}\n{\"reason\":\"compiler-artifact\",\"package_id\":\"path+file:///mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol#0.1.0-dev.27\",\"manifest_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol/Cargo.toml\",\"target\":{\"kind\":[\"test\"],\"crate_types\":[\"bin\"],\"name\":\"adversarial\",\"src_path\":\"/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol/tests/adversarial.rs\",\"edition\":\"2024\",\"doc\":false,\"doctest\":false,\"test\":true},\"profile\":{\"opt_level\":\"0\",\"debuginfo\":2,\"debug_assertions\":true,\"overflow_checks\":true,\"test\":true},\"features\":[],\"filenames\":[\"/tmp/rgg-target/debug/deps/adversarial-31ea5e4e2eaa100a\"],\"executable\":\"/tmp/rgg-target/debug/deps/adversarial-31ea5e4e2eaa100a\",\"fresh\":false}\n{\"reason\":\"build-finished\",\"success\":true}\n",
+      "stderr": "   Compiling rgg-protocol v0.1.0-dev.27 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.08s\n"
+    },
+    {
+      "name": "corpus-framing-and-default-campaign",
+      "passed": true,
+      "seconds": 20.805,
+      "stdout": "\nrunning 3 tests\ntest independent_frames_fragmentation_coalescing_and_length_boundaries ... ok\nPROTOCOL_MUTATION_REPORT={\"accepted\":[335,141,217,806,170,264,539],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":20000,\"rejected\":[2075,1806,1716,2210,2708,3666,3347],\"seed\":32201839963672834,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\nPROTOCOL_CORPUS_REPORT={\"cases\":41,\"prefixes\":11545,\"single_bit_mutations\":92032}\ntest golden_corpus_all_prefixes_and_every_single_bit_mutation ... ok\n\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.80s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-1",
+      "passed": true,
+      "seconds": 2.037,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4311,1986,2652,9516,1976,3025,6896],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26169,22297,21713,27139,34617,45765,41938],\"seed\":1,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.04s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-2",
+      "passed": true,
+      "seconds": 2.083,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4361,1898,2611,9610,2074,3072,6961],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26108,22583,21629,27017,34530,45885,41661],\"seed\":2,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.08s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-3",
+      "passed": true,
+      "seconds": 2.144,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4291,1949,2639,9612,1952,3146,6944],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26124,22429,21620,26968,34793,45445,42088],\"seed\":3,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.14s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-20261102",
+      "passed": true,
+      "seconds": 2.045,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4280,1931,2725,9766,1939,3074,7058],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26035,22461,21684,26998,34583,45749,41717],\"seed\":20261102,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.04s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-32201839963672834",
+      "passed": true,
+      "seconds": 1.996,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4407,1939,2645,9680,2047,3076,7002],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[25869,22575,21785,26890,34332,46114,41639],\"seed\":32201839963672834,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 1.99s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-81985529216486895",
+      "passed": true,
+      "seconds": 2.007,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4352,1877,2599,9577,1996,3034,6994],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26183,22262,21798,26972,34206,46017,42133],\"seed\":81985529216486895,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.01s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-9223372036854775809",
+      "passed": true,
+      "seconds": 2.077,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4430,1885,2587,9513,1926,3076,6907],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26495,22701,21938,26782,34565,45656,41539],\"seed\":9223372036854775809,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.08s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "seed-18446744073709551615",
+      "passed": true,
+      "seconds": 2.04,
+      "stdout": "\nrunning 1 test\nPROTOCOL_MUTATION_REPORT={\"accepted\":[4300,1850,2613,9470,1990,3075,7186],\"coverage_guided\":false,\"input_limit\":8192,\"iterations\":250000,\"rejected\":[26169,22213,21756,27103,34480,45958,41837],\"seed\":18446744073709551615,\"targets\":[\"login\",\"status\",\"contacts\",\"archive\",\"directory\",\"message\",\"image\"]}\ntest deterministic_mutation_campaign ... ok\n\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 2 filtered out; finished in 2.04s\n\n",
+      "stderr": ""
+    },
+    {
+      "name": "workspace-rust",
+      "passed": true,
+      "seconds": 26.148,
+      "stdout": "\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 6 tests\ntest directory::tests::polish_keys_years_and_profile_removal_are_explicit ... ok\ntest accounts::tests::password_policy_rejects_silent_transcoding_and_redacts_debug ... ok\ntest presence::tests::privacy_hides_the_entire_status_and_never_exports_invisibility ... ok\ntest telemetry::tests::cancellation_drop_and_duplicate_finish_are_accounted_once ... ok\ntest telemetry::tests::exact_boundaries_cumulative_infinity_and_saturating_arithmetic ... ok\ntest telemetry::tests::concurrent_updates_and_snapshots_keep_histogram_counts_consistent ... ok\n\ntest result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 7 tests\ntest tests::invitation_format_is_unambiguous_and_case_insensitive ... ok\ntest gg_retro::tests::independent_libsodium_vector_binds_key_account_and_ciphertext ... ok\ntest tests::legacy_invites_have_a_separate_case_sensitive_digest_and_strict_ascii_bounds ... ok\ntest tests::key_files_survive_reload_refuse_overwrite_and_reject_invalid_data ... ok\ntest tests::old_keys_are_readable_but_only_active_key_is_used_for_writing ... ok\ntest tests::envelopes_are_randomized_and_bound_to_account_version_nonce_and_key_id ... ok\ntest tests::successor_persists_all_old_keys_refuses_overwrite_and_stops_at_retention_limit ... ok\n\ntest result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s\n\n\nrunning 2 tests\ntest tests::text_validation_and_debug_do_not_leak_content ... ok\ntest tests::user_ids_do_not_inherit_a_legacy_wire_limit ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 9 tests\ntest downloads::tests::manifest_text_and_paths_are_bounded_and_html_is_escaped ... ok\ntest legacy::tests::discovery_cannot_advertise_a_remote_ipv6_or_unbound_endpoint ... ok\ntest metrics_runtime::tests::missing_stale_and_partial_observations_do_not_invent_zero_usage ... ok\ntest metrics_runtime::tests::maximum_numeric_values_keep_the_export_bounded_and_finite ... ok\ntest website::tests::budgets_and_ambiguous_cookies_are_rejected ... ok\ntest metrics::tests::busy_scrapes_and_a_stalled_repository_have_finite_admission_and_time ... ok\ntest metrics::tests::readiness_cache_expiry_and_storage_failure_never_export_an_expired_snapshot ... ok\ntest website::tests::csrf_tokens_cannot_cross_registration_and_password_forms ... ok\ntest website::tests::csrf_is_single_use_ip_bound_expiring_and_bounded ... ok\n\ntest result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s\n\n\nrunning 15 tests\ntest frame::tests::coalesced_packets_and_unknown_kinds_keep_their_boundaries ... ok\ntest frame::tests::fragmented_header_and_payload_preserve_every_byte ... ok\ntest frame::tests::rejects_large_lengths_before_waiting_for_the_body_and_detects_eof ... ok\ntest gg6::tests::encoding_never_silently_replaces_unsupported_characters ... ok\ntest gg6::tests::login_length_and_wire_limits_are_separate_from_domain_types ... ok\ntest gg6::tests::polish_description_timestamp_and_invalid_tails ... ok\ntest gg6_directory::tests::native_read_codes_unset_sequences_and_sparse_search_rows ... ok\ntest gg6_images::tests::control_boundaries_and_missing_have_no_filename ... ok\ntest gg6_messages::tests::conference_options_preserve_order_accept_styles_in_either_order_and_bound_counts ... ok\ntest gg6_messages::tests::contacts_and_status_bounds ... ok\ntest gg6_contacts::tests::exact_chunk_is_ambiguous_and_export_has_an_explicit_last_type ... ok\ntest gg6_messages::tests::image_descriptor_after_color_roundtrips_and_rejects_truncation_and_limits ... ok\ntest gg6_messages::tests::message_roundtrip_strips_untrusted_flags_and_preserves_polish_styles ... ok\ntest gg6_presence::tests::description_boundaries_and_distinct_snapshot_change_layouts ... ok\ntest legacy_hash::tests::pinned_synthetic_vectors_cover_zero_rotations_high_bytes_and_overflow ... ok\n\ntest result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 3 tests\ntest independent_frames_fragmentation_coalescing_and_length_boundaries ... ok\ntest deterministic_mutation_campaign ... ok\ntest golden_corpus_all_prefixes_and_every_single_bit_mutation ... ok\n\ntest result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.91s\n\n\nrunning 17 tests\ntest config::tests::discovery_requires_an_ipv4_gg_listener ... ok\ntest config::tests::http_limits_are_bounded_and_reject_unknown_fields ... ok\ntest config::tests::local_development_cannot_accidentally_listen_on_the_lan_or_internet ... ok\ntest config::tests::password_website_requires_gg_and_is_disabled_by_default ... ok\ntest config::tests::website_requires_the_initialized_gg_account_runtime ... ok\ntest config::tests::browser_patcher_is_opt_in_and_validates_hostname_before_database_open ... ok\ntest config::tests::metrics_are_opt_in_loopback_and_separate_from_client_services ... ok\ntest config::tests::paths_are_relative_to_configuration_and_unknown_options_are_errors ... ok\ntest http_listener::tests::admission_is_bounded_and_removes_inactive_addresses ... ok\ntest http_listener::tests::blocked_output_is_not_kept_alive_by_incoming_bytes ... ok\ntest http_listener::tests::both_directions_extend_idle_but_idle_eventually_expires ... ok\ntest http_listener::tests::empty_flush_does_not_reset_a_stalled_write ... ok\ntest http_listener::tests::lifetime_cannot_be_extended_by_continuous_traffic ... ok\ntest process_metrics::linux::tests::status_parser_ignores_non_utf8_names_and_checks_units_duplicates_and_overflow ... ok\ntest process_metrics::linux::tests::own_process_clock_is_monotonic_and_procfs_is_readable ... ok\ntest process_metrics::tests::cancelled_sampler_never_collects_and_running_sampler_joins_cleanly ... ok\ntest process_metrics::linux::tests::status_read_is_bounded_and_io_failure_is_not_zero_usage ... ok\n\ntest result: ok. 17 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 46 tests\ntest directory::tests::aliases_of_a_directory_do_not_create_two_owners ... ok\ntest directory::tests::lock_lives_until_owner_drops_and_can_then_be_reacquired ... ok\ntest accounts::tests::encryption_failure_rolls_back_invitation_and_number_allocation ... ok\ntest accounts::tests::manual_numbers_do_not_jump_the_automatic_counter_and_conflicts_do_not_consume_invites ... ok\ntest key_maintenance::tests::reused_nonce_rolls_back_the_entire_batch_then_resume_succeeds ... ok\ntest accounts::tests::reused_nonce_is_rejected_even_after_the_old_account_has_been_retired ... ok\ntest accounts::tests::competing_manual_claims_are_atomic_and_automatic_numbers_skip_occupied_values ... ok\ntest accounts::tests::simultaneous_registrations_obey_the_three_use_limit_and_allocate_unique_numbers ... ok\ntest messaging_tests::actor_waits_for_socket_barrier_and_revocation_fences_previously_verified_login ... ok\ntest password_maintenance::tests::authenticates_full_password_and_rolls_back_nonce_failure ... ok\ntest accounts::tests::schema_two_migrates_existing_encrypted_accounts_and_backfills_nonce_history ... ok\ntest accounts::tests::retired_numbers_remain_reserved_after_restart_without_preserving_personal_fields ... ok\ntest image_tests::blocks_revoke_permanently_sessions_are_fenced_and_retirement_cascades ... ok\ntest messaging_tests::concurrent_acceptance_obeys_atomic_recipient_quota_and_retirement_purges_payloads ... ok\ntest messaging_tests::privacy_is_atomic_persistent_and_unblocking_does_not_resurrect_messages ... ok\ntest operations_tests::operator_sessions_include_private_users_but_never_stale_sessions ... ok\ntest messaging_tests::quotas_expiry_and_terminal_payload_retention_are_enforced ... ok\ntest messaging_tests::fifo_is_enqueue_order_and_reused_sequence_is_not_deduplicated ... ok\ntest operations_tests::queue_gauges_follow_leases_transport_write_and_retention_without_fake_acknowledgements ... ok\ntest image_tests::offers_are_atomic_recipient_scoped_and_outlive_payload_and_history ... ok\ntest image_tests::image_publication_serializes_block_commit_without_awaiting_an_actor ... ok\ntest tests::sqlite_engine_floor_rejects_unfixed_and_unrecognized_versions ... ok\ntest conference_tests::context_is_validated_in_the_core_and_corrupt_metadata_is_terminal_and_purged ... ok\ntest messaging_tests::new_epoch_recovers_leases_and_stale_sessions_cannot_write ... ok\ntest password_maintenance::tests::refuses_live_inactive_accounts_and_version_overflow ... ok\ntest password_maintenance::tests::bounds_audit_count_and_age_without_exposing_expired_events ... ok\ntest password_web_tests::concurrent_changes_commit_exactly_one_secret_and_audit ... ok\ntest password_web_tests::wrong_unchanged_and_reused_nonce_preserve_secret_generation_and_audit ... ok\ntest image_tests::retained_offer_quota_cannot_be_bypassed_by_delivering_or_deleting_text ... ok\ntest password_web_tests::attempts_are_persistent_bounded_and_do_not_allocate_for_unknown_or_reset_on_clock_rollback ... ok\ntest tests::import_opener_requires_marker_and_cannot_reopen_existing_database ... ok\ntest presence_tests::friends_only_status_hides_presence_without_blocking_pending_messages ... ok\ntest write_pool_tests::queued_writers_leave_readers_available_and_rollback_precedes_the_next_writer ... ok\ntest tests::refuses_future_schema_without_overwriting_runtime_state ... ok\ntest presence_tests::archive_versions_are_independent_atomic_private_and_discard_staging_on_restart ... ok\ntest tests::initialization_is_durable_and_each_restart_gets_a_new_epoch ... ok\ntest presence_tests::privacy_commit_waits_for_an_in_progress_publication_without_waiting_on_observer_actor ... ok\ntest password_web_tests::socket_and_publication_barriers_precede_commit_and_stale_login_cannot_kick_new_session ... ok\ntest presence_tests::effective_presence_is_ready_scoped_private_and_offline_description_survives_epoch ... ok\ntest profile_tests::profiles_are_opt_in_fenced_replace_whole_form_and_use_literal_polish_filters ... ok\ntest messaging_tests::corrupt_payload_is_terminal_and_attempt_history_is_bounded ... ok\ntest profile_tests::removing_a_profile_waits_for_directory_publication_to_finish ... ok\ntest profile_tests::directory_rate_limit_survives_session_replacement_restart_and_backwards_clock ... ok\ntest statistics_tests::public_counters_require_current_ready_public_presence_and_exclude_tombstones ... ok\ntest profile_tests::keyset_paging_is_ordered_and_retirement_cascades_profiles ... ok\ntest messaging_tests::full_history_scrubs_sparse_payloads_without_expiring_a_live_writer ... ok\n\ntest result: ok. 46 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.62s\n\n\nrunning 4 tests\ntest tests::bad_crc_order_overflow_stale_sessions_timeout_and_disconnect_release_data ... ok\ntest tests::crc_complete_before_publication_and_bounded_repacketization ... ok\ntest tests::unsolicited_duplicate_and_per_user_capacity_do_not_allocate ... ok\ntest tests::global_capacity_partial_fragment_limit_and_expiry_free_the_reservation ... ok\n\ntest result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 2 tests\ntest tests::real_tcp_fragmentation_crosses_protocol_application_and_transport ... ok\ntest server::telemetry_tests::abort_drops_the_real_socket_fence_connection_and_operation_observations ... ok\n\ntest result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s\n\n",
+      "stderr": "   Compiling rgg-protocol v0.1.0-dev.27 (/mnt/d/Dokumenty/Documents/RetroGadu/crates/rgg-protocol)\n    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.32s\n     Running unittests src/main.rs (/tmp/rgg-target/debug/deps/rgg_admin-e33a067871fecef4)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_application-217a9747d4877655)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_credentials-48a327242a42a705)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_domain-ece499112dde3b0c)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_http-b63a86c724868953)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_protocol-739eccffcda45525)\n     Running tests/adversarial.rs (/tmp/rgg-target/debug/deps/adversarial-b0c7aec1f55fb6ab)\n     Running unittests src/main.rs (/tmp/rgg-target/debug/deps/rgg_server-1bc609ab92aee06f)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_store_sqlite-39a1f9a6245e8efa)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_transfers-e7898ec391297cfd)\n     Running unittests src/lib.rs (/tmp/rgg-target/debug/deps/rgg_transport-ad3cab3073edae81)\n   Doc-tests rgg_application\n   Doc-tests rgg_credentials\n   Doc-tests rgg_domain\n   Doc-tests rgg_http\n   Doc-tests rgg_protocol\n   Doc-tests rgg_store_sqlite\n   Doc-tests rgg_transfers\n   Doc-tests rgg_transport\n"
+    }
+  ],
+  "campaigns": [
+    {
+      "accepted": [
+        4311,
+        1986,
+        2652,
+        9516,
+        1976,
+        3025,
+        6896
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26169,
+        22297,
+        21713,
+        27139,
+        34617,
+        45765,
+        41938
+      ],
+      "seed": 1,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4361,
+        1898,
+        2611,
+        9610,
+        2074,
+        3072,
+        6961
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26108,
+        22583,
+        21629,
+        27017,
+        34530,
+        45885,
+        41661
+      ],
+      "seed": 2,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4291,
+        1949,
+        2639,
+        9612,
+        1952,
+        3146,
+        6944
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26124,
+        22429,
+        21620,
+        26968,
+        34793,
+        45445,
+        42088
+      ],
+      "seed": 3,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4280,
+        1931,
+        2725,
+        9766,
+        1939,
+        3074,
+        7058
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26035,
+        22461,
+        21684,
+        26998,
+        34583,
+        45749,
+        41717
+      ],
+      "seed": 20261102,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4407,
+        1939,
+        2645,
+        9680,
+        2047,
+        3076,
+        7002
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        25869,
+        22575,
+        21785,
+        26890,
+        34332,
+        46114,
+        41639
+      ],
+      "seed": 32201839963672834,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4352,
+        1877,
+        2599,
+        9577,
+        1996,
+        3034,
+        6994
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26183,
+        22262,
+        21798,
+        26972,
+        34206,
+        46017,
+        42133
+      ],
+      "seed": 81985529216486895,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4430,
+        1885,
+        2587,
+        9513,
+        1926,
+        3076,
+        6907
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26495,
+        22701,
+        21938,
+        26782,
+        34565,
+        45656,
+        41539
+      ],
+      "seed": 9223372036854775809,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    },
+    {
+      "accepted": [
+        4300,
+        1850,
+        2613,
+        9470,
+        1990,
+        3075,
+        7186
+      ],
+      "coverage_guided": false,
+      "input_limit": 8192,
+      "iterations": 250000,
+      "rejected": [
+        26169,
+        22213,
+        21756,
+        27103,
+        34480,
+        45958,
+        41837
+      ],
+      "seed": 18446744073709551615,
+      "targets": [
+        "login",
+        "status",
+        "contacts",
+        "archive",
+        "directory",
+        "message",
+        "image"
+      ]
+    }
+  ],
+  "probe_sha256": "9231c45d43a53a6ccdf14ed1b5bff76ab621bef113efd880269ee7eaeaa873fc"
+}
